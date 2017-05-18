@@ -1,0 +1,57 @@
+<style type="text/css">
+    .saved-success.ng-enter {
+        animation: fadeIn 1.0s;
+    }
+
+    .saved-success.ng-leave {
+        animation: fadeOut 1.0s;
+    }
+
+    .saved-success {
+        margin: 5px auto;
+        border-radius: 5px;
+        background-color:rgba(51, 255, 102, 0.6);
+    }
+
+    .saved-error {
+        margin: 5px auto;
+        border-radius: 5px;
+        background-color:rgba(255, 51, 51, 0.6);
+    }
+
+    .saved-error.ng-enter {
+        animation: fadeIn 1.0s;
+    }
+
+    .saved-error.ng-leave {
+        animation: fadeOut 1.0s;
+    }
+
+    .call {
+        height: 30px;
+        text-align: center;
+    }
+
+    .stackBottom {
+        z-index: -1050;
+    }
+
+
+</style>
+
+<div class="navbar navbar-fixed-top" style="top:90px;" ng-controller="FeedbackBarController" ng-class="{'stackBottom' : hideIt}">
+    <div class="col-sm-12 call">
+        <div class="col-sm-12">
+            <div class="col-sm-12">
+                <div class="col-sm-12">
+                    <div class="saved-success" ng-if="call.success">
+                        <span>{{messageSuccess}}</span>
+                    </div>
+                    <div class="saved-error" ng-if="call.error">
+                        <span>{{messageError}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

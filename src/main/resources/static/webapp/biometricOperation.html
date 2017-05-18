@@ -1,0 +1,163 @@
+<style>
+	.signer-container {
+		box-shadow: 3px 2px 3px 4px rgba(228, 20, 116, 0.05);
+	}
+
+	.doc-container {
+		box-shadow: 3px 2px 3px 4px rgba(5, 23, 243, 0.05);;
+	}
+
+	.no-padding-left {
+		padding-left: 0px;
+	}
+
+	.qr-modal-window .modal-dialog {
+		width: 300px;
+	}
+</style>
+
+<div id="container-fluid" class="fondo" ng-init="loadPoliciesType(); firstVisible=false; secondVisible=false;">
+    <div class="col-sm-12 first-view" ng-if="firstVisible">
+
+		<div class="panel panel-primary panel-primary-custom">
+		    <div class="panel-heading">
+		    	Gestión de <i>bSign</i>
+		   	</div>
+		    <div class="text-titular">
+		    	Pantalla de gestión de las operaciones de firma biometrica.
+		    </div>
+		    <div class="panel-body">
+				<table datatable="ng" dt-options="dtOptionsPolicy" dt-column-defs="dtColumnsPolicy" dt-instance="dtInstancePolicy" class="row-border hover table" width="100%">
+	                <thead>
+	                    <tr>
+	                        <th>Nombre Poliza</th>
+	                        <th>Tipo Poliza</th>
+	                        <th>N�mero Documentos</th>
+	                        <th>Acciones</th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                    <tr ng-repeat="policy in policyList">
+	                        <td>{{ policy.policyName }}</td>
+	                        <td>{{ policy.policyFamily }}</td>
+	                        <td>{{ policy.countDocs }}</td>
+	                        <td>
+	                            <i>
+	                                <span ng-click="createOperation(policy)" class="glyphicon glyphicon-plus pointer-span"></span>
+	                            </i>
+	                        </td>
+	                    </tr>
+	                </tbody>
+            	</table>
+		    </div>
+		</div>
+	</div>
+
+
+
+	<div class="col-sm-12 second-view" ng-if="secondVisible"  style="position: absolute; margin-left: -50px; width: 100%;" >
+
+		<div class="panel panel-primary panel-primary-custom">
+		    <div class="panel-heading">
+		    	Gestión de <i>bSign</i> <i style="float:right;" ng-click="closeCreateOperation();"><span class="glyphicon glyphicon-remove"></span></i>
+		   	</div>
+		    <div class="text-titular">
+		    	Pantalla de creación de operación de firma biometrica.
+		    </div>
+		    <div class="panel-body">
+		    	<div class="col-sm-12">
+
+					<div class="panel signer-container">
+						<div class="panel-heading">
+							<p class="panel-title" style="font-size:large;">Titular<i style="float:right;"><span class="glyphicon glyphicon-info-sign" uib-popover="Insertar las informaciones del titular de la operación." popover-trigger="outsideClick" popover-placement="left"></span></i></p>
+						</div>
+						<div class="panel-body">
+				    		<form role="form" name="addTitularInfo" novalidate>
+								<div class="form-group col-sm-6 col-xs-12 col-md-6" ng-class="{ 'has-error' : addTitularInfo.titularname.$invalid , 'has-success' : !addTitularInfo.titularname.$invalid}">
+									<label for="titularname" class="control-label">Nombre y Appellido(s):</label>
+									<input type="text" class="form-control" id="titularname" name="titularname" ng-model="titular.nombre" placeholder="Este campo es obligatorio" required>
+								</div>
+								<div class="form-group col-sm-6 col-xs-12 col-md-6" ng-class="{ 'has-error' : addTitularInfo.titularaddress.$invalid , 'has-success' : !addTitularInfo.titularaddress.$invalid}">
+									<label for="titularaddress" class="control-label">Dirección:</label>
+									<input type="text" class="form-control" id="titularaddress" name="titularaddress" ng-model="titular.direccion" placeholder="Este campo es obligatorio" required>
+								</div>
+
+								<div class="form-group col-sm-6 col-xs-12 col-md-4" ng-class="{ 'has-error' : addTitularInfo.titularnif.$invalid , 'has-success' : !addTitularInfo.titularnif.$invalid}">
+									<label for="titularnif" class="control-label">NIF:</label>
+									<input type="text" class="form-control" id="titularnif" name="titularnif" ng-model="titular.nif" placeholder="Este campo es obligatorio" required>
+								</div>
+								<div class="form-group col-sm-6 col-xs-12 col-md-4" ng-class="{ 'has-error' : addTitularInfo.titularphone.$invalid , 'has-success' : !addTitularInfo.titularphone.$invalid}">
+									<label for="titularphone" class="control-label">Telefono:</label>
+									<input type="number" class="form-control" id="titularphone" name="titularphone" ng-model="titular.telefono" placeholder="Este campo es obligatorio" required>
+								</div>
+								<div class="form-group col-sm-6 col-xs-12 col-md-4" ng-class="{ 'has-error' : addTitularInfo.titularemail.$invalid , 'has-success' : !addTitularInfo.titularemail.$invalid}">
+									<label for="titularemail" class="control-label">Correo Electrónico:</label>
+									<input type="email" class="form-control" id="titularemail" name="titularemail" ng-model="titular.email" placeholder="Este campo es obligatorio" required>
+								</div>
+		                	</form>
+	                	</div>
+                	</div>
+                	<hr>
+		    	</div>
+		    	<div class="col-sm-12">
+		    		<form name="prova">
+				    	<div ng-repeat="document in docs">
+					    	<div class="panel doc-container">
+					    		<div class="panel-heading">
+									<p class="panel-title" style="font-size:large;">{{document.name}}</p>
+								</div>
+								<div class="panel-body">
+						    		<div ng-repeat="signer in document.signersArray">
+						    			<div class="col-xs-12 col-sm-6 col-md-5 no-padding-left">
+						    				<ng-form role="form" name="addSignerInfo" novalidate>
+												<div class="form-group col-sm-12 col-xs-12 no-padding-left" ng-class="{ 'has-error' : addSignerInfo.signername.$invalid , 'has-success' : !addSignerInfo.signername.$invalid}">
+													<label for="signername" class="control-label">Nombre Firmante {{$index + 1}}:</label>
+													<input type="text" class="form-control" id="signername" name="signername" same-operation-name ng-model="signer.nombre" placeholder="Este campo es obligatorio" required>
+												</div>
+												<div class="form-group col-sm-12 col-xs-12 no-padding-left" ng-class="{ 'has-error' : addSignerInfo.signernif.$invalid , 'has-success' : !addSignerInfo.signernif.$invalid}">
+													<label for="signernif" class="control-label">NIF Firmante {{$index + 1}}:</label>
+													<input type="text" class="form-control" id="signernif" name="signernif" same-operation-name ng-model="signer.nif" placeholder="Este campo es obligatorio" required>
+												</div>
+					                    	</ng-form>
+					                    	<p ng-show="addSignerInfo.signername.$dirty && signer.nombre.length > 0">{{signer.nombre}} firmará el documento a la pagína {{signer.page}} a las coordenadas: (x) {{signer.x}}, (y) {{signer.y}}</p>
+					    				</div>
+						    		</div>
+						    	</div>
+					    	</div>
+					    	<hr>
+				    	</div>
+				    	<div class="col-sm-6 well well-lg" ng-repeat="document in docs">
+							<form name="upload{{$index}}" class="form" data-ng-submit="createOp()">
+								<div class="col-sm-3" style="overflow-x: overlay; min-height: 40px;">
+									<span style="line-height: 3em;">{{document.name}}</span>
+								</div>
+								<div class="col-sm-3">
+									<span class="btn btn-file" style="margin-top: 0px;">
+										<input class="fileinput " type="file" name="file{{$index}}" onchange="angular.element(this).scope().uploadedFile(this)"/>Elige el fichero
+									</span>
+								</div>
+								<div class = "col-sm-6">
+									<div id="preview{{$index}}"></div>
+									<div id="name{{$index}}"></div>
+								</div>
+							</form>
+						</div>
+			    	</form>
+		    	</div>
+		    	<div class="col-sm-12">
+		    		<button class="btn btn-default" style="margin-top:0px;" ng-disabled="addTitularInfo.$invalid || prova.$invalid || files.length !== docs.length" ng-click="createNewOperation()">Crear Operación</button>	
+		    	</div>
+		    </div>
+		</div>
+	</div>
+	<script type="text/ng-template" id="modalSignprova.html">
+	    <div class="modal-body">
+	    	<div style="text-align: center;">
+	    		<iframe style="text-align: center; height: 250px; width: 250px;" scrolling="no" frameborder="0" ng-src="{{qrCodeAsImg}}"/>
+			</div>
+			<div style="text-align: center">
+				<button class="btn btn-primary" style="margin-top: 0px;" ng-click="openSignWacomPage();">Firmar en PC</button>
+			</div>
+		</div>
+	</script>
+</div>

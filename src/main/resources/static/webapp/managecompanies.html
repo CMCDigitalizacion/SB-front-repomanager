@@ -1,0 +1,286 @@
+<style>
+    
+    .prova.ng-hide-remove {
+        animation: fadeInLeft 0.5s;
+    }
+
+</style>
+
+<div id="container-fluid" class="fondo" ng-init="super.loadSuperData()">
+    <div class="row prova" ng-hide="super.isLoaded">
+
+        <div class="panel panel-primary panel-primary-custom" >
+            <div id="manage-companies-heading" class="panel-heading">Gesti&oacute;n de <i>Empresas</i>
+            </div>
+            <div id="manage-companies-sub-heading" class="text-titular">Pantalla de gesti&oacute;n de las empresas. Puedes añadir un nuevo dominio y su administrador.</div>
+            <div class="panel-body">
+                <ul class="nav nav-pills nav-justified">
+                    <li class="active"><a data-toggle="pill" href="#tab_companies" target="_self">Empresas</a></li>
+                    <li><a data-toggle="pill" target="_self" href="#tab_users">Usuarios</a></li>
+                    <li><a data-toggle="pill" target="_self" href="#tab_notaries">Notarios</a></li>
+                    <li><a data-toggle="pill" target="_self" href="#tab_search_batch">Lotes</a></li>
+                </ul>
+                <div class="tab-content">
+
+                    <div class="tab-pane fade in active" id="tab_companies" role="tabpanel"> <!-- TAB DOCUMENTOS -->
+                        
+                        <div class="row">
+                        <hr>
+                            <div class="col-sm-12">
+                                <form name="newDomain" id="newDomain" novalidate>
+                                    <div class="form-group">
+
+                        		        <div class="row col-sm-8">
+
+        		                          <div class="col-md-8 col-sm-12 form-group" style="padding-left:0px;" ng-class="{ 'has-error' : newDomain.domainname.$invalid , 'has-success' : !newDomain.domainname.$invalid}">
+            		                          <label id="domain-name-label" for="domainname" class="control-label">Nombre dominio: </label>
+            		                          <input type="text" name="domainname" class="form-control" ng-model="domain.domainName" placeholder="Insertar el nombre del nuevo dominio" domain-exist required>
+        		                          </div>
+
+                		                  <div class="col-md-4 col-sm-12 form-group" style="padding-left:0px;">
+                		                      <label id="hidden-label-button" for="useremail" class="control-label" style="visibility:hidden;">:</label>
+                		                      <button id="save-domain-button" class="btn btn-default form-control" style="margin-top: 0px; height: 34px;" ng-disabled="newDomain.$invalid" ng-click="super.saveDomain(domain)">Guardar Dominio</button>
+                		                  </div>
+
+                        		        </div>
+
+                                		<div class="row col-sm-4">
+                                			<div class="col-md-12 form-group">
+                		                        <label id="hidden-label-domain-exists" for="domainname" class="control-label" style="visibility:hidden;">: </label>
+                                				<span id="span-domain-exists" class="form-control" style="border: 0; box-shadow: none; color: red;" ng-show="newDomain.domainname.$error.sameDomainName">{{domainExistMessage}}</span>	
+                		                    </div>
+                                		</div>
+                		            </div>
+                	             </form>
+                	             <table id="domain-table" width="100%" datatable="" dt-options="super.dtOptionsDomain" dt-columns="super.dtColumnsDomain" dt-instance="super.dtInstanceDomain" class="row-border hover table"></table>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab_users" role="tabpanel">
+                        
+                        <div class="row">
+                        <hr>
+                            <div class="col-sm-12">
+                                 <table id="users-table" width="100%" datatable="" dt-options="super.dtOptionsUsers" dt-columns="super.dtColumnsUsers" dt-instance="super.dtInstanceUsers" class="row-border hover table"></table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab_notaries" role="tabpanel">
+                        
+                        <div class="row">
+                        <hr>
+                            <div class="col-sm-12">
+                                 <table id="notaries-table" width="100%" datatable="" dt-options="super.dtOptionsNotaries" dt-columns="super.dtColumnsNotaries" dt-instance="super.dtInstanceNotaries" class="row-border hover table"></table>
+                            </div>
+                            <div class="col-sm-12">
+                                <button id="add-notary-button" class="btn btn-primary" ng-click="super.modifyNotary()">Añadir Notario</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab_search_batch" role="tabpanel">
+                        
+                        <div class="row">
+                        <hr>
+                            <div class="col-sm-12">
+                                <table id="batches-table" width="100%" datatable="" dt-options="super.dtOptionsBatches" dt-columns="super.dtColumnsBatches" dt-instance="super.dtInstanceBatches" class="row-border hover table"></table>
+                                <hr>
+                                <h4>Busqueda Operación:</h4>
+                                <form name="searchBatchForm" id="search-batch-form" novalidate>
+                                    <div class="form-group">
+                                        <div class="row">
+
+                                            <div class="col-md-6 form-group" ng-class="{ 'has-error' : searchBatchForm.uuid.$invalid , 'has-success' : !searchBatchForm.uuid.$invalid}">
+                                                <label id="label-cuv" for="uuid" class="control-label">CUV (*):</label>
+                                                <input id="operation-uuid" type="text" name="uuid" class="form-control" ng-model="operation.uuid" placeholder="Este campo es obligatorio" required>
+                                            </div>
+
+                                            <div class="col-md-2 form-group">
+                                                <label for="date" class="control-label">Fecha:</label>
+                                                <input id="operation-date" type="date" id="date" name="date" class="form-control" ng-model="operation.date" placeholder="Este campo es obligatorio">
+                                            </div>
+
+                                            <div class="col-md-2 form-group">
+                                                <label for="date" class="control-label">Hora:</label>
+                                                <div id="operation-time" uib-timepicker ng-model="operation.time" hour-step="1" minute-step="1" show-meridian="false" show-spinners="false"></div>
+                                            </div>
+
+                                            <div class="col-md-2 form-group">
+                                                <label id="hidden-label-time" for="date" class="control-label" style="visibility: hidden;">Hora:</label>
+                                                <button id="reset-form-button" class="btn btn-primary" style="margin-left: 0px; height: 34px; margin-top: 23px;" ng-click="super.resetField(operation)">Limpiar</button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <button id="search-batch-button" class="btn btn-primary" ng-disabled="!searchBatchForm.$valid" style="margin-left: 0px; margin-top: 0px;" ng-click="super.searchOperation(operation)">Buscar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <hr>
+                                <p id="notary-label">Notario: {{batch.notaryName}} {{batch.notarySurname}}</p>
+                                <hr>
+                                <p id="batch-identifier-label">Identificador del lote: {{batch.identificador}}</p>
+                                <hr>
+                                <p id="batch-creation-label">Fecha Creación: {{batch.fechacreacion}}</p>
+                                <hr>
+                                <p id="batch-state-label">Estado: {{batch.estado | batchesState}}</p>
+                                <hr>
+                                <p id="operations-number-label">N�mero Operaciones: {{batch.numerooperaciones}}</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/ng-template" id="userModal.html">
+    
+    <div class="modal-body">
+    <span ng-hide="hide" style="color: red; font-size:large; font-family: Palatino Linotype, Book Antiqua, Palatino, serif">{{response}}</span>
+       <form name="newUserForm" id="new-user-form" novalidate autocomplete="off">
+            <div class="form-group">
+                <div class="row">
+
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.username.$invalid , 'has-success' : !newUserForm.username.$invalid}">
+                        <label id="username-label" for="username" class="control-label">Username: </label>
+                        <input id="user-username" type="text" name="username" class="form-control" ng-model="user.username" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.useremail.$invalid , 'has-success' : !newUserForm.useremail.$invalid}">
+                        <label id="email-label" for="useremail" class="control-label">Email:</label>
+                        <input type="email" id="useremail" name="useremail" class="form-control" ng-model="user.useremail" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+                </div>
+
+				<div class="row">
+					<div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.firstName.$invalid , 'has-success' : !newUserForm.firstName.$invalid}">
+                       	<label for="firstName" class="control-label">Nombre:</label>
+                        <input type="text" id="firstName" name="firstName" class="form-control" check-firstName="{{user}}" ng-model="user.extradata.firstName" placeholder="Nombre del usuario">
+					</div>
+
+					<div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.lastName.$invalid , 'has-success' : !newUserForm.lastName.$invalid}">
+                    	<label for="lastName" class="control-label">Apellidos:</label>
+                    	<input type="text" id="lastName" name="lastName" class="form-control" check-lastName="{{user}}" ng-model="user.extradata.lastName" placeholder="Apellidos del usuario">
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.nif.$invalid , 'has-success' : !newUserForm.nif.$invalid}">
+                        <label for="nif" class="control-label">NIF: </label>
+                        <input id="nif" type="text" name="nif" class="form-control" ng-model="user.extradata.nif" validate-nif from-domain="true" placeholder="Nif del usuario">
+                    </div>
+
+					<div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.phone.$invalid , 'has-success' : !newUserForm.phone.$invalid}">
+                    	<label for="phone" class="control-label">Tel&eacute;fono: </label>
+                    	<input id="phone" type="text" name="phone" class="form-control" ng-model="user.extradata.phone" validate-phone from-domain="true" placeholder="Tel&eacute;fono del usuario">
+                   	</div>
+				</div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.role.$invalid , 'has-success' : !newUserForm.role.$invalid}">
+                        <label id="role-label" for="role" class="control-label">Rol:</label>
+                        <select type="text" ng-model="user.role" class="form-control" name="role" id="role" required>
+                            <option value="0">VIDEO</option>
+                            <option value="-1">SUPERVISOR</option>
+                            <option value="-2">VISOR</option>
+                            <option value="1">NORMAL</option>
+                            <option value="2">ADMIN</option>
+                            <option value="3">SUPERADMIN</option>
+							<option value="-3">FIRMANTE</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.state.$invalid , 'has-success' : !newUserForm.state.$invalid}">
+                        <label id="state-label" for="state" class="control-label">Estado:</label>
+                        <select type="text" ng-model="user.state" class="form-control" name="state" id="state" required>
+                            <option value="0">ACTIVO</option>
+							<option value="-1">INACTIVO</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.pass.$invalid , 'has-success' : !newUserForm.pass.$invalid }">
+                        <label id="pass-label" for="pass" class="control-label">Password:</label>
+                        <input type="password" id="pass" name="pass" class="form-control" check-length-pass check-lower-case check-upper-case check-digit ng-model="user.userpassword" autocomplete="off" placeholder="Este campo es obligatorio" ng-required="checkIfAltering()">
+                    </div>
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.passRepeated.$invalid , 'has-success' : !newUserForm.passRepeated.$invalid }">
+                        <label for="passRepeated" class="control-label">Repetir Password:</label>
+                        <input type="password" id="passRepeated" name="passRepeated" same-pass-super="{{user.userpassword}}" class="form-control" ng-model="user.userpasswordrepeated" placeholder="Este campo es obligatorio" autocomplete="off" ng-required="checkIfAltering()">
+                    </div>
+                </div>
+            </div>
+
+            <p id="pass-long-error" class="error-pass" ng-if="newUserForm.pass.$error.checkLengthPass">La longitud de la contraseña tiene que ser mayor que 5, faltan {{numberOfPendingsChars}}.</p>
+            <p id="pass-lower-letter-error" class="error-pass" ng-if="newUserForm.pass.$error.checkLowerCase">La contraseña tiene que contener al menos una letra minúscula.</p>
+            <p id="pass-upper-letter-error" class="error-pass" ng-if="newUserForm.pass.$error.checkUpperCase">La contraseña tiene que contener al menos una letra mayúscula.</p>
+            <p id="pass-number-error" class="error-pass" ng-if="newUserForm.pass.$error.checkDigit">La contraseña tiene que contener al menos un número.</p>
+
+            <div class="modal-footer" style="padding-bottom: 0px;">
+                <button id="save-user" class="btn btn-primary btn-custom" type="button" ng-click="saveUser(user)" ng-disabled="newUserForm.$invalid">Guardar</button>
+                <button id="close-user-dialog" class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="notaryModal.html">
+    
+    <div class="modal-body">
+    <span ng-hide="hide" style="color: red; font-size:large; font-family: Palatino Linotype, Book Antiqua, Palatino, serif">{{response}}</span>
+       <form name="newNotaryForm" id="new-notary-form" novalidate autocomplete="off">
+            <div class="form-group">
+                <div class="row">
+
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : newNotaryForm.nombre.$invalid , 'has-success' : !newNotaryForm.nombre.$invalid}">
+                        <label id="name-label" for="nombre" class="control-label">Nombre: </label>
+                        <input id="notary-name" type="text" name="nombre" class="form-control" ng-model="notary.nombre" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : newNotaryForm.apellidos.$invalid , 'has-success' : !newNotaryForm.apellidos.$invalid}">
+                        <label id="surname-label" for="apellidos" class="control-label">Apellidos:</label>
+                        <input id="notary-surname" type="text" id="apellidos" name="apellidos" class="form-control" ng-model="notary.apellidos" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : newNotaryForm.identifier.$invalid , 'has-success' : !newNotaryForm.identifier.$invalid}">
+                        <label id="identifier-label" for="identifier" class="control-label">Identificador:</label>
+                        <input id="notary-identifier" type="text" id="apellidos" name="identifier" class="form-control" ng-model="notary.identificador" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : newNotaryForm.email.$invalid , 'has-success' : !newNotaryForm.email.$invalid}">
+                        <label id="email-label" for="email" class="control-label">Email:</label>
+                        <input id="notary-email" type="email" id="email" name="email" class="form-control" ng-model="notary.email" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer" style="padding-bottom: 0px;">
+                <button id="save-notary" class="btn btn-primary btn-custom" type="button" ng-click="saveNotary(notary)" ng-disabled="newNotaryForm.$invalid">Guardar</button>
+                <button id="close-notary-dialog" class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</script>

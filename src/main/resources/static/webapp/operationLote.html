@@ -1,0 +1,149 @@
+<head>
+  <meta charset="UTF-8" />
+
+<style type="text/css">
+	
+	.list-operation.ng-enter {
+	  animation: fadeInLeft 0.5s;
+	}
+
+	.list-operation.ng-leave {
+	  animation: fadeOutLeft 0.5s;
+	}
+
+	.operation-details.ng-enter {
+	  animation: fadeInRight 0.5s;
+	}
+
+	.operation-details.ng-leave {
+	  animation: fadeOutRight 0.5s;
+	}
+	
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+ }
+ 
+ .btn {
+    margin-top: 0px;
+}
+
+.modal-window {
+	margin-top: 5%;
+}
+</style>
+</head>
+<div id="container-fluid" class="fondo" ng-init="loadOperationTypeList()">
+     <div class="row operation-details">
+        <div class="panel panel-primary panel-primary-custom">
+            <div class="panel-heading">
+                Crear y/o cancelar operaciones desde fichero de lote
+            </div>
+            <div class="panel-body">
+              <div class="col-sm-6">
+                <div class="col-sm-12" style="margin-bottom: 1.5em;">
+                  <h4><i>Crear</i> Operaciones</h4>
+                </div>
+                <form name="batchForm">
+                  <div class="form-group">
+                    <div class="col-sm-6">
+                      <div class="input-group">
+                        <span class="btn btn-file col-sm-12">
+                          <input class="fileinput " type="file" name="file" onchange="angular.element(this).scope().uploadedFileLote(this)"/>
+                            Seleccionar fichero
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="col-sm-6">
+                      <div class="input-group">
+                        <button class="btn btn-primary" ng-click="createOperations();" ng-disabled="!isValidFile">Crear operaciones</button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="col-sm-6">
+                <div class="col-sm-12" style="margin-bottom: 1.5em;">
+                  <h4><i>Cancelar</i> Operaciones</h4>
+                </div>
+
+                <form name="batchForm">
+                  <div class="form-group">
+                    <div class="col-sm-6">
+                      <div class="input-group">
+                        <span class="btn btn-file col-sm-12">
+                          <input class="fileinput " type="file" name="file" onchange="angular.element(this).scope().uploadedCancelFile(this)"/>
+                            Seleccionar fichero
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="col-sm-6">
+                      <div class="input-group">
+                        <button class="btn btn-primary" ng-click="deleteOperations();" ng-disabled="!isValidCancelFile">Cancelar operaciones</button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="col-sm-6" >
+                <div class="col-sm-12 col-md-12 container-infos" style="margin-top: 3em;" ng-show="isLoaded">
+                    <div class="col-sm-6 col-md-8 container-info-operation" >
+                        <p>
+                            <span class="label-detail-operation" style="overflow-wrap: break-word;">Nombre del fichero:</span>
+                            <span class="detail-operation">{{info.fileBatchName}}</span>
+                        </p>
+                    </div>
+                    <div class="col-sm-6 col-md-4 container-info-operation" >
+                        <p>
+                            <span class="label-detail-operation">Operaciones a crear:</span>
+                            <span class="detail-operation">{{info.numberOfOps}}</span>
+                        </p>
+                    </div>
+                </div>
+              </div>
+
+              
+              <div class="col-sm-6" >
+                <div class="col-sm-12 col-md-12 container-infos" style="margin-top: 3em;" ng-show="isLoadedCancel">
+                    <div class="col-sm-6 col-md-8 container-info-operation" >
+                        <p>
+                            <span class="label-detail-operation" style="overflow-wrap: break-word;">Nombre del fichero:</span>
+                            <span class="detail-operation">{{infoCancel.fileBatchName}}</span>
+                        </p>
+                    </div>
+                    <div class="col-sm-6 col-md-4 container-info-operation" >
+                        <p>
+                            <span class="label-detail-operation">Operaciones a borrar:</span>
+                            <span class="detail-operation">{{infoCancel.numberOfOps}}</span>
+                        </p>
+                    </div>
+                </div>
+              </div>
+            </div>
+
+
+            </div>
+        </div>
+      </div>
+</div>

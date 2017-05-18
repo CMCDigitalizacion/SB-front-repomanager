@@ -1,0 +1,108 @@
+<style>
+    .prueba {
+        padding-top: 28px;
+        /*float: right;*/
+    }
+</style>
+<div id="container-fluid" class="fondo" ng-init="loadBSignData()">
+    <div class="row list-operation" ng-if="isLoaded">
+
+		<div class="panel panel-primary panel-primary-custom">
+		    <div class="panel-heading">
+		    	Gestion de <i>bSign</i>
+		   	</div>
+		    <div class="text-titular">
+		    	Pantalla de gestion de las operaciones de firma biometrica.
+		    </div>
+		    <div class="panel-body">
+				<div class="row row-tab">
+            		<!-- <hr> -->
+                    <div class="col-md-12 col-sm-12">
+                        <div class="col-sm-12 col-md-12">
+                            <form role="form" name="configurationForm" novalidate>
+                                <div class="form-group col-sm-12" ng-class="{ 'has-error' : configurationForm.publicKey.$invalid , 'has-success' : !configurationForm.publicKey.$invalid}" style="height:150px;">
+                                    <label for="publicKey" class="control-label">Clave pública:</label>
+                                    <textarea class="certificate-textarea" name="publicKey" id="publicKey" ng-model="conf.publicKey"></textarea>
+                                </div>
+                                <div class=" col-sm-12">
+                                    <br>
+                                </div>
+                                <div class=" col-md-7 no-padding-left">
+                                    <div class="col-sm-12">
+                                        <h4>Configuración TSA:</h4>
+                                        <hr>
+                                    </div>
+                                    <div class="form-group col-xs-12 col-sm-12 col-md-4 no-margin-bottom">
+                                        <div class="checkbox">
+                                            <label ng-attr-id="{{ idLabelDefault }}"><input type="checkbox" ng-model="defTsa.checked" ng-disabled="disableDefaultTsa" ng-change="setDefaultTsa(defTsa.checked)">Usar TSA por defecto</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-12 col-sm-8 col-md-4 no-margin-bottom">
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" name="tsaPruebas" ng-model="conf.configurationTsa.tsaPruebas" ng-change="changePruebasTsa(conf.configurationTsa.tsaPruebas)">Firmar sin TSA</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group col-xs-12 col-sm-8 col-md-4 no-margin-bottom">
+                                        <label for="tsaURL" class="control-label" style="visibility: hidden;">URL TSA:</label>
+                                        <input type="text" class="form-control" style="visibility: hidden;">
+                                    </div>
+
+                                    <div class="form-group col-sm-12 col-xs-12 col-md-4 no-margin-bottom" ng-class="{ 'has-error' : configurationForm.tsaURL.$invalid , 'has-success' : !configurationForm.tsaURL.$invalid}">
+                                        <label for="tsaURL" class="control-label">URL TSA:</label>
+                                        <input type="text" class="form-control" id="tsaURL" name="tsaURL" ng-model="conf.configurationTsa.tsaURL" placeholder="Insertar el URL de la TSA" ng-required="!conf.configurationTsa.tsaPruebas" ng-readonly="conf.configurationTsa.tsaPruebas || defTsa.checked">
+                                    </div>
+
+                                    <div class="form-group col-sm-12 col-xs-12 col-md-4 no-margin-bottom" ng-class="{ 'has-error' : configurationForm.tsaUser.$invalid , 'has-success' : !configurationForm.tsaUser.$invalid}">
+                                        <label for="tsaUser" class="control-label">Usuario TSA:</label>
+                                        <input type="text" class="form-control" id="tsaUser" name="tsaUser" ng-model="conf.configurationTsa.tsaUser" placeholder="Insertar el usuario de la TSA" ng-required="!conf.configurationTsa.tsaPruebas" ng-readonly="conf.configurationTsa.tsaPruebas || defTsa.checked">
+                                    </div>
+
+                                    <div class="form-group col-sm-5 col-xs-12 col-md-4 no-margin-bottom" ng-class="{ 'has-error' : configurationForm.tsaPass.$invalid , 'has-success' : !configurationForm.tsaPass.$invalid}">
+                                        <label for="tsaPass" class="control-label">Password TSA:</label>
+                                        <input type="password" class="form-control" id="tsaPass" name="tsaPass" ng-model="conf.configurationTsa.tsaPass" placeholder="Insertar la password de la TSA" ng-required="!conf.configurationTsa.tsaPruebas && !defTsa.checked" ng-readonly="conf.configurationTsa.tsaPruebas || defTsa.checked">
+                                    </div>
+
+                                </div>
+
+                                <div class=" col-md-5">
+
+                                    <div class="col-sm-12">
+                                        <h4>Configuración avanzada:</h4>
+                                        <hr>
+                                    </div>
+
+                                    <div class="form-group col-sm-4 col-xs-12 col-md-4">
+                                        <label for="pointsNumber" class="control-label">Puntos:</label>
+                                        <input type="number" min="0" class="form-control" id="pointsNumber" name="pointsNumber" ng-model="conf.pointsNumber" placeholder="">
+                                    </div>
+
+                                    <div class="form-group col-xs-12 col-sm-12 col-md-7 col-md-offset-1 no-margin-bottom">
+                                        <label for="pointsNumber" class="control-label" style="visibility: hidden;">Puntos:</label>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" ng-model="conf.configurationTsa.useBioData" >Obligatorio recoger datos de presión</label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                               
+                                
+                            </form>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="col-sm-12">
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="col-sm-12 col-md-12">
+                                <button class="btn btn-default btn-custom" ng-disabled="configurationForm.$invalid" ng-click="saveBioSignConfiguration(conf)">Guardar Configuración</button>
+                                <button class="btn btn-default btn-custom" ng-disabled="configurationForm.$invalid || conf.configurationTsa.tsaPruebas" ng-click="testTsaData(conf)">Probar TSA</button>
+                            </div>
+                        </div>
+                    </div>
+            	</div>
+		    </div>
+	    </div>
+    </div>
+</div>

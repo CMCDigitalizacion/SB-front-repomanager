@@ -1,0 +1,177 @@
+<div id="container-fluid" class="fondo" ng-init="loadLDAPConfiguration()">
+	<div class="row list-operation" ng-if="isLoaded">
+
+		<div class="panel panel-primary panel-primary-custom">
+			<div class="panel-heading">
+				Configuraci&oacute;n de servidores LDAP
+			</div>
+			<div class="panel-body">
+				<div class="col-sm-12">
+					<table datatable="ng" dt-options="dtOptionsLDAP" dt-column-defs="dtColumnDefsLDAP" dt-instance="dtInstanceUserCallback" class="row-border hover table" width="100%">
+						<thead>
+						<tr>
+							<th></th>
+							<th>Nombre</th>
+							<th>Servidor</th>
+							<th>CN</th>
+							<th>Acciones</th>
+						</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="ldap in ldapConfigurations">
+								<td><input type="checkbox" name="selectedByDomain" ng-model="ldap.used" ng-change="select()"/></td>
+								<td>{{ ldap.ldapname }}</td>
+								<td>{{ ldap.ldapData.ldapHost }}</td>
+								<td>{{ ldap.ldapData.dcObject }}</td>
+								<td>
+									<i>
+										<span ng-click="editLDapConfiguration(ldap)" class="glyphicon glyphicon-edit pointer-span "></span>
+										<span ng-click="deleteLDapConfiguration(ldap)" confirm="¿Está seguro de eliminar la configuración '{{ldap.ldapname}}'?" class="icon glyphicon glyphicon-trash pointer-span">
+									</i>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="col-sm-12">
+					<button class="btn btn-primary no-margin-left" ng-click="editLDapConfiguration()">Crear una configuraci&oacute;n</button>
+					<button class="btn btn-primary" ng-click="saveLDAPCombinations()" ng-disabled="!hasBeenChecked">Guardar combinaciones</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/ng-template" id="ldapConfigurationModal.html">
+
+    <div class="modal-body">
+       <form name="addLDAPConfigurationForm" novalidate autocomplete="off">
+            <div class="form-group">
+                <div class="row">
+					<div class="col-xs-12 no-padding">
+
+						<div class="col-xs-12 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.ldapname.$invalid , 'has-success' : !addLDAPConfiguration.ldapname.$invalid}">
+                        	<label for="ldapname" class="control-label">Nombre de la configuraci&oacute;n:</label>
+                        	<input type="text" max-length="100" name="ldapname" id="ldapname" class="form-control" ng-model="ldap.ldapname" placeholder="Este campo es obligatorio" required>
+                    	</div>
+
+						<div class="col-md-3 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.commonNameKey.$invalid , 'has-success' : !addLDAPConfiguration.commonNameKey.$invalid}">
+                        	<label for="commonNameKey" class="control-label">Llave del <i>common name</i>:</label>
+                        	<input type="text" name="commonNameKey" id="commonNameKey" class="form-control" ng-model="ldap.ldapData.commonNameKey" placeholder="Este campo es obligatorio" required>
+                    	</div>
+
+                    	<div class="col-md-3 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.emailKey.$invalid , 'has-success' : !addLDAPConfigurationForm.emailKey.$invalid}">
+                        	<label for="emailKey" class="control-label">Llave del <i>email</i>:</label>
+                       	 	<input type="text" id="emailKey" name="emailKey" class="form-control" ng-model="ldap.ldapData.emailKey" placeholder="Este campo es obligatorio" required>
+						</div>
+
+						<div class="col-md-3 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.givenNameKey.$invalid , 'has-success' : !addLDAPConfiguration.givenNameKey.$invalid}">
+                        	<label for="givenNameKey" class="control-label">Llave del <i>given name</i>: </label>
+                        	<input type="text" name="givenNameKey" id="givenNameKey" class="form-control" ng-model="ldap.ldapData.givenNameKey" placeholder="Este campo es obligatorio" required>
+                    	</div>
+
+                    	<div class="col-md-3 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.userPasswordKey.$invalid , 'has-success' : !addLDAPConfigurationForm.userPasswordKey.$invalid}">
+                        	<label for="userPasswordKey" class="control-label">Llave de <i>userPassword</i>:</label>
+                       	 	<input type="text" id="userPasswordKey" name="userPasswordKey" class="form-control" ng-model="ldap.ldapData.userPasswordKey" placeholder="Este campo es obligatorio" required>
+						</div>
+
+						<div class="col-md-3 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.objectClassKey.$invalid , 'has-success' : !addLDAPConfiguration.objectClassKey.$invalid}">
+                        	<label for="objectClassKey" class="control-label">Llave del <i>objectClass</i>:</label>
+                        	<input type="text" name="objectClassKey" id="objectClassKey" class="form-control" ng-model="ldap.ldapData.objectClassKey" placeholder="Este campo es obligatorio" required>
+                    	</div>
+
+                    	<div class="col-md-3 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.phoneKey.$invalid , 'has-success' : !addLDAPConfigurationForm.phoneKey.$invalid}">
+                        	<label for="phoneKey" class="control-label">Llave del <i>phoneKey</i>:</label>
+                       	 	<input type="text" id="phoneKey" name="phoneKey" class="form-control" ng-model="ldap.ldapData.phoneKey" placeholder="Este campo es obligatorio" required>
+						</div>
+
+						<div class="col-md-3 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.surNameKey.$invalid , 'has-success' : !addLDAPConfiguration.surNameKey.$invalid}">
+                        	<label for="surNameKey" class="control-label">Llave del <i>surName</i>: </label>
+                        	<input type="text" name="surNameKey" id="surNameKey" class="form-control" ng-model="ldap.ldapData.surNameKey" placeholder="Este campo es obligatorio" required>
+                    	</div>
+
+                    	<div class="col-md-3 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.userIDKey.$invalid , 'has-success' : !addLDAPConfigurationForm.userIDKey.$invalid}">
+                        	<label for="userIDKey" class="control-label">Llave de <i>userID</i>:</label>
+                       	 	<input type="text" id="userIDKey" name="userIDKey" class="form-control" ng-model="ldap.ldapData.userIDKey" placeholder="Este campo es obligatorio" required>
+						</div>
+
+						<div class="col-xs-12">
+							<hr>
+						</div>
+
+						<div class="col-md-4 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.dcObjectFilter.$invalid , 'has-success' : !addLDAPConfigurationForm.dcObjectFilter.$invalid}">
+                        	<label for="dcObjectFilter" class="control-label"><i>dcObjectFilter</i>:</label>
+                       	 	<input type="text" id="dcObjectFilter" name="dcObjectFilter" class="form-control" ng-model="ldap.ldapData.dcObjectFilter" placeholder="Este campo es obligatorio" required>
+						</div>
+
+						<div class="col-md-4 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.groupFilter.$invalid , 'has-success' : !addLDAPConfiguration.groupFilter.$invalid}">
+                        	<label for="groupFilter" class="control-label"><i>groupFilter</i>: </label>
+                        	<input type="text" name="groupFilter" id="groupFilter" class="form-control" ng-model="ldap.ldapData.groupFilter" placeholder="Este campo es obligatorio" required>
+                    	</div>
+
+                    	<div class="col-md-4 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.userFilter.$invalid , 'has-success' : !addLDAPConfigurationForm.userFilter.$invalid}">
+                        	<label for="userFilter" class="control-label"><i>userFilter</i>:</label>
+                       	 	<input type="text" id="userFilter" name="userFilter" class="form-control" ng-model="ldap.ldapData.userFilter" placeholder="Este campo es obligatorio" required>
+						</div>
+
+						<div class="col-xs-12">
+							<hr>
+						</div>
+
+						<div class="col-md-4 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.ldapHost.$invalid , 'has-success' : !addLDAPConfigurationForm.ldapHost.$invalid}">
+                        	<label for="ldapHost" class="control-label"><i>LDAP Host</i>:</label>
+                       	 	<input type="text" id="ldapHost" name="ldapHost" class="form-control" ng-model="ldap.ldapData.ldapHost" placeholder="Este campo es obligatorio" required>
+						</div>
+
+						<div class="col-md-3 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.ldapPass.$invalid , 'has-success' : !addLDAPConfiguration.ldapPass.$invalid}">
+                        	<label for="ldapPass" class="control-label"><i>LDAP password</i>: </label>
+                        	<input type="text" name="ldapPass" id="ldapPass" class="form-control" ng-model="ldap.ldapData.ldapPass" placeholder="Este campo es obligatorio" required>
+                    	</div>
+
+                    	<div class="col-md-3 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.ldapUser.$invalid , 'has-success' : !addLDAPConfigurationForm.ldapUser.$invalid}">
+                        	<label for="ldapUser" class="control-label"><i>LDAP User</i>:</label>
+                       	 	<input type="text" id="ldapUser" name="ldapUser" class="form-control" ng-model="ldap.ldapData.ldapUser" placeholder="Este campo es obligatorio" required>
+						</div>
+
+						<div class="col-md-2 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.ldapPort.$invalid , 'has-success' : !addLDAPConfigurationForm.ldapPort.$invalid}">
+                        	<label for="ldapPort" class="control-label"><i>LDAP Port</i>:</label>
+                       	 	<input type="number" min=0 id="ldapPort" name="ldapPort" class="form-control" ng-model="ldap.ldapData.ldapPort" placeholder="Este campo es obligatorio" required>
+						</div>
+
+						<div class="col-xs-12">
+							<hr>
+						</div>
+
+						<div class="col-md-6 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.dcObject.$invalid , 'has-success' : !addLDAPConfigurationForm.dcObject.$invalid}">
+                        	<label for="dcObject" class="control-label"><i>dcObject</i>:</label>
+                       	 	<input type="text" id="dcObject" name="dcObject" class="form-control" ng-model="ldap.ldapData.dcObject" placeholder="Este campo es obligatorio" required>
+						</div>
+
+						<div class="col-md-6 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.groupValue.$invalid , 'has-success' : !addLDAPConfiguration.groupValue.$invalid}">
+                        	<label for="groupValue" class="control-label"><i>groupValue</i>: </label>
+                        	<input type="text" name="groupValue" id="groupValue" class="form-control" ng-model="ldap.ldapData.groupValue" placeholder="Este campo es obligatorio" required>
+                    	</div>
+
+						<div class="col-md-6 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.serverImpl.$invalid , 'has-success' : !addLDAPConfigurationForm.serverImpl.$invalid}">
+                        	<label for="serverImpl" class="control-label"><i>serverImpl</i>:</label>
+                       	 	<input type="text" id="serverImpl" name="serverImpl" class="form-control" ng-model="ldap.ldapData.serverImpl" placeholder="Este campo es obligatorio" required>
+						</div>
+
+						<div class="col-md-6 form-group" ng-class="{ 'has-error' : addLDAPConfigurationForm.userValue.$invalid , 'has-success' : !addLDAPConfiguration.userValue.$invalid}">
+                        	<label for="userValue" class="control-label"><i>userValue</i>: </label>
+                        	<input type="text" name="userValue" id="userValue" class="form-control" ng-model="ldap.ldapData.userValue" placeholder="Este campo es obligatorio" required>
+                    	</div>
+
+					</div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer modal-footer-custom">
+                <button class="btn btn-primary btn-custom" type="button" ng-click="saveLDAPConfiguration(ldap)" ng-disabled="addLDAPConfigurationForm.$invalid">Guardar</button>
+                <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</script>

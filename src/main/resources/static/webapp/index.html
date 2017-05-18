@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es" class=" js csstransforms3d" xmlns="http://www.w3.org/1999/html" ng-app="O2DigitalSite" ng-controller="MainController" ng-cloak>
+<head>
+  <!-- <base href="/HAGCLI_VIDEOID_BCE/">  -->
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title idle-disabled="true">02DigitalSite</title>
+  <meta name="description" content="02DigitalSite - repomanager" />
+  <meta name="keywords" content="" />
+  <meta name="author" content="GrupoCMC" />
+  <meta http-equiv="cache-control" content="max-age=0" />
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta http-equiv="expires" content="0" />
+  <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+  <meta http-equiv="pragma" content="no-cache" />
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="nocache">
+
+  <link rel="stylesheet" type="text/css" href="webapp/css/angular-cron-jobs.css">
+
+  <link rel="stylesheet" type="text/css" href="webapp/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/menus.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/elementos_fijos.css">
+
+  <link rel="stylesheet" type="text/css" href="webapp/css/sweetalert.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/angular-cron-jobs.css">
+
+  <link rel="shortcut icon" type="image/png" href="webapp/img/favicon.ico"/>
+
+  <link rel="stylesheet" type="text/css" href="webapp/css/buttons.dataTables.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/dataTables.colReorder.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/dataTables.colVis.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/dataTables.fixedColumns.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/dataTables.scroller.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/dataTables.tableTools.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/elementos_tablas.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/hotkeys.min.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/estilos_firma.css">
+
+  <link rel="stylesheet" type="text/css" href="webapp/css/loading-bar.min.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/animate.min.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/dialog-fullscreen.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/angular.treeview.css">
+  <link rel='stylesheet' type='text/css' href='//fonts.googleapis.com/css?family=Montserrat:400,700'>
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Quicksand" />
+  <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Lato:300'>
+  <link rel='stylesheet' type='text/css' ng-href='{{cssURL}}'>
+  <link rel="stylesheet" type="text/css" href="webapp/css/angular-bootstrap-color-picker.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/angular-notification-icons.min.css">
+  <link rel="stylesheet" type="text/css" href="webapp/css/json-formatter.min.css">
+
+  <script type="text/javascript" src="webapp/js/EventSource.js"></script>
+
+  <script type="text/javascript" src="webapp/js/jquery.js"></script>
+  <script type="text/javascript" src="webapp/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="webapp/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="webapp/js/angular.js"></script>
+  <script type="text/javascript" src="webapp/js/angular.treeview.min.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-idle.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-animate.min.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-datatables.directive.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-datatables.factory.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-datatables.instances.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-datatables.options.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-datatables.renderer.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-datatables.util.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-datatables.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-ui-router.min.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-confirm.min.js"></script>
+  <script type="text/javascript" src="webapp/js/moment.min.js"></script>
+  <script type="text/javascript" src="webapp/js/datetime-moment.js"></script>
+  <script type="text/javascript" src="webapp/js/hotkeys.min.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-filter.min.js"></script>
+
+  <script type="text/javascript" src="webapp/js/angular-datatables.buttons.min.js"></script>
+  <script type="text/javascript" src="webapp/js/dataTables.buttons.min.js"></script>
+  <script type="text/javascript" src="webapp/js/buttons.flash.min.js"></script>
+  <script type="text/javascript" src="webapp/js/buttons.html5.min.js"></script>
+
+  <script type="text/javascript" src="webapp/js/sha256.js"></script>
+  <script type="text/javascript" src="webapp/js/enc-base64-min.js"></script>
+  <script type="text/javascript" src="webapp/js/loading-bar.min.js"></script>
+  <script type="text/javascript" src="webapp/js/classie.js"></script>
+  <script type="text/javascript" src="webapp/js/ui-bootstrap-tpls-1.1.1.min.js"></script>
+  <script type="text/javascript" src="webapp/js/tinymce/tinymce.min.js"></script>
+  <script type="text/javascript" src="webapp/js/tinyMCE-angular.js"></script>
+  <script type="text/javascript" src="webapp/web/compatibility.js"></script>
+  <script type="text/javascript" src="webapp/build/pdf.js"></script>
+  <script type="text/javascript" src="webapp/build/pdf.worker.js"></script>
+  <script type="text/javascript" src="webapp/js/form-model.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-cron-jobs.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/app.js"></script>
+
+  <script type="text/javascript" src="webapp/js/sweetalert.min.js"></script>
+  <script type="text/javascript" src="webapp/js/ngSweetAlert.min.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-bootstrap-color-picker.js"></script>
+  <script type="text/javascript" src="webapp/js/angular-notification-icons.min.js"></script>
+  <script type="text/javascript" src="webapp/js/json-formatter.min.js"></script>
+
+  <!-- Controllers -->
+  <script type="text/javascript" src="webapp/angular/modules/login/loginController.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/loginLDAP/loginLDAPController.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/super_manager/superController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/super_manager/superServices.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/super_manager/superDirectives.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/menu/menuController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/menu/menuServices.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/main/mainController.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/welcome/welcomeController.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/domain_manager/domainManagerController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/domain_manager/domainManagerDirectives.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/domain_manager/domainManagerServices.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/operations_list/operationsListController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/operations_list/operationsListDirectives.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/operations_list/operationListFilterService.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/operations_list/operationManagerService.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/operations_list/operationTypeListController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/operations_list/operationTypeManagerService.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/operations_list/operationTypeListDirectives.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/operations_list_grouped/operationsListGroupedController.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/batches/operationLotesController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/batches/lotesListController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/batches/lotesManagerService.js"></script>
+  <script type="text/javascript" src="webapp/ang/js/controllers/ResumenOpChartController.js"></script>
+  <script type="text/javascript" src="webapp/ang/js/controllers/ResumenNotifChartController.js"></script>
+  <script type="text/javascript" src="webapp/ang/js/controllers/FunnelOpChartController.js"></script>
+
+
+  <script type="text/javascript" src="webapp/angular/modules/operation_type_manager/operationTypeManagerController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/operation_type_manager/operationTypeManagerServices.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/operation_type_manager/operationTypeManagerDirectives.js"></script>
+
+
+  <script type="text/javascript" src="webapp/angular/modules/filters/filters.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/directives/commonsDirectives.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/videoTable/videoTableController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/videoTable/videoTableService.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/videoConferenceTable/videoConferenceController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/videoConferenceTable/videoConferenceServices.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/videoConferenceTable/videoConferenceFilterService.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/videoConferenceAttended/videoConferenceAttendedController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/videoConferenceAttended/videoConferenceAttendedServices.js"></script>
+
+
+  <script type="text/javascript" src="webapp/angular/modules/operation_details/modalDirectives.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/operation_details/modalControllers.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/feedbackbar_manager/feedBackBarController.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/bsign_manager_administracion/BSignManagerController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/bsign_manager_administracion/BSignManagerServices.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/bsign_manager_administracion/BSignManagerDirectives.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/bio_operation_solicitar/biometricOperationController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/bio_operation_solicitar/biometricOperationServices.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/bsign_operation_list_consultar/ListBiometricOperationController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/bsign_operation_list_consultar/ListBiometricOperationServices.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/token_manager/tokenManagerService.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/witness_configuration/WitnessConfigurationController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/witness_configuration/WitnessServices.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/advanced_options/AdvancedOptionsController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/advanced_options/AdvancedOptionsServices.js"></script>
+  
+  <!-- DIGICERT -->
+  <script type="text/javascript" src="webapp/angular/modules/digicertList/digicertListController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/digicertList/digicertListServices.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/digicertList/modalcontrollerViewPDF.js"></script>
+  
+  <script type="text/javascript" src="webapp/angular/modules/categoryDetails/categoryDetailsController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/categoryDetails/modalViewPDFCategoryController.js"></script>
+  
+  <script type="text/javascript" src="webapp/angular/modules/detailsOperation/ListCategoryController.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/ldap/ldapConfigurationController.js"></script>
+  <script type="text/javascript" src="webapp/angular/modules/ldap/ldapConfigurationServices.js"></script>
+  
+
+
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/funnel.js"></script>
+  <script src="webapp/ang/js/shared/highcharts-ng.js"></script>
+
+  <!-- OpenTok -->
+  <script src="https://static.opentok.com/v2/js/opentok.js"></script>
+
+  <script type="text/javascript" src="webapp/js/jquery.jplayer.js"></script>
+  <link rel="stylesheet" href="webapp/css/jplayer.pink.flag.min.css" />
+  <script type="text/javascript" src="webapp/add-on/jplayer.playlist.js"></script>
+  <script type="text/javascript" src="webapp/add-on/jquery.jplayer.inspector.js"></script>
+  <link rel="stylesheet" href="webapp/css/jquery.fancybox.css"/>
+  <script type="text/javascript" src="webapp/js/jquery.fancybox.js"></script>
+  <script type="text/javascript" src="webapp/js/jquery.fancybox.pack.js"></script>
+
+  <!--  growl  -->
+  <link href="webapp/css/angular-growl.min.css" rel="stylesheet">
+  <script src="webapp/js/angular-growl.min.js"></script>
+
+  <script type="text/javascript" src="webapp/angular/modules/utils/utils-functions.js"></script>
+
+
+
+</head>
+<body id="body" class="cbp-spmenu-s1 fondo" ng-cloak>
+<div ng-if="loginSuccess" ng-include src="'webapp/header.html'"></div>
+<div ng-include src="'webapp/feedbackBar.html'"></div>
+<div global-events style="height: 100%;">
+  <div ui-view></div>
+</div>
+
+
+	<div growl></div>
+
+<!-- Modal fullscreen -->
+<div class="modal modal-fullscreen fade" style="z-index:10000;" id="modal-fullscreen" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true">
+  <div class="modal-dialog">
+  </div>
+</div>
+</body>
+</html>
+
+<script type="text/ng-template" id="sessionExpiring.html">
+
+  <div class="modal-body">
+    <p id="timeoutingSession">Tu sesion caducará en {{seconds}}</p>
+  </div>
+
+</script>

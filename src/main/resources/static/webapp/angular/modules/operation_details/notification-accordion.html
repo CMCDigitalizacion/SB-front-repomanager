@@ -1,0 +1,43 @@
+<!-- Notification Accordion -->
+<div class="panel panel-custom-notifications">
+    <div class="panel-heading panel-heading-custom-notifications pointer-span" role="tab" id="headingNotification{index}}" href="#collapseNotification{{index}}" data-toggle="collapse" data-parent="#accordion" style="background-color:{{color}}">
+      <h4 class="panel-title">
+        <a class="colapse" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseNotification{{index}}" target="_self" aria-expanded="false" aria-controls="collapseNotification{{index}}">
+          {{info.notificationType}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapseNotification{{index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingNotification{{index}}">
+        <div class="panel-body">
+          <p>Destinatario: {{info.content.toName}}</p>
+          <p>Email/SMS: {{info.content.to}}</p>
+          <p>Remitente: {{info.content.from}}</p>
+          <p>Dirección Remitente: {{info.content.from}}</p>
+          <p>ID: {{info.id}}</p>
+          <!-- Event Notification Accordion -->
+          <div class="panel panel-default" ng-repeat="event in info.events">
+              <div class="panel-heading" role="tab" id="headingNotificationEvent{{$index}}" style="background-color: #A9F5BC">
+                <h4 class="panel-title">
+                  <a class="colapse" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseNotificationEvent{{index}}{{$index}}" target="_self" aria-expanded="false" aria-controls="collapseNotificationEvent{{index}}{{$index}}">
+                    {{event.eventType}}
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseNotificationEvent{{index}}{{$index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingNotificationEvent{{$index}}">
+                  <div class="panel-body">
+                    <div class="panel-body">
+                      <p>Actor: {{event.event.cliente_nombre}}</p>
+                      <p>Fecha: {{event.event.fecha_formato}}</p>
+                      <p>TSA Signer: {{event.event.tsaSignerdata}}</p>
+                      <p>TSA Número Serie: {{event.event.tsaSerialnumber}}</p>
+                      <p>TSA Hora: {{event.event.tsaGentime}}</p>
+                      <p>TSA Política: {{event.event.tsaPolicy}}</p>
+                      <p>ID Evento: {{event.id}}</p>
+                      <p>Firma: <textarea style="margin-top: 10px; width: 100%; height: 150px;">{{event.xml}}</textarea></p>
+                  </div>
+              </div>
+          </div>
+
+        </div>
+    </div>
+</div>

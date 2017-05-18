@@ -1,0 +1,284 @@
+<head>
+  <meta charset="UTF-8" />
+
+  <style>
+    .full-screen-image {
+      width: 100%;
+      cursor: pointer;
+    }
+    :-webkit-full-screen {
+      width: auto !important;
+      /*height: 100%;*/
+    }
+    :-moz-full-screen {
+      width: 100%;
+      height: 100%;
+    }
+    :-ms-full-screen {
+      width: 100%;
+      height: 100%;
+    }
+    :-o-full-screen {
+      width: 100%;
+      height: 100%;
+    }
+    :full-screen {
+      width: 100%;
+      /*height: 100%;*/
+    }
+  </style>
+</head>
+<div id="container-fluid" class="fondo ng-cloak" ng-cloak>
+  <div class="col-sm-12">
+    <div class="panel panel-primary panel-primary-custom">
+      <div class="panel-heading">Visualización del vídeo de identificación.</div>
+        <!-- <div class="text-titular"></div> -->
+        <div class="panel-body" ng-controller="VideoConferenceController">
+          <div class="col-sm-12">
+            <!-- HTML 5 Video -->
+            <!-- <video id="video" class="col-sm-6" ng-src="{{url}}" controls="true" onended="angular.element(this).scope().runNextVideo()"> -->
+                <!-- <source src="http://corrupt-system.de/assets/media/sintel/sintel-trailer.m4v" type="video/mp4" /> -->
+                <!-- <source src="" dynamic-url dynamic-url-src="{{url}}" type="video/webm" /> -->
+            <!-- </video> -->
+            <!-- JWPLAYER Video -->
+            <!-- <div class="col-sm-6" ng-init="initializePlayer()">
+              <div id="video">Loading the player...</div>
+            </div> -->
+            <!-- JPLAYER Vídeo -->
+            <div class="col-sm-6 col-sm-offset-2">
+              <div id="jp_container_1" class="jp-video" role="application" aria-label="media player">
+                <div class="jp-type-single">
+                  <div id="jquery_jplayer_1" class="jp-jplayer"></div>
+                  <div class="jp-gui">
+                    <div class="jp-video-play">
+                      <button class="jp-video-play-icon" role="button" tabindex="0">play</button>
+                    </div>
+                    <div class="jp-interface">
+                      <div class="jp-progress">
+                        <div class="jp-seek-bar" style="width: 100%;">
+                          <div class="jp-play-bar"></div>
+                        </div>
+                      </div>
+                      <div class="jp-current-time" role="timer" aria-label="time">&nbsp;</div>
+                      <div class="jp-duration" role="timer" aria-label="duration">&nbsp;</div>
+                      <div class="jp-details">
+                        <div class="jp-title" aria-label="title">&nbsp;</div>
+                      </div>
+                      <div class="jp-controls-holder">
+                        <div class="jp-volume-controls">
+                          <button class="jp-mute" role="button" tabindex="0">mute</button>
+                          <button class="jp-volume-max" role="button" tabindex="0">max volume</button>
+                          <div class="jp-volume-bar">
+                            <div class="jp-volume-bar-value"></div>
+                          </div>
+                        </div>
+                        <div class="jp-controls">
+                          <button class="jp-play" role="button" tabindex="0">play</button>
+                          <button class="jp-stop" role="button" tabindex="0">stop</button>
+                        </div>
+                        <div class="jp-toggles">
+                          <button class="jp-repeat" role="button" tabindex="0">repeat</button>
+                          <button class="jp-full-screen" role="button" tabindex="0">full screen</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="jp-no-solution">
+                    <span>Update Required</span>
+                    To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-4">
+              <button class="btn btn-default" style="float:right; margin-top: 0px;" ng-click="goToVideoConferenceTable()"><span class="glyphicon glyphicon-arrow-left"></span> Volver</button>
+            </div>
+        </div>
+
+        <div class="col-sm-5">
+              <button class="btn btn-default" style="float:right; margin-top: 20px;" ng-click="playNextVideo()">Siguiente vídeo</button>
+        </div>
+
+         <div class="col-sm-12" style="padding-top: 20px;" ng-if="isVerficatedImagesVisible">
+            <div class="col-sm-4" ng-repeat="image in verifiedImages track by $index" ng-cloak>
+              <a class="fancybox" rel="group" href="#copiaImagenes{{$index}}">
+                  <img id="imagenesCapturadas{{$index}}" class="imgHover" ng-click="getWidthHeight(detailsData.customer, $index)" src="{{ image }}" width="320px" alt="" style="position: absolute; z-index: 10;"/>
+                  <canvas id="canvasImgCapturadas{{$index}}" class="canvasHover" ng-click="getWidthHeight(detailsData.customer, $index)" width="320px" style="position: absolute;"></canvas>
+              </a>
+              <img id="copiaImagenes{{$index}}" style="display: none;" src="{{ image }}" width="{{imageW}}" height="{{imageH}}"/>
+            </div>
+              <!-- <div class="col-sm-4" ng-repeat="icarImage in detailsData.customer.icarImages" ng-cloak>
+                <img id="{{icarImage}}" class="full-screen-image" src="/HAGCLI_VIDEOID/esignservices/opentok/getverificationimage/{{icarImage}}" fullscreen/>
+              </div> -->
+          </div>
+
+ 			<div class="col-sm-12" id="formUserDataCapture">
+            <div style="padding-top: 15px;" class="col-sm-6">
+
+              <div class="col-sm-12 condiciones">
+                  <div class="form-group col-sm-10">
+                    <div class="col-sm-2 col-sm-offset-1">
+                      <label  style="font-size:medium" class="control-label etiqueta">Nombre</label>
+                    </div>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.name" ng-disabled="detailsData.customer.name" readonly="">
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-10">
+                    <div class="col-sm-2 col-sm-offset-1">
+                      <label  style="font-size:medium" class="control-label etiqueta">Apellidos</label>
+                    </div>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.lastName" ng-disabled="detailsData.customer.lastName" readonly="">
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-10">
+                    <div class="col-sm-2 col-sm-offset-1">
+                      <label  style="font-size:medium" class="control-label etiqueta">DNI</label>
+                    </div>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.nif" ng-disabled="detailsData.customer.nif" readonly="">
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-10">
+                    <div class="col-sm-2 col-sm-offset-1">
+                      <label  style="font-size:medium" class="control-label etiqueta">Teléfono</label>
+                    </div>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.phone" ng-disabled="detailsData.customer.pones" readonly="">
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-10">
+                    <div class="col-sm-2 col-sm-offset-1">
+                      <label  style="font-size:medium" class="control-label etiqueta">Email</label>
+                    </div>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.email" ng-disabled="detailsData.customer.email" readonly="">
+                    </div>
+                  </div>
+              </div>
+
+			</div>
+
+
+        <div style="padding-top: 15px;" class="col-sm-6">
+             <div class="condiciones">
+                <div class="form-group col-sm-12">
+                  <div class="col-sm-2 col-sm-offset-1">
+                    <label  style="font-size:medium" class="control-label etiqueta">Nombre</label>
+                  </div>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.icarName" ng-disabled="detailsData.customer.icarName" readonly="">
+                  </div>
+                </div>
+
+                <div class="form-group col-sm-12">
+                  <div class="col-sm-2 col-sm-offset-1">
+                    <label  style="font-size:medium" class="control-label etiqueta">Apellidos</label>
+                  </div>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.icarLastName" ng-disabled="detailsData.customer.icarLastName" readonly="">
+                  </div>
+                </div>
+
+                <div class="form-group col-sm-12">
+                  <div class="col-sm-2 col-sm-offset-1">
+                    <label  style="font-size:medium" class="control-label etiqueta">DNI</label>
+                  </div>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.icarNif" ng-disabled="detailsData.customer.icarNif" readonly="">
+                  </div>
+                </div>
+
+                <!-- <div class="form-group col-sm-12">
+                  <div class="col-sm-2">
+                    <label  style="font-size:medium" class="control-label etiqueta">Expedición</label>
+                  </div>
+                  <div class="col-sm-6">
+                    <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.cellphone" ng-disabled="detailsData.customer.cellphone" readonly="">
+                  </div>
+                </div> -->
+
+                <div class="form-group col-sm-12">
+                    <div class="col-sm-2 col-sm-offset-1">
+                        <label  style="font-size:medium" class="control-label etiqueta">Validez</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.icarExpirationDate" ng-disabled="detailsData.customer.icarExpirationDate" readonly="">
+                    </div>
+                </div>
+                <!-- div class="form-group col-sm-12">
+                    <div class="col-sm-2 col-sm-offset-1">
+                        <label style="font-size:medium" class="control-label etiqueta">Coincidencia</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="" ng-model="verificationLevel.value" ng-class="{'errorConf' : !confidence, 'successConf' : confidence}" ng-disabled="" readonly="">
+                    </div>
+                </div -->
+            </div>
+
+        </div>
+
+      </div>
+      <script type="text/javascript">
+        var tarGet;
+      	$(document).ready(function() {
+      		$(".fancybox").fancybox({
+                  beforeLoad: function() {
+                      tarGet = this.href;
+                  },
+                  afterClose: function() {
+                  },
+                  // maxWidth: 512,
+                  // maxHeight: 384,
+                  // fitToView: true,
+                  // width: '70%',
+                  // height: '70%',
+                  // nextMethod : 'resizeIn',
+                  // padding: 0,
+                  // fitToView: false,
+                  arrows:	false,
+                  autoResize: true,
+                  autoSize: true,
+                  closeClick: false,
+                  openEffect: 'elastic',
+                  closeEffect: 'elastic',
+                  speedIn:	600,
+		              speedOut:	200,
+		              overlayShow:	false
+          });
+      	});
+      </script>
+
+
+  <div class="col-sm-12" style="padding-top: 15px;" ng-if="isActaVisible" >
+    <div class="panel">
+      <div class="panel-heading">
+        <h4 class="panel-title">{{actualDocument.documentName}}</h4>
+      </div>
+      <div class="panel-body">
+        <div id="pdf">
+          <div class="embed-responsive embed-responsive-4by3">
+            <iframe style="width: 100%; height: 100%" name="plugin" ng-src="{{urlacta}}" type="application/pdf"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  		<div class="col-sm-5">
+              <button class="btn btn-default" style="float:right; margin-top: 20px;" ng-click="getVideoSignature()">Ver Firma del Video</button>
+        </div>
+        <div class="col-sm-12">
+          <button class="btn btn-default" style="float:right; margin-top: 0px;" ng-click="goToVideoConferenceTable()"><span class="glyphicon glyphicon-arrow-left"></span>Volver</button>
+        </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

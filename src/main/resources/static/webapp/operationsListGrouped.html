@@ -1,0 +1,312 @@
+<head>
+<meta charset="UTF-8">
+</head>
+<style>
+    .acta-modal-window .modal-dialog {
+        width: 95%;
+        height: 90%;
+    }
+    
+    .divEstado {
+    	width: 10%;
+    	float: left;
+    }
+
+	#tableListOperations th {
+    	height: 25px;
+    }
+    
+    #tableListOperations td {
+    	line-height: 2.1em;
+    }
+    
+    #tableListOperations thead {
+        height: 25px;
+    }
+    
+    .divBtnConfig {
+	   	position: absolute;
+	    right: 19px;
+	    opacity: 1;
+	    top: 71px;
+	    float: right;
+	    z-index: 1;
+    }
+    .divBtnConfig button {
+		margin-left: 125px;
+    }
+    
+    .configTable {
+    	padding: 5px 0;
+    	width: 180px;
+    	background-color: #EEE;
+	    border-radius: 5px;
+    }
+    
+    .configTable li {
+    	color: #333;
+    	list-style: none;
+    	text-align: justify;
+    }
+    
+    .divBtnConfig button.btnApply {
+	    width: 100px;
+	    margin: 0 auto;
+    }
+    
+    .no-padding-lat {
+    	padding-left: 0;
+    	padding-right: 0;
+    }
+</style>
+<div id="container-fluid" class="fondo" ng-init="loadOperationsList()">
+    <div class="row list-operation" ng-if="isLoadedList">
+        <div class="panel panel-primary panel-primary-custom">
+            <div class="panel-heading">
+                Listado <i>Operaciones</i>
+            </div>
+            <div class="panel-body">
+                <form name="filterForm" novalidate>
+                    <div class="form-group col-sm-3">
+                        <label for="from" class="control-label">Desde:</label>
+                        <p class="input-group">
+                             <input type="text" class="form-control" uib-datepicker-popup="dd-MM-yyyy" is-open="fromdatepicker.opened" id="from" name="from" ng-model="filter.from" ng-click="openFromDatePicker()" placeholder="Elige una fecha">
+                             <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" style="margin-top: 0px; height: 34px;" ng-click="openFromDatePicker()"><i class="glyphicon glyphicon-calendar no-hover"></i></button>
+                            </span>
+                        </p>
+                    </div>
+
+                    <div class="form-group col-sm-3">
+                        <label for="to" class="control-label">Hasta:</label>
+                        <p class="input-group">
+                             <input type="text" class="form-control" uib-datepicker-popup="dd-MM-yyyy" is-open="todatepicker.opened" id="to" name="to" ng-model="filter.to" placeholder="Elige una fecha" ng-click="openToDatePicker()">
+                             <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" style="margin-top: 0px; height: 34px;" ng-click="openToDatePicker()"><i class="glyphicon glyphicon-calendar no-hover"></i></button>
+                            </span>
+                        </p>
+                    </div>
+
+                    <div class="form-group col-sm-2">
+                        <label for="nif" class="control-label">Id. Cliente:</label>
+                        <input type="text" class="form-control" id="nif" name="nif" ng-model="filter.nif" placeholder="Introducir el NIF" required>
+                    </div>
+
+                    <div class="form-group col-sm-2">
+                        <label for="state" class="control-label">Estado:</label>
+                        <select type="text" ng-model="filter.state" class="form-control" name="state" id="state">
+                            <option value="undefined">TODOS</option>
+                            <option value="0">PENDIENTE</option>
+                            <option value="1">ACCESO</option>
+                            <option value="2">FIRMADA</option>
+                            <option value="3">CADUCADA</option>
+                            <option value="12">FIRMA PARCIAL</option>
+                            <option value="91">BLOQUEADA</option>
+                            <option value="99">CANCELADA</option>
+                            <option value="21">VIDEOID: ACCESO</option>
+                            <option value="22">VIDEOID: VERIFICADO</option>
+                            <option value="23">VIDEOID: RECHAZADO</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-1">
+                        <label for="filter" class="control-label" style="visibility:hidden;">:</label>
+                        <button class="btn btn-default form-control" style="height:34px; margin-top:0px;" ng-click="filterTable(filter)"><span class="glyphicon glyphicon-filter no-hover"></span></button>
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <label for="refresh" class="control-label" style="visibility:hidden;">:</label>
+                        <button class="btn btn-default form-control" style="height:34px; margin-top:0px;" ng-click="refreshFilterTable(filter)"><span class="glyphicon glyphicon-refresh no-hover" ></span></button>
+                    </div>
+                </form>
+                <div class="col-xs-12">
+                	<div class="divBtnConfig dropdown">
+						<button class="form-control dropdown-toggle" data-toggle="dropdown" title="Configuración de Columnas" style="width: 55px;" ng-click="showSelectedOption()">
+	                    	<span><i class="glyphicon glyphicon-cog" style="font-size: 1.5em;"></i></span>
+						</button>
+						<div class="configTable dropdown-menu">
+							<ul ng-repeat="option in optionsConfig">
+								<li><input type="checkbox" ng-checked="isExists(option.id)" ng-click="toggle(option.id)"/> {{option.value}}</li>
+							</ul>
+							<button class="form-control btnApply" name="apply" ng-click="applyChanges()">Aplicar</button>
+						</div>
+					</div>
+					<table id="tableListOperations" width="100%" datatable="ng" dt-options="dtOptionsOperations" dt-column-defs="dtColumnsOperations" class="row-border hover table">
+	                    <thead>
+	                        <tr>
+	                            <th></th>
+	                            <th></th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	                    	<tr ng-repeat="(key, value) in operationsList" ng-init="p=0;starDate=0;">
+	                    		<td></td>
+								<td class="no-padding-lat">
+									<div class="col-xs-12 no-padding-lat">
+										<div class="col-xs-4" style="">Número Contrato: {{value.operationId}}</div>
+										<div class="col-xs-4" style="">Fecha del inicio del  Contrato: {{value.creationDateF}}</div>
+										<div class="col-xs-3" style="">Progreso (firmadas): {{value.opSigned}} de {{value.signer}}</div>
+										<div class="col-xs-1 showHideTable" ng-model="show" ng-click="show = !show">
+											<i ng-if="show" class="glyphicon glyphicon-chevron-up"></i>
+											<i ng-if="!show" class="glyphicon glyphicon-chevron-down"></i>
+										</div>				
+										<div ng-show="show" class="subTable col-xs-12 noPadding">
+											<div class="col-xs-12 noPadding">
+												<div class="divEstado" name="pendiente" title="Pendiente">PD: <span>{{p | statusCount:value:0}}</span></div>
+												<div class="divEstado" name="acceso" title="Acceso">AC: <span>{{p | statusCount:value:1}}</span></div>
+												<div class="divEstado" name="firmada" title="Firmada">FI: <span>{{p | statusCount:value:2}}</div>
+												<div class="divEstado" name="caducada" title="Caducada">CD: <span>{{p | statusCount:value:3}}</div>
+												<div class="divEstado" name="firmaParcial" title="Firma Parcial">FP: <span>{{p | statusCount:value:12}}</div>
+												<div class="divEstado" name="bloqueada" title="Bloqueada">BL: <span>{{p | statusCount:value:91}}</div>
+												<div class="divEstado" name="cancelada" title="Cancelada">CN: <span>{{p | statusCount:value:99}}</div>
+												<div class="divEstado" name="videoAcceso" title="Video Acceso">VA: <span>{{p | statusCount:value:21}}</div>
+												<div class="divEstado" name="videoVerificado" title="Video Verificado">VV: <span>{{p | statusCount:value:22}}</div>
+												<div class="divEstado" name="videoRechazado" title="Video Rechazado">VR: <span>{{p | statusCount:value:23}}</div>
+											</div>
+											<table width="100%" datatable="ng" dt-options="dtOptionsOperationsSecondTable" dt-column-defs="dtColumnsOperationsSecondTable" dt-instance="dtInstanceOperationsList" class="row-border hover table">
+												<thead>
+													<tr>
+														<th>Número Contrato</th>
+														<th>Fecha Contrato</th>
+														<th>Cliente</th>
+													    <th>NIF Cliente</th>
+													    <th>Telefono</th>
+													    <th>Email</th>
+													    <th>Tipología Firma</th>
+														<th>Estado</th>
+													    <th></th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr ng-repeat="op in value.lstSubOperation">
+													
+														<td>{{ op.operationId }}</td>
+													    <td>{{ op.creationDateF }}</td>
+													    <td>{{ op.name }}</td>
+													    <td>{{ op.author }}</td>
+									                    <td>{{ op.titularCellphone }}</td>
+									                    <td>{{ op.titularEmail }}</td>
+									                    <td>{{ op.signatureType }}</td>
+									                    <td>{{op.state}}</td>
+									                    <td>
+									                    	<div class="btn-group" role="group" aria-label="...">
+									                    		<i ng-click="detallesOp(op)"><span class="glyphicon glyphicon-eye-open"></span></i>
+															</div>
+														</td>
+					                       			</tr>
+					                       		</tbody>
+					                       	</table>
+										</div>
+									</div>
+		                       	</td>
+	                       	</tr>
+	                    </tbody>
+	                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+ 	<div class="col-sm-12 operation-details" style="position: absolute; margin-left: -50px;" ng-if="isLoaded" >
+        <div class="panel panel-primary panel-primary-custom">
+            <div class="panel-heading">
+                <span style="visibility: hidden;">detalles</span>
+                <i style="float:right;" ng-click="closeOperationDetails();">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </i>
+            </div>
+            <div class="panel-body">
+            	<div class="col-sm-12" >
+					<div class="col-sm-2" ng-if="canResendVideoAccess && !isVisor()">
+                      <button type="button" class="btn btn-primary" ng-click="resendSmsVideoAccess()"  confirm="¿Está seguro de reenviar el sms de acceso al video para la operación '{{operationID}}'?">Reenviar SMS video</button>
+                    </div>
+
+                    <div class="col-sm-2" ng-if="canResend && !isVisor()">
+                      <button type="button" class="btn btn-primary" ng-click="resendSmsAccess()"  confirm="¿Está seguro de reenviar el sms de acceso para la operación '{{operationID}}'?">Reenviar SMS acceso</button>
+                    </div>
+
+					<div class="col-sm-2" ng-if="canResend && !isVisor()">
+			          <button type="button" class="btn btn-primary" ng-click="resend()"  confirm="¿Está seguro de reenviar la notificación para la operación '{{operationID}}'?">Reenviar notificación</button>
+			        </div>
+
+					<div class="col-sm-2" ng-if="canCancel && !isVisor()">
+			          <button type="button" class="btn btn-primary" ng-click="cancelOp()" confirm="¿Está seguro de cancelar la operación '{{operationID}}'?" >Cancelar Operación</button>
+			        </div>
+					
+                    <div class="col-sm-2" ng-if="isWaitingReview && !isVisor()">
+			          <button type="button" class="btn btn-primary" ng-click="reviewVideo()">Revisar video</button>
+			        </div>
+
+                  <!--    <div class="col-sm-2" ng-if="canValidate">
+                      <button type="button" class="btn btn-primary" ng-click="validateVideo()">Validar video</button>
+                    </div>		        
+				-->
+                    <div class="col-sm-2" ng-if="canSee && !isVisor()">
+                      <button type="button" class="btn btn-primary" ng-click="seeVideo()">Ver video</button>
+                    </div>
+			        
+			        <div class="col-sm-2" ng-if="canViewActa">
+			          <button type="button" class="btn btn-primary" ng-click="openWindow()">Descargar Acta</button>
+			        </div>
+			        
+			         <div class="col-sm-2" ng-if="canViewActa">
+			           <button type="button" class="btn btn-primary" ng-click="downloadActaGlobal()">Descargar Acta Global</button>
+			         </div>
+			        <!--  
+                    <div class="col-sm-2" ng-if="canFinalize">
+                      <button type="button" class="btn btn-primary" ng-click="finalizeOp()">Validar Operación</button>
+                    </div>			        
+			        -->
+      			</div>
+                <div class="col-sm-12 container-details-operation">
+                    <h4> Detalles de la operación: </h4>
+                    <div class="panel">
+                        <div class="panel-collapse">
+                            <div class="panel-body container-infos">
+                                <div class="col-sm-12 col-md-12 container-infos">
+                                    <div class="col-sm-4 col-md-4 container-info-operation" ng-repeat="info in infoList">
+                                        <p>
+                                            <span class="label-detail-operation">{{info.label}}:</span>
+                                            <span class="detail-operation">{{info.value}}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				<!-- Event Accordion -->
+				<div class="col-sm-12 container-detail-events">
+            		<h4> Eventos </h4>
+            		<event-accordion ng-repeat="listEvent in listEvents" info="listEvent" index="{{$index}}" color="colorHeader"></event-accordion>
+          		</div>
+				<!-- Notification Accordion -->
+				<div class="col-sm-12 container-detail-notifications">
+					<h4> Notificaciones </h4>
+					<notification-accordion ng-repeat="listNotification in listNotifications" info="listNotification" index="{{$index}}" color="colorHeader"></notification-accordion>
+				</div>
+				<!-- Document Accordion -->
+				<div class="col-sm-12 container-detail-documents">
+					<h4> Documentos </h4>
+					<document-accordion ng-repeat="listDocument in listDocuments" info="listDocument" index="{{$index}}" color="colorHeader"></document-accordion>
+				</div>
+
+                <div class="col-sm-12 container-detail-documents">
+                    <h4> Documentos Aportados</h4>
+                    <document-uploaded-accordion ng-repeat="documentUploaded in listDocumentsToUpload" info="documentUploaded" index="{{$index}}" color="colorHeader"></document-uploaded-accordion>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+<script type="text/ng-template" id="modal-document-acta.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Acta de la operación</h3>
+    </div>
+    <div class="modal-body">
+        <iframe style="width: 100%; height: 450px;" name="plugin" ng-src="{{documentUrl}}" type="application/pdf"></iframe>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" style="margin-top:0px;" ng-click="cancel()">Cerrar</button>
+    </div>
+</script>

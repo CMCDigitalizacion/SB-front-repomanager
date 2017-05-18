@@ -1,0 +1,58 @@
+<head>
+  <meta charset="UTF-8" />
+
+<style type="text/css">
+	
+	.list-operation.ng-enter {
+	  animation: fadeInLeft 0.5s;
+	}
+
+	.list-operation.ng-leave {
+	  animation: fadeOutLeft 0.5s;
+	}
+
+	.operation-details.ng-enter {
+	  animation: fadeInRight 0.5s;
+	}
+
+	.operation-details.ng-leave {
+	  animation: fadeOutRight 0.5s;
+	}
+</style>
+</head>
+
+<div id="container-fluid" class="fondo" ng-init="loadLotesList()">
+    <div class="col-sm-12 list-operation" ng-if="isLoadedList">
+        <div class="panel panel-primary panel-primary-custom">
+            <div class="panel-heading">
+                Listado <i>Lotes</i>
+            </div>
+            <div class="panel-body">
+
+            	<table width="100%" datatable="ng" dt-options="dtOptionsOperations" dt-column-defs="dtColumnsOperations" dt-instance="dtInstanceOperationsCallback" class="row-border hover table">
+                    <thead>
+                        <tr>
+                            <th>Id Lote</th>
+                            <th>Comienzo</th>
+                            <th>Fin</th>
+                            <th>Total registros</th>
+                            <th>Correctos</th>
+                            <th>Errores</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="lote in lotesList">
+                            <td>{{ lote.domainId }}</td>
+                            <td>{{ lote.dateStart }}</td>
+                            <td>{{ lote.dateEnd }}</td>
+                            <td>{{ lote.totalRegs }}</td>
+                            <td>{{ lote.validRegs }}</td>
+                            <td>{{ lote.errorRegs }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>

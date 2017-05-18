@@ -1,0 +1,243 @@
+<head>
+<meta charset="UTF-8">
+
+
+</head>
+<style>
+    .acta-modal-window .modal-dialog {
+        width: 95%;
+        height: 90%;
+    }
+    
+    .btnRight{
+    
+    }
+    
+</style>
+<div id="container-fluid" class="fondo" ng-init="loadDigicertList()">
+    <div class="row list-operation">
+        <div class="panel panel-primary panel-primary-custom">
+            <div class="panel-heading">
+                Filtro <i>búsqueda operaciones</i>
+             </div>
+            <div class="panel-body">
+                <form name="filterForm" novalidate>
+                
+                 	<div class="form-group col-sm-3">
+                        <label for="nummeroderecepcion" class="control-label">Número de recepción</label>
+                        <input type="text" class="form-control" id="nummeroderecepcion" name="nummeroderecepcion" ng-model="operationObject.nummeroderecepcion" placeholder="Introduce número de recepción" >
+                    </div>
+                    
+                     <div class="form-group col-sm-3">
+                        <label for="nombreyapllidos" class="control-label">Nombre y apellidos</label>
+                        <input type="text" class="form-control" id="nombreyapllidos" name="nombreyapllidos" ng-model="operationObject.nombreyapllidos" placeholder="Introduce nombre y apellidos" >
+                    </div>
+                    
+                     <div class="form-group col-sm-3">
+                        <label for="razonsocial" class="control-label">Razón social</label>
+                        <input type="text" class="form-control" id="razonsocial" name="razonsocial" ng-model="operationObject.razonsocial" placeholder="Introduce razón social" >
+                    </div>
+                    
+                     <div class="form-group col-sm-3">
+                        <label for="cif" class="control-label">CIF empresa</label>
+                        <input type="text" class="form-control" id="cif" name="cif" ng-model="operationObject.cif" placeholder="Introduce CIF" >
+                    </div>
+                    
+                    <!--                minimo 0 -->
+                    <div class="form-group col-sm-3">
+                        <label for="baseimponibledesde" min="0" class="control-label">Base imponible desde:</label>
+                        <input type="number"  class="form-control" id="baseimponibledesde" name="baseimponibledesde" ng-model="operationObject.baseimponibledesde" placeholder="Introduce base imponible mínima" >
+                    </div>
+<!-- 				maximo 100 -->
+                    <div class="form-group col-sm-3">
+                        <label for="baseimponiblehasta" max="100 "class="control-label">Base imponible hasta:</label>
+                        <input type="number"  class="form-control" id="baseimponiblehasta" name="baseimponiblehasta" ng-model="operationObject.baseimponiblehasta" placeholder="Introduce base imponible máxima" >
+                    </div>
+                
+                   
+                    <div class="form-group col-sm-3">
+                       <label for="cuotatributariadesde" class="control-label">Cuota tributaria desde:</label>
+                       <input type="number" class="form-control" id="cuotatributariadesde" name="cuotatributariadesde" ng-model="operationObject.cuotatributariadesde" placeholder="Introduce cuota tributaria mínima" >
+                    </div>
+
+                    <div class="form-group col-sm-3">
+                        <label for="cuotatributariahasta" class="control-label">Cuota tributaria hasta:</label>
+                        <input type="number" class="form-control" id="cuotatributariahasta" name="cuotatributariahasta" ng-model="operationObject.cuotatributariahasta" placeholder="Introduce cuota tributaria máxima" >
+                    </div>
+                    
+                  
+                    <div class="form-group col-sm-3">
+                        <label for="importedesde" class="control-label">Importe total desde:</label>
+                        <input type="number" class="form-control" id="importedesde" name="importedesde" ng-model="operationObject.importedesde" placeholder="Introduce importe mínimo " >
+                    </div>
+                    
+                    <div class="form-group col-sm-3">
+                        <label for="importehasta" class="control-label">Importe total hasta:</label>
+                       <input type="number" class="form-control" id="importehasta" name="importehasta" ng-model="operationObject.importehasta" placeholder="Introduce importe máximo" >
+                    </div>
+                    
+                    <div class="form-group col-sm-6">
+                        <label for="tipoimpositivo" class="control-label">Tipo impositivo</label>
+                       <input type="number" class="form-control" id="tipoimpositivo" name="tipoimpositivo" ng-model="operationObject.tipoimpositivo" placeholder="Introduce tipo impositivo" >
+                    </div>
+
+                    
+                     <div class="form-group col-sm-3">
+                        <label for="fechadeexpediciondesde" class="control-label">Fecha de expedición desde:</label>
+                        <p class="input-group">
+                             <input type="text" readonly='true' class="form-control" uib-datepicker-popup="dd-MM-yyyy" is-open="fechadeexpediciondesde.opened" id="fechadeexpediciondesde" name="fechadeexpediciondesde" ng-model="operationObject.fechadeexpediciondesde"  placeholder="Elige una fecha" ng-click="fechadeexpedicionhasta()" ng-required="true" ng-change="onChange()">
+                             <span class="input-group-btn">
+                                <button type="button" readonly='true' class="btn btn-default" style="margin-top: 0px; height: 34px;" ng-click="fechadeexpediciondesde()"><i class="glyphicon glyphicon-calendar no-hover"></i></button>
+                            </span>
+                        </p>
+                    </div>
+
+                    <div class="form-group col-sm-3">
+                        <label for="fechadeexpedicionhasta" class="control-label">Fecha de expedición hasta:</label>
+                        <p class="input-group">
+                             <input type="text" readonly='true' class="form-control" uib-datepicker-popup="dd-MM-yyyy" is-open="fechadeexpedicionhasta.opened" id="fechadeexpedicionhasta" name="fechadeexpedicionhasta" ng-model="operationObject.fechadeexpedicionhasta" placeholder="Elige una fecha" ng-click="fechadeexpedicionhasta()" ng-required="true" ng-change="onChange()">
+                             <span class="input-group-btn">
+                                <button type="button" readonly='true' class="btn btn-default" style="margin-top: 0px; height: 34px;" ng-click="fechadeexpedicionhasta() "><i class="glyphicon glyphicon-calendar no-hover"></i></button>
+                            </span>
+                        </p>
+                    </div>
+<!--                     <div class="form-group col-sm-3"> -->
+<!--                         <label for="expeditionDateTo" class="control-label">Fecha de expedición desde:</label> -->
+<!--                         <input type="date" class="form-control" id="expeditionDateTo" name="expeditionDateTo" ng-model="operationObject.expeditionDateTo" placeholder="Introduce fecha expediente inicial" > -->
+<!--                     </div> -->
+
+
+<!--                     <div class="form-group col-sm-3"> -->
+<!--                         <label for="expeditionDateFrom" class="control-label">Fecha de expedición hasta:</label> -->
+<!--                         <input type="date" class="form-control" id="expeditionDateFrom" name="expeditionDateFrom" ng-model="operationObject.expeditionDateFrom" placeholder="Introduce fecha expediente final" > -->
+<!--                     </div> -->
+                    
+                   <div class="form-group col-sm-3">
+                        <label for="fechadecapturadesde" class="control-label">Fecha de captura desde:</label>
+                        <p class="input-group">
+                             <input type="text" readonly='true' class="form-control" uib-datepicker-popup="dd-MM-yyyy" is-open="fechadecapturadesde.opened" id="fechadecapturadesde" name="fechadecapturadesde" ng-model="operationObject.fechadecapturadesde" ng-click="fechadecapturadesde()" placeholder="Elige una fecha" ng-required="true" ng-change="onChange()">
+                             <span class="input-group-btn">
+                                <button type="button" readonly='true' class="btn btn-default" style="margin-top: 0px; height: 34px;" ng-click="fechadecapturadesde()"><i class="glyphicon glyphicon-calendar no-hover"></i></button>
+                            </span>
+                        </p>
+                    </div>
+
+                    <div class="form-group col-sm-3">
+                        <label for="fechadecapturahasta" class="control-label">Fecha de captura hasta:</label>
+                        <p class="input-group">
+                             <input type="text" readonly='true' class="form-control" uib-datepicker-popup="dd-MM-yyyy" is-open="fechadecapturahasta.opened" id="fechadecapturahasta" name="fechadecapturahasta" ng-model="operationObject.fechadecapturahasta" placeholder="Elige una fecha" ng-click="fechadecapturahasta()" ng-required="true" ng-change="onChange()">
+                             <span class="input-group-btn">
+                                <button type="button" readonly='true' class="btn btn-default" style="margin-top: 0px; height: 34px;" ng-click="fechadecapturahasta()"><i class="glyphicon glyphicon-calendar no-hover"></i></button>
+                            </span>
+                        </p>
+                    </div>
+<!--                     <div class="form-group col-sm-3"> -->
+<!--                         <label for="madeDateTo" class="control-label">Fecha de realización desde:</label> -->
+<!--                         <input type="date" class="form-control" id="madeDateTo" name="madeDateTo" ng-model="operationObject.madeDateTo" placeholder="Introduce fecha realización inicial" > -->
+<!--                     </div> -->
+
+<!--                     <div class="form-group col-sm-3"> -->
+<!--                         <label for="madeDateFrom" class="control-label">Fecha de realización hasta:</label> -->
+<!--                          <input type="date" class="form-control" id="madeDateFrom" name="madeDateFrom" ng-model="operationObject.madeDateFrom" placeholder="Introduce fecha realización final" > -->
+<!--                     </div> -->
+
+ 					<div class="form-group col-sm-3">
+                        <label for="fechadeoperacionesdesde" class="control-label">Fecha de operaciones desde:</label>
+                        <p class="input-group">
+                             <input type="text" readonly='true' class="form-control" uib-datepicker-popup="dd-MM-yyyy" is-open="fechadeoperacionesdesde.opened" id="fechadeoperacionesdesde" name="fechadeoperacionesdesde" ng-model="operationObject.fechadeoperacionesdesde" placeholder="Elige una fecha" ng-click="fechadeoperacionesdesde()" ng-required="true" ng-change="onChange()">
+                             <span class="input-group-btn">
+                                <button type="button" readonly='true' class="btn btn-default" style="margin-top: 0px; height: 34px;" ng-click="fechadeoperacionesdesde()"><i class="glyphicon glyphicon-calendar no-hover"></i></button>
+                            </span>
+                        </p>
+                    </div>
+
+                    <div class="form-group col-sm-3">
+                        <label for="fechadeoperacioneshasta" class="control-label">Fecha de operaciones hasta:</label>
+                        <p class="input-group">
+                             <input type="text" readonly='true' class="form-control" uib-datepicker-popup="dd-MM-yyyy" is-open="fechadeoperacioneshasta.opened" id="fechadeoperacioneshasta" name="fechadeoperacioneshasta" ng-model="operationObject.fechadeoperacioneshasta" placeholder="Elige una fecha" ng-click="fechadeoperacioneshasta()" ng-required="true" ng-change="onChange()">
+                             <span class="input-group-btn">
+                                <button type="button" readonly='true' class="btn btn-default" style="margin-top: 0px; height: 34px;" ng-click="fechadeoperacioneshasta()"><i class="glyphicon glyphicon-calendar no-hover"></i></button>
+                            </span>
+                        </p>
+                    </div>
+                    
+                    
+                    <div class="form-group col-sm-2"></div>
+                    
+                    <div class="form-group col-sm-1"></div>
+                    
+<!--                     <div class="form-group col-sm-3"> -->
+<!--                         <label for="from" class="control-label">Fecha de operaciones desde:</label> -->
+<!--                         <input type="date" class="form-control" id="operationDateTo" name="operationDateTo" ng-model="operationObject.operationDateTo" placeholder="Introduce fecha operación inicial" > -->
+<!--                     </div> -->
+
+<!--                     <div class="form-group col-sm-3"> -->
+<!--                         <label for="operationDateTo" class="control-label">Fecha de operaciones hasta:</label> -->
+<!--                          <input type="date" class="form-control" id="operationDateFrom" name="operationDateFrom" ng-model="operationObject.operationDateFrom" placeholder="Introduce fecha operación final" > -->
+<!--                     </div> -->
+           
+
+                    
+                    <div id="button" class="btnRight">
+                     <div class="form-group col-sm-1">
+                        <label for="filter" class="control-label" style="visibility:hidden;">:</label>
+                        <button class="btn btn-default form-control" style="height:34px; margin-top:0px;" ng-click="myFunction(operationObject)"><span class="glyphicon glyphicon-filter"></span></button>
+                    </div>
+                    
+                    <div class="form-group col-sm-1">
+                        <label for="refresh" class="control-label" style="visibility:hidden;">:</label>
+                        <button class="btn btn-default form-control" style="height:34px; margin-top:0px;" ng-click="refreshFilterTable(operationObject)"><span class="glyphicon glyphicon-refresh"></span></button>
+                    </div>
+                    
+                    <div class="form-group col-sm-1">
+                        <label for="refresh" class="control-label" style="visibility:hidden;">:</label>
+                        <button class="btn btn-default form-control" style="height:34px; margin-top:0px;" ng-click="goToCategoryDetails(operation)"><span class="glyphicon glyphicon-send"></span></button>
+                    </div>
+                    
+                     </form>
+            	<table width="100%" datatable="ng" dt-options="dtOptionsOperations" dt-column-defs="dtColumnsOperations" dt-instance="dtInstanceOperationsList" class="row-border hover table">
+                    <thead>
+                        <tr>
+                        	<th>CIF</th>
+                        	<th>Razon social</th>
+                            <th>Nombre y apellidos</th>
+                            <th>Fecha de captura</th>
+                            <th>Fecha de expedición</th>
+                            <th>Importe total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="op in digicertOperationList">
+                        	<td>{{ op.cif }}</td>
+                         	<td>{{ op.razonsocial }}</td>
+                            <td>{{ op.nombreyapellidos }}</td>
+                            <td>{{ op.fechadecaptura }}</td>
+                            <td>{{ op.fechadeexpedicion }}</td>
+                            <td>{{ op.importetotal }}</td>
+							<td>
+	                           <div class="btn-group" role="group" aria-label="...">
+	                         	<a ng-click="goToDocument(op.uudid)"><span class="glyphicon glyphicon-eye-open"></span></a>
+                           		<a ng-href="{{op.downloadUrl}}"><span class="glyphicon glyphicon-download icon"></span></a>
+                                <span ng-click="goToDetails(op)" class="glyphicon glyphicon-list-alt icon"></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+       
+                       
+                     
+<!--                     <div class="form-group col-sm-2"> -->
+<!--                         <label for="refresh" class="control-label" style="visibility:hidden;">:</label> -->
+<!--                         <button class="btn btn-primary form-control" style="height:34px; margin-top:0px;" ng-click="donwloadPDF()">Documento PDF</button> -->
+<!--                     </div> -->
+                    
+                  </div>  
+               
+
+            
+           

@@ -1,0 +1,181 @@
+<style type="text/css">
+	
+	.details-operation-modal-window .modal-dialog {
+		width: 95%;
+		height: 90%;
+		overflow-y: visible;
+	}
+
+	.info-bioperation-modal {
+		padding-left: 1em;
+	}
+
+	.list-info-bioperation-modal {
+        border-left: solid 5px;
+		list-style-type: none;
+		border-left-color: darkslateblue;
+		border-radius: 3px;
+		margin-top: 36px;
+	}
+
+
+	.ng-animate.item:not(.left):not(.right) {
+	  -webkit-transition: 0s ease-in-out left;
+	  transition: 0s ease-in-out left
+	}
+
+</style>
+<div id="container-fluid" class="fondo" ng-init="loadListOperation()">
+    <div class="row list-operation" ng-if="isLoaded">
+
+		<div class="panel panel-primary panel-primary-custom">
+		    <div class="panel-heading">
+		    	Listado de operaciones <i>bSign</i>
+		   	</div>
+		    <!-- <div class="text-titular">
+		    	Pantalla de gestion de las operaciones de firma biometrica.
+		    </div> -->
+		    <div class="panel-body">
+				<table datatable="ng" dt-options="dtOptionsOperationsBio" dt-column-defs="dtColumnsOperationsBio" dt-instance="dtInstanceOperationsBio" class="row-border hover table" width="100%">
+	                <thead>
+	                    <tr>
+	                    	<th>N�mero Contrato</th>
+                            <th>Fecha Contrato</th>
+                            <th>Cliente</th>
+                            <th>NIF Cliente</th>
+                            <th>Telefono</th>
+                            <th>Email</th>
+                            <th>Estado</th>
+                            <th></th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                    <tr ng-repeat="operation in operationsList">
+	                        <td>{{ operation.creator }}</td>
+	                        <td>{{ operation.creationDate}}</td>
+	                        <td>{{ operation.titular }}</td>
+	                        <td>{{ operation.nifTitular }}</td>
+	                        <td>{{ operation.cellphoneTitular}}</td>
+	                        <td>{{ operation.emailTitular}}</td>
+	                        <td>{{ operation.stringState}}</td>
+	                        <td>
+	                            <i>
+	                                <span ng-click="detailsOperation(operation)" class="glyphicon glyphicon-eye-open pointer-span"></span>
+	                            </i>
+	                        </td>
+	                    </tr>
+	                </tbody>
+            	</table>
+		    </div>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/ng-template" id="modalOperation.html">
+	<div ng-cloak>
+		<div class="modal-header">
+			<h3 class="modal-title">Detalles Operación: {{operation.idoperation}}
+				<i>
+	                <span title="Cerrar" ng-click="cancel()" class="glyphicon glyphicon-remove pointer-span" style="float: right;"></span>
+	            </i>
+            </h3>
+	    </div>
+	    <div class="modal-body">
+	    	<div class="row">
+		    	<div class="col-sm-12">
+			    	<div class="col-sm-6">
+			    		<div class="col-sm-6" style="text-align: center;">
+			    			<iframe style="height: 250px; width: 250px;" scrolling="no" frameborder="0" ng-src="{{urlQR}}"/></iframe>
+			    			<div>
+			    				<button class="btn btn-primary no-margin-top" ng-click="openSignWacomPage()" ng-disabled="operation.state !== 0 || !canSign">Firmar en PC</button>
+			    			</div>
+			    		</div>
+			    		<div class="col-sm-6 div-details">
+							<h4>Titular</h4>
+			    			<div class="col-sm-12">
+			    				<p class="detail-info-bio-label">Nombre y Appellidos:</p>
+			    			</div>
+			    			<div class="col-sm-12">
+			    				<p class="detail-info-bio-value">{{operation.titular}}</p>
+			    			</div>
+
+							<div class="col-sm-12">
+								<hr class="no-margin-top">
+							</div>
+
+			    			<div class="col-sm-12">
+			    				<p class="detail-info-bio-label">Fecha de creación:</p>
+			    			</div>
+			    			<div class="col-sm-12">
+			    				<p class="detail-info-bio-value">{{operation.creationDate}}</p>
+			    			</div>
+			    			
+			    			<div class="col-sm-12">
+								<hr class="no-margin-top">
+							</div>
+
+			    			<div class="col-sm-12">
+			    				<p class="detail-info-bio-label">Número Documento:</p>
+			    			</div>
+			    			<div class="col-sm-12">
+			    				<p class="detail-info-bio-value">{{operation.nifTitular}}</p>
+			    			</div>
+			    			
+			    			<div class="col-sm-12">
+								<hr class="no-margin-top">
+							</div>
+			    			
+			    			<div class="col-sm-12">
+			    				<p class="detail-info-bio-label">Estado:</p>
+			    			</div>
+			    			<div class="col-sm-12">
+			    				<p class="detail-info-bio-value">{{operation.stringState}}</p>
+			    			</div>
+			    			
+			    			<div class="col-sm-12">
+								<hr class="no-margin-top">
+							</div>
+			    		</div>
+			    	</div>
+			    	<div class="col-sm-6">
+			    		<div id="carousel-doc">
+							<uib-carousel interval="0" no-wrap="false" template-url="carouselprova.html">
+								<uib-slide ng-repeat="slide in slides" active="slide.active" index="slide.id" >
+									<iframe id="iframe-pdf" ng-src="{{slide.url}}" width='80%' height='400px' frameborder='0'	allowFullScreen webkitallowfullscreen mozallowfullscreen>
+									</iframe>
+									<div class="carousel-caption">
+										<h4>Doc {{slide.docname}}</h4>
+									</div>
+								</uib-slide>
+							</uib-carousel>
+						</div>
+			    	</div>
+			    </div>
+			</div>
+	    </div>
+	</div>
+    
+</script>
+
+
+
+
+<script type="text/ng-template" id="carouselprova.html">
+	<div ng-mouseenter="pause()" ng-mouseleave="play()" class="carousel" ng-swipe-right="prev()" ng-swipe-left="next()">
+	  <div class="carousel-inner" ng-transclude></div>
+	  <a role="button" href class="left carousel-control" ng-click="prev()" >
+	    <span aria-hidden="true" class="glyphicon glyphicon-chevron-left"></span>
+	    <span class="sr-only">previous</span>
+	  </a>
+	  <a role="button" href class="right carousel-control" ng-click="next()">
+	    <span aria-hidden="true" class="glyphicon glyphicon-chevron-right"></span>
+	    <span class="sr-only">next</span>
+	  </a>
+	  <ol class="carousel-indicators">
+	    <li ng-repeat="slide in slides | orderBy:indexOfSlide track by $index" ng-class="{ active: isActive(slide) }" ng-click="select(slide)">
+	      <span class="sr-only">slide {{ $index + 1 }} of {{ slides.length }}<span ng-if="isActive(slide)">, currently active</span></span>
+	    </li>
+	  </ol>
+	</div>
+</script>

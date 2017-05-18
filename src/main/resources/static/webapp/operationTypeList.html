@@ -1,0 +1,864 @@
+<head>
+<meta charset="UTF-8" />
+
+<style type="text/css">
+
+.list-operation.ng-enter {
+	animation: fadeInLeft 0.5s;
+}
+
+.list-operation.ng-leave {
+	animation: fadeOutLeft 0.5s;
+}
+
+.operation-details.ng-enter {
+	animation: fadeInRight 0.5s;
+}
+
+.operation-details.ng-leave {
+	animation: fadeOutRight 0.5s;
+}
+
+.btn-file {
+	position: relative;
+	overflow: hidden;
+}
+
+.btn-file input[type=file] {
+	position: absolute;
+	top: 0;
+	right: 0;
+	min-width: 100%;
+	min-height: 100%;
+	font-size: 100px;
+	text-align: right;
+	filter: alpha(opacity = 0);
+	opacity: 0;
+	outline: none;
+	background: white;
+	cursor: inherit;
+	display: block;
+}
+
+.btn {
+	margin-top: 0px;
+}
+
+.modal-window {
+	margin-top: 5%;
+}
+
+.groupName {
+	text-align: left !important;
+}
+
+.noBorderLeft {
+	border-left: none !important;
+}
+
+.noBorderRight {
+	border-right: none !important;
+}
+
+.noBorderTop {
+	border-top: none !important;
+}
+
+.noBorderBottom {
+	border-bottom: none !important;
+}
+
+#listOperationGrouped,
+#listOperationGrouped > tbody > tr > td {
+    border: 1px solid #ddd;
+}
+
+.float-right {
+	float: right;
+}
+
+.cursorPointer {
+	cursor: pointer;
+}
+
+form[name="dataUserForm"] ul {
+	padding-bottom: 15px;
+}
+
+.spanButton {
+	padding-top: 10px;
+}
+
+.notVisible {
+	visibility: hidden;
+}
+
+.previewDocument {
+	width: 119px;
+	height: 168px;
+	margin: 0 auto;
+	position: relative;
+	border: 1px dashed #333;
+}
+
+.imgPDF{
+	position: absolute;
+    width: 60%;
+    height: 50%;
+    top: 28%;
+    left: 20%;
+}
+
+.margin-top-25 {
+	margin-top: 25px;
+}
+
+div[id^=preview] canvas {
+    display: block;
+    margin: 0 auto;
+}
+
+.background-well {
+	background-color: #f5f5f5;
+}
+
+</style>
+</head>
+<div id="container-fluid" class="fondo"
+	ng-init="loadOperationTypeList()">
+	<div class="row list-operation" ng-if="isLoadedList">
+		<div class="panel panel-primary panel-primary-custom">
+			<div class="panel-heading">
+				Nueva <i>Operación de Firma</i>
+			</div>
+			<div class="panel-body">
+
+				<table ng-if="showOperationGrouped" id="listOperationGrouped" width="100%" datatable="ng"
+					dt-options="dtOptionsOperationsGrouped"
+					dt-column-defs="dtColumnsOperationsGrouped"
+					class="row-border hover table">
+					<thead>
+						<tr>
+							<th>Grupo</th>
+							<th>ID</th>
+							<th>Nombre</th>
+							<th>Tipo Firma</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody ng-repeat="operationList in operationTypeGrouped">
+						<tr ng-click="show = !show" class="cursorPointer">
+							<td class="groupName">
+								{{operationList.name}}
+								<div class="float-right">
+									<i ng-if="show" class="glyphicon glyphicon-chevron-up"></i>
+									<i ng-if="!show" class="glyphicon glyphicon-chevron-down"></i>
+								</div>
+							</td>
+							<td class="noBorderRight"></td>
+							<td class="noBorderLeft noBorderRight"></td>
+							<td class="noBorderLeft noBorderRight"></td>
+							<td class="noBorderLeft"></td>
+						</tr>
+						<tr ng-show="show" ng-repeat="op in operationList.operation">
+							<td class="noBorderBottom noBorderTop"></td>
+							<td>{{ op.id }}</td>
+							<td>{{ op.name }}</td>
+							<td>{{ op.signatureType }}</td>
+							<td class=" center-text">
+								<div class="btn-group" role="group"
+									ng-show="op.domainid>0 && op.signatureType == 'SIMPLE_MULTIPLE'">
+									<i ng-click="newOpMultiple(op)"> <span
+										class="glyphicon glyphicon-plus pointer-span">MM</span>
+									</i>
+								</div>
+								<div class="btn-group" role="group"
+									ng-show="op.domainid>0 && op.signatureType != 'SIMPLE_MULTIPLE' && op.signatureType != 'MULTINIVEL'">
+									<i ng-click="newOp(op)"><span
+										class="glyphicon glyphicon-plus pointer-span"></span></i>
+								</div>
+								<div class="btn-group" role="group" aria-label="..."
+									ng-show="op.domainid>0 && op.signatureType === 'MULTINIVEL'">
+									<i ng-click="newOperationMultilevel(op)"> <span
+										class="glyphicon glyphicon-plus pointer-span"></span>
+									</i>
+								</div>
+								<div class="btn-group" role="group" aria-label="..."
+									ng-show="op.domainid<0">
+									<span
+										class="glyphicon glyphicon-warning-sign pointer-span"
+										title="Falta la plantilla para el acta"
+										ng-show="op.domainid===-21"></span> <span
+										class="glyphicon glyphicon-warning-sign pointer-span"
+										title="Falta definir el tipo de OTP de acceso y/o firma"
+										ng-show="op.domainid===-31"></span> <span
+										class="glyphicon glyphicon-warning-sign pointer-span"
+										title="Faltan añadir campos" ng-show="op.domainid===-32"></span>
+									<span
+										class="glyphicon glyphicon-warning-sign pointer-span"
+										title="Falta configurar los campos y/o el tipo de firma"
+										ng-show="op.domainid===-91"></span>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<table ng-if="showOperationList" width="100%" datatable="ng"
+					dt-options="dtOptionsOperations"
+					dt-column-defs="dtColumnsOperations"
+					class="row-border hover table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Nombre</th>
+							<th>Tipo Firma</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="op in operationTypeList">
+							<td>{{ op.id }}</td>
+							<td>{{ op.name }}</td>
+							<td>{{ op.signatureType }}</td>
+							<td class=" center-text">
+								<div class="btn-group" role="group"
+									ng-show="op.domainid>0 && op.signatureType == 'SIMPLE_MULTIPLE'">
+									<i ng-click="newOpMultiple(op)"> <span
+										class="glyphicon glyphicon-plus pointer-span">MM</span>
+									</i>
+								</div>
+								<div class="btn-group" role="group"
+									ng-show="op.domainid>0 && op.signatureType != 'SIMPLE_MULTIPLE' && op.signatureType != 'MULTINIVEL'">
+									<i ng-click="newOp(op)"><span
+										class="glyphicon glyphicon-plus pointer-span"></span></i>
+								</div>
+								<div class="btn-group" role="group" aria-label="..."
+									ng-show="op.domainid>0 && op.signatureType === 'MULTINIVEL'">
+									<i ng-click="newOperationMultilevel(op)"> <span
+										class="glyphicon glyphicon-plus pointer-span"></span>
+									</i>
+								</div>
+								<div class="btn-group" role="group" aria-label="..."
+									ng-show="op.domainid<0">
+									<span
+										class="glyphicon glyphicon-warning-sign pointer-span"
+										title="Falta la plantilla para el acta"
+										ng-show="op.domainid===-21"></span> <span
+										class="glyphicon glyphicon-warning-sign pointer-span"
+										title="Falta definir el tipo de OTP de acceso y/o firma"
+										ng-show="op.domainid===-31"></span> <span
+										class="glyphicon glyphicon-warning-sign pointer-span"
+										title="Faltan añadir campos" ng-show="op.domainid===-32"></span>
+									<span
+										class="glyphicon glyphicon-warning-sign pointer-span"
+										title="Falta configurar los campos y/o el tipo de firma"
+										ng-show="op.domainid===-91"></span>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-sm-12 operation-details"
+		style="position: absolute; margin-left: -50px;"
+		ng-if="isLoadedMultiLevel">
+		<form name="dataOperationForm" novalidate>
+			<!-- Panel Operation Data -->
+			<div class="col-sm-12" id="container-panel-operation">
+				<div class="panel panel-operation">
+					<div class="panel-heading heading-user">
+						<i>Datos de la operación: <span
+							class="glyphicon glyphicon-remove pointer-span"
+							ng-click="closeOperationDetailsMultiLevel()"
+							style="float: right;"> </span>
+						</i>
+					</div>
+					<div class="panel-body panel-body-radius">
+						<div class="form-group col-sm-6"
+							ng-class="{ 'has-error' : dataOperationForm.operationType.$invalid , 'has-success' : !dataOperationForm.operationType.$invalid }">
+							<label for="direccion" class="control-label">Tipo de
+								notificación por defecto:</label> <select
+								ng-model="operation.operationType" class="form-control"
+								name="operationType" id="operationType"
+								ng-change="setOperationType(operation.operationType)" required>
+								<option value="EMAIL" selected="true">EMAIL</option>
+								<option value="SMS">SMS</option>
+								<option value="WEB">WEB</option>
+							</select>
+						</div>
+						<div class="form-group col-sm-6"
+							ng-class="{ 'has-error' : (dataOperationForm.{{operation.identifier}}.$invalid && operation.isMandatory === 'Y'), 'has-success' : (!dataOperationForm.{{operation.identifier}}.$invalid && operation.isMandatory === 'Y') }"
+							ng-repeat="operation in operationFields">
+							<label for="{{operation.identifier}}" class="control-label">{{operation.label}}:</label>
+							<input
+								ng-if="operation.defaultValue == null || !operation.isArray"
+								type="{{operation.inputType}}" class="form-control"
+								id="{{operation.identifier}}" name="{{operation.identifier}}"
+								ng-model="operationData[operation.identifier]"
+								ng-value="operationData[operation.identifier]"
+								dynamic-directive="operation.directive"
+								ng-required="isRequired(operation);"
+								placeholder="{{operation.label}} de la operación"/> 
+							<select
+								ng-if="operation.defaultValue != null && operation.isArray"
+								class="form-control" id="{{operation.identifier}}"
+								name="{{operation.identifier}}"
+								ng-model="operationData[operation.identifier]"
+								dynamic-directive="operation.directive"
+								ng-required="isRequired(operation);"
+								ng-options="item as item for item in operation.defaultValue track by item">
+								<option value="">Seleccione un valor</option>
+							</select>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<!-- END Panel Operation Data -->
+
+			<!-- Panel User Data -->
+			<div class="col-sm-12" id="container-panel-users">
+				<div class="panel panel-user">
+					<div class="panel-heading heading-user">
+						<i>Niveles de la operación:</i>
+					</div>
+					<div class="panel-body">
+						<div class="table" ng-repeat="levelNumber in multiplesigndata">
+							<div class="col-sm-12 no-padding-left info-level">
+								<button class="btn btn-primary no-margin-left"
+									ng-click="addUserToLevel($index)">
+									<span class="glyphicon glyphicon-plus"></span> Añadir <i>firmante</i>
+									al nivel {{$index +1 }}
+								</button>
+							</div>
+							<table datatable="ng" dt-options="dtOptionsUsers"
+								dt-column-defs="dtColumnDefsUsers" class="row-border hover"
+								width="100%">
+								<thead>
+									<tr>
+										<th ng-repeat="option in optionsConfig track by $index">
+											{{option}}</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="person in level[$index]">
+										<td ng-repeat="personData in person.data" ng-if="$index>0">{{personData}}</td>
+										<td><span
+											ng-repeat="(key, value) in person.signaturetypes"><span
+												ng-if="$index>0">, </span>{{value}}</span></td>
+										<td><i> <span
+												class="glyphicon glyphicon-edit pointer-span"
+												ng-click="addUserToLevel($parent.$index, $index, person)"></span>
+												<span class="glyphicon glyphicon-trash pointer-span icon"
+												ng-click="removeUserFromLevel($parent.$index, $index, person)"
+												confirm="¿Está seguro qué desea eliminar el usuario {{person.data.name}} {{person.data.lastname}} que pertenece al nivel {{$parent.$index}}?"></span>
+										</i></td>
+									</tr>
+								</tbody>
+							</table>
+							<hr>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END Panel User Data -->
+
+			<!-- Panel files -->
+			<div class="col-sm-12 container-panel" ng-if="documents.length > 0">
+				<div class="panel panel-documents-default background-well">
+					<div class="panel-heading panel-heading-default">
+						<i>Documentación de la operación:</i>
+					</div>
+					<div class="panel-body background-well">
+						<div class="col-xs-3" ng-class="{'margin-top-25' : $index > 3}" ng-repeat="document in documents">
+							<form name="upload{{$index}}" class="form">
+								<p
+									ng-class="{'success' : uploadSuccess{{$index}}, 'error' : uploadError{{$index}}}"
+									class="col-sm-12 stylep no-padding-lateral text-ellipsis" title="{{document.name}}">{{document.name}}</p>
+	
+								<p
+									ng-class="{'success' : uploadSuccess{{$index}}, 'error' : uploadError{{$index}}}"
+									class="col-sm-12 stylep font-italic text-ellipsis no-padding-lateral">{{document.description}}</p>
+	
+								<div class="col-sm-12 no-padding-lateral"
+									style="padding-bottom: 15px;"
+									ng-class="{'notVisible' : document.uploadMandatory}">
+									<label class="pointer-span" for="checkbox{{$index}}"> <input
+										id="checkbox{{$index}}" type="checkbox"
+										ng-model="toUpload[$index]"
+										ng-change="modifyDocsArray(toUpload[$index], $index);">
+										Ignorar documento
+									</label>
+								</div>
+	
+								<div class="col-sm-12" style="margin-bottom: 15px;"
+									ng-if="showPreviewDocument[$index]">
+									<div>
+										<div id="preview{{$index}}"></div>
+										<div id="name{{$index}}" class="text-ellipsis" title=""></div>
+									</div>
+								</div>
+	
+								<div class="col-sm-12"
+									style="margin-bottom: 15px;"
+									ng-if="!showPreviewDocument[$index]">
+									<div class="previewDocument borderDashed">
+										<img ng-if="!toUpload[$index]" class="imgPDF"
+											src="webapp/img/pdf.svg" alt="" /> <img
+											ng-if="toUpload[$index]" class="imgPDF"
+											src="webapp/img/nonePDF.svg" alt="" />
+									</div>
+									<div id="nameDoc{{$index}}" class="col-xs-12 text-ellipsis notVisible">Document Name</div>
+								</div>
+	
+								<span class="btn btn-file col-sm-12 spanButton"
+									ng-disabled="toUpload[$index]"> <input class="fileinput"
+									type="file" name="file{{$index}}"
+									onchange="angular.element(this).scope().uploadedFile(this)"
+									accept="application/pdf" ng-disabled="toUpload[$index]" /> Elige
+									el fichero
+								</span>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END Panel files -->
+			
+			<!-- Panel files -->
+			<div class="col-sm-12 container-panel" ng-if="documentsStatic.length > 0">
+				<div class="panel panel-documents-default background-well">
+					<div class="panel-heading panel-heading-default">
+						<i>Documentación estática de la operación:</i>
+					</div>
+					<div class="panel-body">
+						<div class="col-xs-3" ng-class="{'margin-top-25' : $index > 3}" ng-repeat="document in documentsStatic">
+							<form name="upload{{$index}}" class="form">
+								<p
+									ng-class="{'success' : uploadSuccess{{$index}}, 'error' : uploadError{{$index}}}"
+									class="col-sm-12 stylep no-padding-lateral text-ellipsis" title="{{document.name}}">{{document.name}}</p>
+	
+								<p
+									ng-class="{'success' : uploadSuccess{{$index}}, 'error' : uploadError{{$index}}}"
+									class="col-sm-12 stylep font-italic text-ellipsis no-padding-lateral">{{document.description}}</p>
+	
+								<div class="col-sm-12 no-padding-lateral"
+									style="padding-bottom: 15px;"
+									ng-class="{'notVisible' : document.uploadMandatory}">
+									<label class="pointer-span" for="checkboxStatic{{$index}}"> <input
+										id="checkboxStatic{{$index}}" type="checkbox"
+										ng-model="toUploadStatic[$index]"
+										ng-change="modifyStaticsDocsArray(toUploadStatic[$index], $index);">
+										Ignorar documento
+									</label>
+								</div>
+	
+								<button class="btn btn-default btn-primary col-sm-12"
+									style="margin-left: 0px; background-color: #303030; border-color: #303030;"
+									ng-click="openPdf(document)">
+									Ver el fichero</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END Panel files -->
+
+			<button class="btn btn-default btn-margin-bottom margin-top-25"
+				ng-disabled="dataOperationForm.$invalid || someFilesMissing() || someUserAdded() "
+				ng-click="createMultilevelOperation(operationData)">Crear
+				Operación</button>
+		</form>
+	</div>
+
+	<div class="col-sm-12 operation-details"
+		style="position: absolute; margin-left: -50px;" ng-if="isLoaded">
+		<div class="panel panel-primary panel-primary-custom">
+			<div class="panel-heading">
+				Datos de la Operación <i style="float:right;"> <span
+					class="glyphicon glyphicon-remove pointer-span"
+					ng-click="closeOperationDetails();"></span>
+				</i>
+			</div>
+			<div class="panel-body">
+				<div class="col-sm-12" style="padding-left: 0px; padding-right:0px;"
+					id="panel_destinatario">
+					<div class="panel">
+						<div class="panel-body">
+							<form name="datasUser">
+								<div class="form-group collapse">
+									<label for="direccion" class="col-sm-4 control-label">opClass</label>
+									<div class="col-sm-8">
+										<div class="input-group">
+											<input type="text" class="form-control" id="opClass"
+												name="opClass" ng-model="user.opClass" /> <span
+												class="input-group-addon"></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group col-sm-7"
+									ng-class="{ 'has-error' : datasUser.operationType.$invalid , 'has-success' : !datasUser.operationType.$invalid}">
+									<label for="direccion" class="control-label">Tipo</label> <select
+										ng-model="user.operationType" class="form-control"
+										name="operationType" id="operationType" required>
+										<option value="EMAIL" selected="true">EMAIL</option>
+										<option value="SMS">SMS</option>
+										<option value="WEB">WEB</option>
+									</select>
+								</div>
+
+
+								<div class="form-group collapse">
+									<label for="direccion" class="col-sm-4 control-label">Domain</label>
+									<div class="col-sm-8">
+										<div class="input-group">
+											<input type="text" class="form-control" id="domainId"
+												name="domainId" value=1 ng-model="user.domainId" /> <span
+												class="input-group-addon"></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group col-sm-6"
+									ng-repeat="listfield in listfields" ng-show="!multiple"
+									ng-class="{ 'has-error' : (datasUser.{{listfield.identifier}}.$invalid && listfield.isMandatory === 'Y') , 'has-success' : (!datasUser.{{listfield.identifier}}.$invalid && listfield.isMandatory === 'Y') }">
+									<label for="{{listfield.identifier}}" class="control-label">{{listfield.label}}</label>
+									<div ng-if="listfield.identifier !== 'idiomadef' ">
+										<input type="{{listfield.inputType}}" min="0"
+											class="form-control" id="{{listfield.identifier}}"
+											dynamic-directive="listfield.directive"
+											name="{{listfield.identifier}}"
+											ng-model="user[listfield.identifier]"
+											placeholder="{{listfield.label}}"
+											ng-required="listfield.isMandatory === 'Y'" />
+									</div>
+									<div ng-if="listfield.identifier === 'idiomadef' ">
+										<select class="form-control"
+											ng-model="user[listfield.identifier]"
+											name="{{listfield.identifier}}" id="{{listfield.identifier}}"
+											required>
+											<option ng-repeat="option in languages"
+												value="{{option.languagecode}}">{{option.languagename}}</option>
+										</select>
+									</div>
+								</div>
+
+
+								<div class="form-group col-sm-6" ng-repeat="data in signersm"
+									ng-show="multiple">
+									Firmante {{$index + 1}}<br />
+									<div ng-repeat="listfield in data.fields">
+										<label for="{{listfield.identifier}}" class="control-label">{{listfield.label}}</label>
+										<input type="{{listfield.type}}" class="form-control"
+											id="{{listfield.identifier}}" name="{{listfield.identifier}}"
+											ng-model="users[$parent.$index][listfield.identifier]"
+											placeholder="{{listfield.label}}{{$parent.$index}}"
+											data-toggle="tooltip" data-placement="top" title="" />
+									</div>
+								</div>
+
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-sm-12 container-panel" ng-if="documents.length > 0">
+				<div class="panel panel-documents-default background-well">
+					<div class="panel-heading panel-heading-default">
+						<i>Documentación de la operación:</i>
+					</div>
+					<div class="panel-body">
+					<div class="col-xs-3" ng-class="{'margin-top-25' : $index > 3}" ng-repeat="document in documents">
+						<form name="upload{{$index}}" class="form">
+							<p
+								ng-class="{'success' : uploadSuccess{{$index}}, 'error' : uploadError{{$index}}}"
+								class="col-sm-12 stylep no-padding-lateral text-ellipsis" title="{{document.name}}">{{document.name}}</p>
+
+							<p
+								ng-class="{'success' : uploadSuccess{{$index}}, 'error' : uploadError{{$index}}}"
+								class="col-sm-12 stylep font-italic text-ellipsis no-padding-lateral" title="{{document.description}}">{{document.description}}</p>
+
+							<div class="col-sm-12 no-padding-lateral"
+								style="padding-bottom: 15px;"
+								ng-class="{'notVisible' : document.uploadMandatory}">
+								<label class="pointer-span" for="checkbox{{$index}}"> <input
+									id="checkbox{{$index}}" type="checkbox"
+									ng-model="toUpload[$index]"
+									ng-change="modifyDocsArray(toUpload[$index], $index);">
+									Ignorar documento
+								</label>
+							</div>
+
+							<div class="col-sm-12" style="margin-bottom: 15px;"
+								ng-if="showPreviewDocument[$index]">
+								<div>
+									<div id="preview{{$index}}"></div>
+									<div id="name{{$index}}" class="text-ellipsis" title=""></div>
+								</div>
+							</div>
+
+							<div class="col-sm-12"
+								style="margin-bottom: 15px;"
+								ng-if="!showPreviewDocument[$index]">
+								<div class="previewDocument borderDashed">
+									<img ng-if="!toUpload[$index]" class="imgPDF"
+										src="webapp/img/pdf.svg" alt="" /> <img
+										ng-if="toUpload[$index]" class="imgPDF"
+										src="webapp/img/nonePDF.svg" alt="" />
+								</div>
+								<div id="nameDoc{{$index}}" class="col-xs-12 text-ellipsis notVisible">Document Name</div>
+							</div>
+
+							<span class="btn btn-file col-sm-12 spanButton"
+								ng-disabled="toUpload[$index]"> <input class="fileinput"
+								type="file" name="file{{$index}}"
+								onchange="angular.element(this).scope().uploadedFile(this)"
+								accept="application/pdf" ng-disabled="toUpload[$index]" /> Elige
+								el fichero
+							</span>
+
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Panel files -->
+		<div class="col-sm-12 container-panel" ng-if="documentsStatic.length > 0">
+				<div class="panel panel-documents-default background-well">
+					<div class="panel-heading panel-heading-default">
+						<i>Documentación estáticos de la operación:</i>
+					</div>
+					<div class="panel-body">
+					<div class="col-xs-3" ng-class="{'margin-top-25' : $index > 3}" ng-repeat="document in documentsStatic">
+						<form name="upload{{$index}}" class="form">
+							<p
+								ng-class="{'success' : uploadSuccess{{$index}}, 'error' : uploadError{{$index}}}"
+								class="col-sm-12 stylep no-padding-lateral text-ellipsis" title="{{document.name}}">{{document.name}}</p>
+	
+							<p
+								ng-class="{'success' : uploadSuccess{{$index}}, 'error' : uploadError{{$index}}}"
+								class="col-sm-12 stylep font-italic text-ellipsis no-padding-lateral">{{document.description}}</p>
+	
+							<div class="col-sm-12 no-padding-lateral"
+								style="padding-bottom: 15px;"
+								ng-class="{'notVisible' : document.uploadMandatory}">
+								<label class="pointer-span" for="checkboxStatic{{$index}}"> <input
+									id="checkboxStatic{{$index}}" type="checkbox"
+									ng-model="toUploadStatic[$index]"
+									ng-change="modifyStaticsDocsArray(toUploadStatic[$index], $index);">
+									Ignorar documento
+								</label>
+							</div>
+
+							<button class="btn btn-default btn-primary col-sm-12"
+								style="margin-left: 0px; background-color: #303030; border-color: #303030;"
+								ng-click="openPdf(document)">
+								Ver el fichero</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- END Panel files -->
+
+
+
+		<div ng-show="!multiple">
+			<form name="upload" class="form" data-ng-submit="createOp()">
+
+				<button class="btn btn-default margin-top-25" style="margin-bottom: 10px;"
+					ng-disabled="datasUser.$invalid || checkDocMandatory()"
+					type="submit">Crear operación</button>
+			</form>
+		</div>
+
+		<div ng-show="multiple">
+			<form name="uploadM" class="form" data-ng-submit="createOpMultiple()">
+
+				<button class="btn btn-default " style="margin-bottom: 10px;"
+					type="submit">Crear operación múltiple</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script type="text/ng-template" id="userDataModal.html">
+    <form name="dataUserForm" novalidate autocomplete="on">
+		<div class="modal-body">
+			<div ng-if="showTabs">
+				<ul class="nav nav-pills nav-justified">
+                    <li class="active"><a data-toggle="pill" href="#tab_datos" target="_self">Datos del Firmante</a></li>
+                    <li><a data-toggle="pill" href="#tab_documents" target="_self">Documentación</a></li>
+                </ul>
+			</div>
+
+			<div class="tab-content">
+				<div class="tab-pane fade in active" id="tab_datos" role="tabpanel">
+					<div class="row">
+						<div class="form-group col-xs-12">
+							<label class="control-label cursorPointer">
+								<input type="checkbox" name="existingSigner" ng-model="user.existingSigner" ng-click="removeSignerData();">
+								Usar un firmante existente:  </label>
+						</div>
+						<div ng-show="user.existingSigner" class="form-group col-xs-6">
+							<select id="signer" ng-model="user.signer" class="form-control" name="signer" ng-change="changeSignerData(user.signer)">
+								<option class="form-control" value="" ng-selected="noneSigner"> Seleccione un firmante </option> 
+								<option class="form-control" ng-repeat="signer in lstFirmantes" value="{{signer.id}}"> {{signer.username}} - {{signer.useremail}} </option>
+							</select>
+						</div>
+					</div>
+    				<div class="row">
+    					<div class="form-group col-sm-6" ng-class="{ 'has-error' : dataUserForm.operationType.$invalid , 'has-success' : !dataUserForm.operationType.$invalid}">
+							<label for="direccion" class="control-label">Tipo de notificación:</label>
+							<select	ng-model="user.data['operationType']" class="form-control" name="operationType" id="operationType" required ng-disabled="isOnlyWeb();" ng-change="setOperationType(user.data['operationType'])">
+								<option value="EMAIL" selected="true" >EMAIL</option>
+								<option value="SMS" >SMS</option>
+								<option value="WEB" ng-if="isOnlyWeb();">WEB</option>
+							</select>
+						</div>
+						<div class="form-group col-sm-6" ng-class="{ 'has-error' : dataUserForm.{{field.identifier}}.$invalid , 'has-success' : !dataUserForm.{{field.identifier}}.$invalid }" ng-repeat="field in userFields">
+							<label for="{{field.identifier}}" class="control-label">{{field.label}}:</label>
+							<input ng-if="field.defaultValue == null || !field.isArray" type="{{field.inputType}}" class="form-control" id="{{field.identifier}}" name="{{field.identifier}}" ng-model="user.data[field.identifier]" ng-value="user.data[field.identifier]" dynamic-directive="field.directive" ng-required="isRequired(field);">
+							<select ng-if="field.defaultValue != null && field.isArray" class="form-control" id="{{field.identifier}}" name="{{field.identifier}}" ng-model="user.data[field.identifier]" ng-required="isRequired(field);" ng-options="item as item for item in field.defaultValue track by item">
+								<option value=""> Seleccione un valor </option>
+							</select>
+						</div>
+						<div class="col-sm-12">
+							<hr>
+						</div>
+						<div class="col-sm-12">
+							<p>Elegir la/las tipología/tipologías de firma para este usuario</p>
+						</div>
+						<div class="form-group col-sm-6" ng-repeat="signType in signTypesForLevel">
+							<input type="checkbox" name="{{signType.label}}" id="{{signType.label}}" value="{{signType.label}}" ng-model="checkedSign[signType.label]" ng-click="setRightValue(signType.label, checkedSign[signType.label])" />
+							<label for="{{signType.label}}" class="control-label cursorPointer">{{signType.label}}</label>
+						</div>
+						<div ng-if="isBiometric">
+							<div class="col-sm-12">
+								<hr>
+							</div>
+				
+							<div class="col-sm-12">
+								<p>Elegir la/las caja/cajas de firma para este usuario</p>
+							</div>
+							<div class="form-group col-sm-6" ng-repeat="boxLabel in signatureBoxLabels">
+								<input type="checkbox" name="{{boxLabel}}" id="{{boxLabel}}" value="{{boxLabel}}" ng-model="checkedLabel[boxLabel]" ng-click="setRightValueBoxlabel(boxLabel, checkedLabel[boxLabel])" />
+								<label for="{{boxLabel}}" class="control-label cursorPointer">{{boxLabel}}</label>
+							</div>	
+						</div>
+					</div>
+				</div>
+				
+				<div ng-if="showTabs" class="tab-pane fade" id="tab_documents" role="tabpanel">
+					<div class="row">
+						<div class="col-xs-12" ng-if="documentsSigner.length > 0">
+							<div class="panel-heading panel-heading-default">
+								<i>Documentación de la operación:</i>
+							</div>
+							<div class="col-xs-12 well well-lg" style="padding: 15px;">
+								<div class="col-xs-3" ng-class="{'margin-top-25' : $index > 3}" ng-repeat="document in documentsSigner">
+									<form name="upload{{$index}}" class="form">
+										<p ng-class="{'success' : uploadSuccess{{$index}}, 'error' : uploadError{{$index}}}"
+											class="col-sm-12 stylep no-padding-lateral text-ellipsis" title="{{document.name}}">{{document.name}}</p>
+
+										<p ng-class="{'success' : uploadSuccess{{$index}}, 'error' : uploadError{{$index}}}"
+											class="col-sm-12 stylep font-italic text-ellipsis no-padding-lateral" title="{{document.description}}">{{document.description}}</p>
+
+										<div class="col-sm-12 no-padding-lateral" style="padding-bottom: 15px;"
+											ng-class="{'notVisible' : document.uploadMandatory}">
+											<label class="pointer-span" for="checkboxSigner{{$index}}">
+												<input id="checkboxSigner{{$index}}" type="checkbox"
+													ng-model="toUploadSigner[$index]"
+													ng-change="modifyDocsSignerArray(toUploadSigner[$index], $index);">
+													Ignorar documento</label>
+										</div>
+
+										<div class="col-sm-12" style="margin-bottom: 15px;"
+											ng-if="showPreviewDocument[$index]">
+											<div>
+												<div id="preview{{$index}}"></div>
+												<div id="name{{$index}}" class="text-ellipsis" title=""></div>
+											</div>
+										</div>
+
+										<div data-infor="{{toUploadSigner}}" class="col-sm-12" style="margin-bottom: 15px;" ng-if="!showPreviewDocument[$index]">
+											<div class="previewDocument borderDashed">
+												<img ng-if="!toUploadSigner[$index]" class="imgPDF" src="webapp/img/pdf.svg" alt=""/>
+												<img ng-if="toUploadSigner[$index]" class="imgPDF" src="webapp/img/nonePDF.svg" alt=""/>
+											</div>
+											<div id="nameDocSigner{{$index}}" title="" class="col-xs-12 text-ellipsis notVisible"> Document Name </div>
+										</div>
+									
+										<span class="btn btn-file col-sm-12 spanButton" ng-disabled="toUploadSigner[$index]">
+											<input class="fileinput" type="file" name="file{{$index}}"
+											onchange="angular.element(this).scope().uploadedSignerFile(this)"
+											accept="application/pdf" ng-disabled="toUploadSigner[$index]"/> Elige el fichero
+										</span>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-xs-12" ng-if="documentsStaticSigner.length > 0">
+							<div class="panel-heading panel-heading-default">
+								<i>Documentación estática de la operación:</i>
+							</div>
+							<div class="col-xs-12 well well-lg" style="padding: 15px;">
+								<div class="col-xs-3" ng-class="{'margin-top-25' : $index > 3}" ng-repeat="document in documentsStaticSigner">
+									<form name="upload{{$index}}" class="form">
+										<p ng-class="{'success' : uploadSuccess{{$index}}, 'error' : uploadError{{$index}}}"
+											class="col-sm-12 stylep no-padding-lateral text-ellipsis" title="{{document.name}}">{{document.name}}</p>
+
+										<p ng-class="{'success' : uploadSuccess{{$index}}, 'error' : uploadError{{$index}}}"
+											class="col-sm-12 stylep font-italic text-ellipsis no-padding-lateral" title="{{document.description}}">{{document.description}}</p>
+
+										<div class="col-sm-12 no-padding-lateral" style="padding-bottom: 15px;"
+											ng-class="{'notVisible' : document.uploadMandatory}">
+											<label class="pointer-span" for="checkboxSignerStatic{{$index}}">
+												<input id="checkboxSignerStatic{{$index}}" type="checkbox"
+													ng-model="toUploadSignerStatic[$index]"
+													ng-change="modifyStaticsDocsSignerArray(toUploadSignerStatic[$index], $index);">
+													Ignorar documento</label>
+										</div>
+	
+										<button class="btn btn-default btn-primary col-sm-12"
+											style="margin-left: 0px; background-color: #303030; border-color: #303030;"
+											ng-click="openPdf(document)">
+											Ver el fichero</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+    	</div>
+    	<div class="modal-footer">
+			<input class="btn btn-primary" ng-disabled="dataUserForm.$invalid || someFilesMissing() || isSignEmpty()" type="submit" ng-click="ok(user)" value="OK"/>
+			<button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+		</div>
+	</form>	
+    
+</script>
+
+<script type="text/ng-template" id="modalStaticDocument.html">
+
+    <div class="modal-body">
+
+			<iframe id="fileViewer" style="width: 100%;" ng-src="{{documentURL}}"></iframe>
+			<div class="modal-footer modal-footer-custom">
+				<button class="btn btn-warning btn-custom" type="button" ng-click="closeDocModal()">Cancelar</button>
+			</div>
+    </div>
+</script>

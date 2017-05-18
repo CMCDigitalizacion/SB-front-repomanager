@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+</head>
+<body ng-app="chartsApp">
+  <div class="main col-sm-12" ng-controller="MainController" >
+
+    <div class="container col-sm-6" ng-repeat="domain in domains">
+        <div class="row">
+		<h3>Empresa: {{domain.domainName}}</h3>
+		<h3>{{domain.id}}</h3>
+
+		<div ng-controller="ResumenOpChartController" ng-init="init(domain.id)" >
+			<highchart config="chartConfig"></highchart>
+		</div>
+        </div>
+        </ul>
+    </div>
+    <div class="col-sm-12">
+
+    </div>
+
+
+</div>
+
+<!-- Modules -->
+<script src="/O2Dashboard/ang/js/app2.js"></script>
+
+<!-- Controllers -->
+    <script src="webapp/ang/js/controllers/MainController.js"></script>
+    <script src="webapp/ang/js/controllers/ResumenOpChartController.js"></script>
+<script src="webapp/ang/js/services/domains.js"></script>
+<script src="webapp/ang/js/controllers/HighChartController2.js"></script>
+
+<!-- Services -->
+
+
+<!-- Directives -->
+
+
+
+</body>
+</html>

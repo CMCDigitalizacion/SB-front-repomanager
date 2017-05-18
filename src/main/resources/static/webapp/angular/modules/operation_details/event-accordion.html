@@ -1,0 +1,23 @@
+<!-- Event Accordion -->
+<div class="panel">
+    <div class="panel-custom-events">
+      <div class="panel-heading panel-heading-custom-events pointer-span" role="tab" id="headingOne{{index}}" data-toggle="collapse" data-parent="#accordion" href="#collapseOne{{index}}" target="_self" aria-expanded="false" aria-controls="collapseOne{{index}}">
+        <div class="panel-title">
+          <a class="colapse" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne{{index}}" target="_self" aria-expanded="false" aria-controls="collapseOne{{index}}">           {{info.eventType}}
+          </a> 
+        </div>
+      </div>
+      <div id="collapseOne{{index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne{{index}}">
+          <div class="panel-body">
+            <p>Actor: {{info.event.cliente_nombre}}</p>
+            <p>Fecha: {{info.event.fecha_formato}}</p>
+            <p>TSA Signer: {{info.event.tsaSignerdata}}</p>
+            <p>TSA Número Serie: {{info.event.tsaSerialnumber}}</p>
+            <p>TSA Hora: {{info.event.tsaGentime}}</p>
+            <p>TSA Política: {{info.event.tsaPolicy}}</p>
+            <p>ID Evento: {{info.id}}</p>
+            <p>Firma: <textarea style="margin-top: 10px; width: 100%; height: 150px;">{{info.xml}}</textarea></p>
+          </div>
+      </div>
+    </div>
+</div>

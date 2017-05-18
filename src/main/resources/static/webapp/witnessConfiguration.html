@@ -1,0 +1,57 @@
+<div id="container-fluid" class="fondo" ng-init="loadWitnessConfiguration()">
+    <div class="col-sm-12 list-operation" ng-if="isLoaded">
+
+		<div class="panel panel-primary panel-primary-custom">
+		    <div class="panel-heading">
+		    	Gestion de <i>Lotes Notarios</i>
+		   	</div>
+		    <div class="text-titular">
+		    	Pantalla de gestion de los notarios asociados a la empresa {{witness.companyName}}.
+		    </div>
+		    <div class="panel-body">
+		    	<ul class="nav nav-pills nav-justified">
+                    <li class="active"><a data-toggle="pill" target="_self" href="#tab_notaries">Notarios</a></li>
+                    <li><a data-toggle="pill" href="#tab_cron" target="_self">Cron</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade" id="tab_cron" role="tabpanel"> <!-- TAB CRON -->
+                    	<div class="col-sm-12 cron-div">
+                    		<cron-selection output="cronString" config="cronConfiguration" init="serverData"></cron-selection>
+                    	</div>
+                    	<div class="col-sm-12">
+                    		<button class="btn btn-default btn-custom" ng-click="saveCron(cronString)">Guardar</button>
+                    	</div>
+                    </div><!-- END TAB CRON -->
+                    <div class="tab-pane fade in active" id="tab_notaries" role="tabpanel"> <!-- TAB NOTARIES -->
+                    	<div class="col-sm-12">
+                    		<table datatable="ng" dt-options="dtOptionsNotaries" dt-column-defs="dtColumnsNotaries" dt-instance="dtInstanceNotaries" class="row-border hover table" width="100%">
+				                <thead>
+				                    <tr>
+				                        <th>Nombre</th>
+				                        <th>Apellidos</th>
+				                        <th>Identificador</th>
+				                        <th></th>
+				                    </tr>
+				                </thead>
+				                <tbody>
+				                    <tr ng-repeat="notary in witness.notariesList">
+				                        <td>{{ notary.nombre }}</td>
+				                        <td>{{ notary.apellidos }}</td>
+				                        <td>{{ notary.identificador }}</td>
+				                        <td>
+	                                		<input type="checkbox" ng-model="notary.checked" ng-click="associateNotaryToDomain(notary)">
+	                                	</td>
+				                    </tr>
+				                </tbody>
+	            			</table>
+                    	</div>
+                    	
+	            		<div class="col-sm-12">
+	            			<button class="btn btn-default btn-custom" ng-click="saveNotaryToDomain()" ng-disabled="!modified">Guardar</button>
+	            		</div>
+                    </div><!-- END TAB NOTARIES -->
+
+		    </div>
+		</div>
+	</div>
+</div>

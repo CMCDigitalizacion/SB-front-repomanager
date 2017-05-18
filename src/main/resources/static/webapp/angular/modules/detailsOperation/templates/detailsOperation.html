@@ -1,0 +1,156 @@
+<head>
+<meta charset="UTF-8">
+
+
+</head>
+<style>
+.acta-modal-window .modal-dialog {
+	width: 95%;
+	height: 90%;
+}
+
+.tabla {
+	width: 50%;
+	height: 50%;
+	text-align: center;
+}
+
+.marginButton{
+margin-left: 1em; 
+margin-right: 1em
+}
+</style>
+<div id="container-fluid" class="fondo" ng-controller="ListCategoryController"  ng-init="initDetailsCategory()">
+	<div class="row list-operation">
+		<div class="panel panel-primary panel-primary-custom">
+			<div class="panel-heading">
+				<i>CERTIMAGE</i>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+
+
+					<div class="col-xs-6 form-group">
+						<label for="categorias" class="control-label">Categoria</label>
+						<input type="text" class="form-control"
+							ng-repeat="documentos in operation.categorias" id="categorias"
+							name="categorias" ng-hide="false" ng-model="documentos" disabled>
+					</div>
+					
+					<div class="col-xs-6 form-group">
+						<label for="mySelect" class="control-label">Elegir categoria</label>
+						<select name="mySelect" id="mySelect" ng-options="item for item in categoriesFormatted track by item" ng-model="operation.categoria" class="form-control"></select>
+					</div>
+
+				</div>	
+					
+					
+
+					<div class="col-xs-6 form-group">
+						<label for="numerodefactura" class="control-label">Número
+							de factura</label> <input type="text" class="form-control"
+							id="numerodefactura" name="numerodefactura"
+							ng-model="operation.id" disabled>
+					</div>
+
+
+					<div class="col-xs-6 form-group">
+						<label for="from" class="control-label">Fecha de captura</label> <input
+							type="text" class="form-control" id="madeDateTo"
+							name="fechadecaptura" ng-model="operation.fechadecaptura"
+							disabled>
+					</div>
+
+					<div class="col-xs-6 form-group">
+						<label for="nif" class="control-label">Nombre y apellidos</label>
+						<input type="text" class="form-control" id="nombreyapellidos"
+							name="nombreyapellidos" ng-model="operation.nombreyapellidos"
+							disabled>
+					</div>
+
+					<div class="col-xs-6 form-group">
+						<label for="from" class="control-label">Fecha de
+							expedición</label> <input type="text" class="form-control"
+							id="expeditionDateTo" name="fechadeexpedicion"
+							ng-model="operation.fechadeexpedicion" disabled>
+					</div>
+
+					<div class="col-xs-6 form-group">
+						<label for="nif" class="control-label">CIF empresa</label> <input
+							type="text" class="form-control" id="cif" name="CIF" name="cif"
+							ng-model="operation.cif" disabled>
+					</div>
+
+					<div class="col-xs-6 form-group">
+						<label for="from" class="control-label">Fecha de
+							operaciones</label> <input type="text" class="form-control"
+							id="operationDateTo" name="fechadeoperaciones"
+							ng-model="operation.fechadeoperaciones" disabled>
+					</div>
+
+					<div class="col-xs-6 form-group">
+						<label for="nif" class="control-label">Razón social</label> <input
+							type="text" class="form-control" id="socialReason"
+							name="socialReason" ng-model="operation.razonsocial" disabled>
+					</div>
+
+					<div class="col-xs-6 form-group">
+						<label for="from" class="control-label">Importe total</label> <input
+							type="text" class="form-control" id="totalAmountTo"
+							name="totalAmountTo" ng-model="operation.importetotal" disabled>
+					</div>
+
+					<div class="form-group col-sm-2"></div>
+
+					<div class="form-group col-sm-2"></div>
+
+				
+					<div id="button" class="btnRight">
+						<div class="form-group col-sm-11">
+						
+						</div>
+
+						<div class="form-group col-sm-1">
+							<label for="refresh" class="control-label"
+								style="visibility:hidden;">:</label>
+							<button class="btn btn-default form-control"
+								style="height:34px; margin-top:0px;"
+								ng-click="saveNewInformation(operation.categoria)">
+								<span class="glyphicon glyphicon-floppy-disk"></span>
+							</button>
+						</div>
+
+					</div>
+
+				</div>
+				<div class="marginButton" >
+						<div class="col-md-12">
+							<table width="100%" datatable="ng" dt-options="dtOptionsOperations"	dt-column-defs="dtColumnsOperations" dt-instance="dtInstanceOperationsList"	class="row-border hover table">
+								<thead>
+									<tr>
+										<th>Base imponible</th>
+										<th>Tipo impositivo</th>
+										<th>Cuota tributaria</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="impuestos in operation.extra.impuestos">
+										<td>{{ impuestos.baseimponible }}</td>
+										<td>{{ impuestos.tipoimpositivo }}</td>
+										<td>{{ impuestos.cuotatributaria }}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				<div class="row">
+						<div class="form-group col-sm-1" style="float: right; margin-top: 1em; margin-right: 2em;">
+							<button class="btn btn-default form-control" style="height:34px; margin-top:0px;">
+								<span ng-click="goToList(operations)" class="glyphicon glyphicon-arrow-left"></span>
+							</button>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>

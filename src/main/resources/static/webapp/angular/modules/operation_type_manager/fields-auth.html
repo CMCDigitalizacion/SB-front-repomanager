@@ -1,0 +1,13 @@
+<div ng-repeat="field in auth.fields">
+
+	<div class="form-group">
+        <label for="{{field.label}}" class="col-sm-3 control-label">{{field.label}}</label>
+        <div class="col-sm-4">
+        	<select ng-model="field.value" class="form-control" name="{{field.label}}">
+        		<option selected value="No">No</option>
+        		<option value="Usuario">Usuario</option>
+        		<option value="Bla">Bla</option> 
+        	</select>
+        </div>
+    </div>
+</div>

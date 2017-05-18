@@ -1,0 +1,50 @@
+.iframePdf {
+	width: 100%;
+}
+#container-fluid-sign-module { height:100%; padding-top:60px; padding-left:50px; padding-right:50px;}
+
+.sign-panel {
+	position: absolute;
+	margin-left: -50px;
+	width: 100%;
+}
+
+.icon-close {
+	float:right;
+}
+
+.signers-div {
+	height: 100%;
+	overflow-y: auto;
+}
+
+.canvas-total-heigth {
+	height: 4em;
+	line-height: 4em;
+}
+
+.padding-top-signer-div {
+	padding-top: 10px;
+}
+
+.sign-icon {
+	float: right;
+	padding-top: 1em;
+}
+
+.ok-img {
+	width: 70px;
+	height: 100%;
+}
+
+.img-div {
+	text-align: center;
+}
+
+.enter-ko.ng-enter {
+  animation: fadeInLeft 2.5s;
+}
+
+.exit-ko {
+	animation: fadeOutLeft 2.5s;
+}

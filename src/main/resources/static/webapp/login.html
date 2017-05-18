@@ -1,0 +1,23 @@
+
+<link rel="stylesheet" type="text/css" href="webapp/css/login.css">
+<div ng-controller="LoginController">
+	
+	<div class="col-sm-12">
+		<div class="logoLogin"></div>
+		<div class="login-block" ng-init="loadVersionnumber()">
+		    <form novalidate name="loginForm" autocomplete="off">
+		      <h1 id="login-title">Login</h1>
+		      
+		      <p id="pass-incorrect" ng-if="errorLogin" style="font-weight:200; text-align: center; color: #E83669; ">Usuario o contraseña incorrectos.</p>
+		      <p id="user-desactivated" ng-if="userLocked" style="font-weight:200; text-align: center; color: #E83669; ">Este usuario está inactivo.</p>
+		      <p id="user-withoutpermission" ng-if="userWithoutPermission" style="font-weight:200; text-align: center; color: #E83669; ">Este usuario no tiene permiso para acceder.</p>
+		      <input type="text" value="" name="username" placeholder="username or Email" id="username_login" ng-model="user.username" autocomplete="off" required tooltip-placement="top" uib-tooltip="El usuario podrá indicarse mediante 'dominio/usuario', solamente 'usuario' o 'email'"/>
+		      <input type="password" value="" name="pwd" placeholder="Password" id="password" ng-model="user.userpassword" autocomplete="off" required/>
+		      <button id="login-button" type="submit" ng-click="login(user)">Submit</button>
+		    </form>
+		</div>
+	</div>
+	<div class="app-version-container">
+		<p class="app-version" id="version-number" ng-if="showVersionNumber">{{versionNumber}}</p>	
+	</div>
+</div>

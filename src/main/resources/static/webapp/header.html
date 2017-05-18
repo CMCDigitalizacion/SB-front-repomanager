@@ -1,0 +1,224 @@
+<head>
+  <meta charset="UTF-8" />
+  <link rel="shortcut icon" type="image/png" href="webapp/img/favicon.ico"/>
+</head>
+
+<div ng-controller="MenuController" ng-init="initAll();">
+  <nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left menu" id="cbp-spmenu-s1">
+    <ul>
+
+      <li ng-show="isAdmin || isSuperAdmin || isNormal || isSupervisor"><a href="javascript:void();"><span class="iconos-menu"><img src="webapp/img/pen.png" width="24" height="24" alt=""/></span>Solicitar firma</a>
+        <ul>
+          <li><a ui-sref="newop_operationTypeList({ id : {{idDomain}} })" ui-sref-opts="{reload: true}"><span class="subnivel1">Electrónica</span></a></li>
+          <li><a ui-sref="new_batch_operation({ id : {{idDomain}} })" ui-sref-opts="{reload: true}"><span class="subnivel1">Lote</span></a></li>
+        </ul>
+      </li>
+
+      <li ng-show="(isVideoUser || isAdmin || isSuperAdmin || isNormal || isSupervisor) && availableFunct2"><a href="javascript:void();"><span class="iconos-menu"><img src="webapp/img/video.png" width="24" height="24" alt=""/></span>Video</a>
+        <ul>
+          <li><a ui-sref="videoTable()" ui-sref-opts="{reload: true}"><span class="subnivel1">Video Table</span></a>
+          </li>
+          <li><a ui-sref="videoConferenceTable()" ui-sref-opts="{reload: true}"><span class="subnivel1">Vídeo Conferencias</span></a>
+          </li>
+        </ul>
+      </li>
+
+      <li ng-show="isAdmin || isSuperAdmin || isNormal || isSupervisor || isVideoUser || isVisor"><a href="javascript:void();"><span class="iconos-menu"><img src="webapp/img/file-find.png" width="24" height="24" alt=""/></span>Consultar</a>
+        <ul>
+          <li><a ui-sref="operationsListOf_domain_with_id({ id : {{idDomain}}, fromNotification : false })" ui-sref-opts="{reload: true}"><span class="subnivel1">Operaciones de firma</span></a></li>
+          <li><a ui-sref="operationsListGroupedOf_domain_with_id({ id : {{idDomain}} })" ui-sref-opts="{reload: true}"><span class="subnivel1">Operaciones de firma agrupadas</span></a></li>
+          <li ng-show="availableFunct1"><a ui-sref="list_biometric_operation({ id : {{idConfiguration}} })" ui-sref-opts="{reload: true}"><span class="subnivel1">Operaciones</span><span class="logos-menu"><img src="webapp/img/logo_O2bSign.png" width="70" height="19" alt=""/></span></a></li>
+        </ul>
+      </li>
+
+      <li ng-show="(isAdmin || isSuperAdmin || isNormal || isSupervisor) && availableFunct3"><a href="javascript:void();"><span class="iconos-menu"><img src="webapp/img/fingerprint.png" width="24" height="24" alt=""/></span>Identidades</a>
+        <ul>
+          <li><a ><span class="subnivel1 pointer-span">Listado</span></a></li>
+          <li><a ><span class="subnivel1 pointer-span">Mantenimiento</span></a></li>
+          <li><a ><span class="subnivel1 pointer-span">Gestionar certificados</span></a></li>
+        </ul>
+      </li>
+
+      <li ng-show="isAdmin || isSuperAdmin"><a href="javascript:void();"><span class="iconos-menu"><img src="webapp/img/settings.png" width="24" height="24" alt=""/></span>Administración</a>
+        <ul>
+          <li ng-show="isAdmin || isSuperAdmin"><a  ui-sref="domain_with_id({ id : {{idDomain}} })" ui-sref-opts="{reload: true}"><span class="subnivel1">Configuración general</span></a></li>
+          <li ng-show="isSuperAdmin"><a  ui-sref="super_state" ui-sref-opts="{reload: true}"><span class="subnivel1">Gestión Empresas</span></a></li>
+          <li ng-show="(isAdmin || isSuperAdmin) && availableFunct1"><a  ui-sref="bsign_configuration({id : {{idConfiguration}} })" ui-sref-opts="{reload: true}"><span class="subnivel1">Configuración</span><span class="logos-menu"><img src="webapp/img/logo_O2bSign.png" width="70" height="19" alt=""/></span> </a></li>
+          <li ng-show="isAdmin || isSuperAdmin"><a  ui-sref="advanced_options({id : {{idDomain}} })" ui-sref-opts="{reload: true}"><span class="subnivel1">Avanzadas</span></a></li>
+          <li ng-show="isAdmin || isSuperAdmin"><a  ui-sref="ldapconfiguration({id : {{idDomain}} })" ui-sref-opts="{reload: true}"><span class="subnivel1">Configuraci&oacute;n LDAP</span></a></li>
+        </ul>
+      </li>
+
+      <li ng-show="isAdmin || isSuperAdmin || isNormal || isSupervisor"><a href="javascript:void();"><span class="iconos-menu"><img src="webapp/img/pie-chart.svg" width="24" height="24" alt=""/></span>Informes</a>
+        <ul>
+          <li><a ui-sref="dashboardop({ id : {{idDomain}} })" ui-sref-opts="{reload: true}"><span class="subnivel1">Operaciones</span></a></li>
+          <li><a ui-sref="dashboardnotif({ id : {{idDomain}} })" ui-sref-opts="{reload: true}"><span class="subnivel1">Notificaciones</span></a></li>
+          <li><a ui-sref="dashboardfunnel({ id : {{idDomain}} })" ui-sref-opts="{reload: true}"><span class="subnivel1">Resumen</span></a></li>
+         </ul>
+      </li>     
+      
+     <li ng-if="false"><a href="javascript:void();"><span class="iconos-menu"><img src="webapp/img/pie-chart.svg" width="24" height="24" alt=""/></span>Digitalización certificada</a>
+        <ul>
+          <li><a ui-sref="digicertList()" ui-sref-opts="{reload: true}"><span class="subnivel1">Listado</span></a></li>
+          <li><a ui-sref="categoryDetails()" ui-sref-opts="{reload: true}"><span class="subnivel1">Categorías</span></a></li>
+         </ul>
+      </li>     
+    </ul>
+
+   <div ng-controller="basicDemoCtrl">
+	<span id="foo"></span>
+	
+	<br><br>
+	<div growl></div>
+	
+</div>
+   
+    <div class="certificados">
+      <span class="logos-iso"><img src="webapp/img/certificados.png" width="160" height="48" alt=""/></span>
+      <div id="powered">
+        <span class="cmc" style="display:block;">Powered by Grupo CMC</span>
+        <span class="cmc"><i>{{versionNumber}}</i></span> 
+      </div>
+    </div> 
+  </nav>
+
+  <header>
+  
+    <div id="cabecera" class="row">
+      <div id="icono-menu" class="col-xs-1">
+        <div id="showLeft">
+          <div class="menu-toggle">
+            <button class="c-hamburger c-hamburger--htx">
+              <span>toggle menu</span>
+            </button>
+          </div>
+        </div>
+        <div class="logo col-xs-3">
+          <img src="webapp/img/logo_O2.DigitalSite.png" width="150" height="27" alt=""/>
+        </div>
+      </div>
+  
+  
+      <div id="logos-cliente" class="logo-cliente">
+        <img ng-src="{{logoSrc}}" height="45" alt=""/>
+      </div>
+      <div id="user" class="row">
+        <div id="ruta" class="col-xs-6">
+          {{road}}
+        </div>
+        <div id="username" class="col-xs-6">
+        	<span>Dominio: {{domainName}}   /   Usuario: {{username}}</span>
+            <notification-icon ng-show="isAdmin || isSuperAdmin || isNormal || isSupervisor" animation="bounce" count="notificationsNumber"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-click="openNotifications($event)">
+              <span class="desconectar glyphicon glyphicon-bell"></span>
+            </notification-icon>
+            <ul class="dropdown-menu pull-right" id="dropdownEvents" prevent-parent-scroll>
+              <li class="dropdown-header" ng-repeat="notificationObject in notifications">{{notificationObject.header}}
+                <a ng-repeat="notificationEvent in notificationObject.notifications" class="pointer-span" ng-click="goToOperationDetail(notificationEvent)">
+                  <span class="user-icons">
+                    <img ng-if="notificationEvent.type === 1" class="icon-document-to-replace-notification" src="webapp/img/document-to-replace.svg">
+                  </span>
+                  <span class="user-icons-label">{{notificationEvent.message}}</span>
+                </a>
+              </li>
+            </ul>
+             
+            <span class="desconectar glyphicon glyphicon-user" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-click="toggleUser($event)"></span>
+            <ul class="dropdown-menu pull-right" id="dropdownUser">
+              <li>
+                <a class="pointer-span" ng-click="changePsw()">
+                  <span class="desconectar glyphicon glyphicon-lock user-icons"></span>
+                  <span class="user-icons-label">Cambiar  contraseña</span>
+                </a>
+              </li>
+              <li ng-if="isSuperAdmin">
+                <a class="pointer-span" ng-click="changeDomain()">
+                  <span class="desconectar glyphicon glyphicon-home user-icons"></span>
+                  <span class="user-icons-label">Cambiar  dominio</span>
+                </a>
+              </li>
+              <li>
+                <a class="pointer-span" ng-click="goToLogin()">
+                  <span class="desconectar glyphicon glyphicon-off user-icons"></span>
+                  <span class="user-icons-label">Logout</span>
+                </a>
+              </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>  
+</div>
+
+
+<script type="text/ng-template" id="changePass.html">
+    
+    <div class="modal-body modal-body-psw">
+       <form name="modifyPswForm" novalidate autocomplete="off">
+            <p class="error-pass" ng-if="modifyPswForm.pass.$error.checkLengthPass">La longitud de la contraseña tiene que ser mayor que 5, faltan {{numberOfPendingsChars}}.</p>
+            <p class="error-pass" ng-if="modifyPswForm.pass.$error.checkLowerCase">La contraseña tiene que contener al menos una letra minúscula.</p>
+            <p class="error-pass" ng-if="modifyPswForm.pass.$error.checkUpperCase">La contraseña tiene que contener al menos una letra mayúscula.</p>
+            <p class="error-pass" ng-if="modifyPswForm.pass.$error.checkDigit">La contraseña tiene que contener al menos un número.</p>
+            <div class="form-group">
+                <div class="row">
+
+                    <div class="col-md-12 col-lg-12 col-xs-12 col-sm-12 form-group" ng-class="{ 'has-error' : modifyPswForm.pass.$invalid , 'has-success' : !modifyPswForm.pass.$invalid }">
+                        <label for="pass" class="control-label">Nueva contraseña:</label>
+                        <input type="password" id="pass" name="pass" class="form-control" check-length-pass check-lower-case check-upper-case check-digit ng-model="user.userpassword" placeholder="Este campo es obligatorio" autocomplete="off" required>
+
+                    </div>
+                    <div class="col-md-12 col-lg-12 col-xs-12 col-sm-12 form-group" ng-class="{ 'has-error' : modifyPswForm.passRepeated.$invalid , 'has-success' : !modifyPswForm.passRepeated.$invalid }">
+                        <label for="passRepeated" class="control-label">Repetir contraseña:</label>
+                        <input type="password" id="passRepeated" name="passRepeated" same-pass="{{user.userpassword}}" class="form-control" ng-model="user.userpasswordrepeated" placeholder="Este campo es obligatorio" autocomplete="off" required>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer modal-footer-psw">
+                <button class="btn btn-warning btn-custom" type="button" ng-click="savePsw(user.userpassword)" ng-disabled="modifyPswForm.$invalid">Guardar</button>
+                <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+
+<script type="text/ng-template" id="logout.html">
+    <div class="modal-header">
+        <h3 class="modal-title modal-title-close-session">Cerrar sesi&oacute;n</h3>
+    </div>
+    <div class="modal-body modal-body-close-session">
+
+            <span>¿Est&aacute; seguro?</span>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-warning btn-custom" type="button" ng-click="closeSession()" ng-disabled="modifyPswForm.$invalid">Si</button>
+        <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">No</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="changeDomain.html">
+    <div class="modal-body">
+      <table width="100%" datatable="ng" dt-options="dtOptionsDomains" dt-column-defs="dtColumnDefsDomains" class="row-border hover table">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="domain in domainsList" style="cursor: pointer;" ng-class="{'selectedRow' : $index == selectedRow}" ng-click="setClickedRow($index)">
+            <td >{{ domain.domainName }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-warning btn-custom" type="button" ng-click="saveNewDomain()" ng-disabled="!isDomainSelected">Guardar</button>
+        <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancelar</button>
+    </div>
+</script>

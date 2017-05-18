@@ -1,0 +1,92 @@
+<style>
+.noBtn {
+	background-color: transparent;
+    border-color: transparent;
+    float: right;
+}
+
+.noBtn:focus {
+	outline: transparent;
+}
+</style>
+<div id="container-fluid-sign-module" class="fondo" ng-init="startSignProcess(); firstVisible = false; secondVisible = false;">
+    <div class="col-sm-12 first-view" ng-if="firstVisible">
+
+		<div class="panel panel-primary panel-primary-custom">
+		    <div class="panel-heading">
+		    	Pantalla de firma <i>bSign</i> desde Wacom.
+		   	</div>
+		    <div class="text-titular">
+		    	Proceso de firma {{idOperation}}.
+		    </div>
+		    <div class="panel-body">
+				<table datatable="ng" dt-options="dtOptionsDocs" dt-column-defs="dtColumnsDocs" dt-instance="dtInstanceDocs" class="row-border hover table" width="100%">
+	                <thead>
+	                    <tr>
+	                        <th>Nombre Documento</th>
+	                        <th>Número Firmantes</th>
+	                        <th>Estado</th>
+	                        <th>Acciones</th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                    <tr ng-repeat="doc in docsList">
+	                        <td>{{ doc.docname }}</td>
+	                        <td>{{ doc.docmetadata | docSignersNumber }}</td>
+	                        <td>{{ doc.docstate | docState }}</td>
+	                        <td>
+	                            <i>
+	                                <span ng-if="doc.docstate === 0" ng-click="signDetails(doc)" class="glyphicon glyphicon-pencil pointer-span"></span>
+	                                <span ng-if="doc.docstate !== 0" ng-click="signDoc(policy)" class="glyphicon glyphicon-eye-open pointer-span"></span>
+	                            </i>
+	                        </td>
+	                    </tr>
+	                </tbody>
+            	</table>
+		    </div>
+		</div>
+	</div>
+
+
+
+	<div class="col-sm-12 second-view sign-panel" ng-if="secondVisible">
+
+		<div class="panel panel-primary panel-primary-custom">
+		    <div class="panel-heading">
+		    	Gestión de <i>bSign</i> <i class="icon-close" ng-click="closeSignOperation();"><span class="glyphicon glyphicon-remove"></span></i>
+		   	</div>
+		    <div class="panel-body">
+		    	<div class="col-sm-6">
+			    	<div class="signers-div">
+			    		<h4>Listado firmantes</h4>
+			    		<div class="col-sm-12 padding-top-signer-div" ng-repeat="signer in signersList">
+			    			<div class="col-sm-3 canvas-total-heigth img-div">
+			    				<img ng-if="signer.signed" class="ok-img" src="../img/ok.svg" alt="Firmado!">
+			    				<img ng-if="!signer.signed" class="ok-img enter-ko" src="../img/ko.svg" alt="Aun no firmado!">
+			    			</div>
+			    			<div class="col-sm-9 canvas-total-heigth">
+			    				<div class="col-sm-8">
+			    					<p>{{signer.nombre}}</p>
+			    				</div>
+			    				<div class="col-sm-4">
+			    					<button class="noBtn" type="button" ng-disabled="disabledBtnFirmar" ng-click="signPdf(signer, $index)"><span title="Firmar" ng-if="!signer.signed" class="glyphicon glyphicon-pencil pointer-span sign-icon"></span></button>
+			    				</div>
+			    			</div>
+			    			<div class="col-sm-12">
+			    				<hr>
+			    			</div>
+			    		</div>
+			    	</div>
+		    		<div class="col-sm-12">
+		    			<button class="btn btn-primary" ng-click="terminateSignProcess();" ng-disabled="disableFinalize()">Finalizar</button>
+		    		</div>
+		    	</div>
+		    	<div class="col-sm-6">
+		    		<iframe class="iframePdf" src=""></iframe>	
+		    	</div>
+		    </div>
+		</div>
+	</div>
+</div>
+
+

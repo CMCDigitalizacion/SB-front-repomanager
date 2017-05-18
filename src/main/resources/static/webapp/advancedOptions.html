@@ -1,0 +1,335 @@
+<div id="container-fluid" class="fondo" ng-init="loadAdvancedOptions()">
+	<div class="row list-operation" ng-if="isLoaded">
+
+		<div class="panel panel-primary panel-primary-custom">
+			<div class="panel-heading">
+				Opciones Avanzadas
+			</div>
+			<div class="panel-body">
+				<div class="col-sm-6 div-advanced-generals">
+					<h4>Opciones avanzadas del dominio</h4>
+					<hr>
+					<form name="advancedOptionsForm" novalidate>
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-checkbox-id-url" class="col-sm-7 advanced-label">Usar acortador de URL:</label>
+							<input class="col-sm-5 advanced-checkbox-id" type="checkbox" id="advanced-checkbox-id-url" name="useURLShortnere" ng-model="advanced.useURLShortner">
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-checkbox-id-tsa" class="col-sm-7 advanced-label">Firmar sin TSA:</label>
+							<input type="checkbox" class="col-sm-5 advanced-checkbox-id" id="advanced-checkbox-id-tsa" name="signWithoutTsa" ng-model="advanced.signWithoutTsa">
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-checkbox-id-certs" class="col-sm-7 advanced-label">Permitir firmar con certificados caducados:</label>
+							<input type="checkbox" class="col-sm-5 advanced-checkbox-id" id="advanced-checkbox-id-certs" name="signWithExpiredCerts"
+							 ng-model="advanced.signWithExpiredCerts">
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-input-cert" class="col-sm-7 advanced-label">Longitud OTP:</label>
+							<div class="col-sm-2 no-padding-left">
+								<input type="number" class="advanced-input form-control" id="advanced-input-cert" name="otpLength" ng-model="advanced.otpLength">
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-input-url" class="col-sm-7 advanced-label">Ubicación del componente para firma electrónica:</label>
+							<div class="col-sm-5 no-padding-left">
+								<input type="text" class="advanced-input form-control" id="advanced-input-url" name="otpLength" ng-model="advanced.advancedSignAppURL">
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-checkbox-id-autogenerate" class="col-sm-7 advanced-label">Auto generar id de operación:</label>
+							<input type="checkbox" class="col-sm-5 advanced-checkbox-id" id="advanced-checkbox-id-autogenerate" name="autogenerateIdOperation"
+							 ng-model="advanced.autogenerateIdOperation">
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-checkbox-id-videochat" class="col-sm-7 advanced-label">Chat Videoconferencia:</label>
+							<input type="checkbox" class="col-sm-5 advanced-checkbox-id" id="advanced-checkbox-id-videochat" name="advanced-checkbox-id-videochat"
+							 ng-model="advanced.activatedVideoChat">
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-checkbox-use-ldap" class="col-sm-7 advanced-label">Integraci&oacute;n con LDAP:</label>
+							<input type="checkbox" class="col-sm-5 advanced-checkbox-id" id="advanced-checkbox-use-ldap" name="useLDAP" ng-model="advanced.useLDAP">
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-checkbox-opentokeApiKey" class="col-sm-7 advanced-label">OpenTok Api Key:</label>
+							<div class="col-sm-5 no-padding-left">
+								<input type="number" class="advanced-input form-control" id="advanced-checkbox-opentokeApiKey" name="opentokeApiKey" ng-model="advanced.opentok.apiKey">
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-checkbox-opentokeApiSecret" class="col-sm-7 advanced-label">OpenTok Api Secret:</label>
+							<div class="col-sm-5 no-padding-left">
+								<input type="text" class="advanced-input form-control" id="advanced-checkbox-opentokeApiSecret" name="opentokeApiSecret" ng-model="advanced.opentok.apiSecret">
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<!--                         <div class="form-group col-sm-12 col-md-12 no-margin-bottom"> -->
+						<!--                             <label for="advanced-checkbox-search-user-ldap" class="col-sm-7 advanced-label">B&uacute;squeda de usuarios por LDAP:</label> -->
+						<!--                            	<input type="checkbox" class="col-sm-5 advanced-checkbox-id" id="advanced-checkbox-search-user-ldap" name="searchUserLDAP" ng-model="advanced.searchUserLDAP"> -->
+						<!--                         </div> -->
+
+
+						<!--                         <div class="col-sm-12"> -->
+						<!-- 							<hr> -->
+						<!-- 						</div> -->
+
+					</form>
+				</div>
+
+				<div class="col-sm-6">
+					<h4>Opciones de reconocimiento de vídeo</h4>
+					<hr>
+					<form name="advancedOptionsVideoForm" novalidate>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-checkbox-id-face " class="col-sm-7 advanced-label">Detectar la cara:</label>
+							<input class="col-sm-5 advanced-checkbox-id" type="checkbox" id="advanced-checkbox-id-face" name="faceDetection" ng-model="advanced.idRecognizer.faceDetection">
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-checkbox-id-front-dni " class="col-sm-7 advanced-label">Detectar anverso DNI:</label>
+							<input type="checkbox" class="col-sm-5 advanced-checkbox-id" id="advanced-checkbox-id-front-dni" name="idFrontDetection"
+							 ng-model="advanced.idRecognizer.idFrontDetection">
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-checkbox-id-back-dni " class="col-sm-7 advanced-label">Detectar reverso DNI:</label>
+							<input type="checkbox" class="col-sm-5 advanced-checkbox-id" id="advanced-checkbox-id-back-dni" name="idBackDetection" ng-model="advanced.idRecognizer.idBackDetection">
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-checkbox-id-bord-dni " class="col-sm-7 advanced-label">Detectar bordes DNI:</label>
+							<input type="checkbox" class="col-sm-5 advanced-checkbox-id" id="advanced-checkbox-id-bord-dni" name="rectangleBorderDetection"
+							 ng-model="advanced.idRecognizer.rectangleBorderDetection">
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label for="advanced-checkbox-id-ocr-dni " class="col-sm-7 advanced-label">Detección OCR cliente:</label>
+							<input type="checkbox" class="col-sm-5 advanced-checkbox-id" id="advanced-checkbox-id-ocr-dni" name="idOcrDetection" ng-model="advanced.idRecognizer.idOcrDetection">
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label id="advanced-label" class="col-sm-7 advanced-label">Pa&iacute;s ID:</label>
+							<div class="col-sm-4 no-padding-left">
+								<select class="form-control select-center" ng-options="item as item for item in advanced.countryList track by item" ng-model="advanced.countryId"></select>
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label class="col-sm-7 advanced-label">Tecnología OCR servidor:</label>
+							<div class="col-sm-4 no-padding-left">
+								<select class="form-control select-center" ng-options="item as item for item in advanced.ocrTypesList track by item" ng-model="advanced.ocrRecognitionType"></select>
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label class="col-sm-7 advanced-label">Coincidencias anverso:</label>
+							<div class="col-sm-2 no-padding-left">
+								<input type="number" class="advanced-input form-control" name="matchedPointsDemandedLaptop" ng-model="advanced.idRecognizer.matchedPointsDemandedFront">
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label class="col-sm-7 advanced-label">Coincidencias buenas anverso:</label>
+							<div class="col-sm-2 no-padding-left">
+								<input type="number" class="advanced-input form-control" name="goodPointsDemandedLaptop" ng-model="advanced.idRecognizer.goodPointsDemandedFront">
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label class="col-sm-7 advanced-label">Coincidencias reverso:</label>
+							<div class="col-sm-2 no-padding-left">
+								<input type="number" class="advanced-input form-control" name="matchedPointsDemandedLaptop" ng-model="advanced.idRecognizer.matchedPointsDemandedBack">
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label class="col-sm-7 advanced-label">Coincidencias buenas reverso:</label>
+							<div class="col-sm-2 no-padding-left">
+								<input type="number" class="advanced-input form-control" name="goodPointsDemandedLaptop" ng-model="advanced.idRecognizer.goodPointsDemandedBack">
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label class="col-sm-7 advanced-label">Resolución:</label>
+							<div class="col-sm-4 no-padding-left">
+								<select class="form-control select-center" ng-model="advanced.idRecognizer.resolution">
+	                            	<option value="0">Baja (320x240)</option>
+	                            	<option value="1">Media (640x480)</option>
+	                            	<option value="2">Alta (1280x720)</option>
+	                            </select>
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label class="col-sm-7 advanced-label">Tamaño cara:</label>
+							<div class="col-sm-2 no-padding-left">
+								<input type="number" class="advanced-input form-control" name="faceWidth" ng-model="advanced.idRecognizer.faceWidth">
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label class="col-sm-7 advanced-label">Tamaño cara móvil:</label>
+							<div class="col-sm-2 no-padding-left">
+								<input type="number" class="advanced-input form-control" name="faceWidthMobile" ng-model="advanced.idRecognizer.faceWidthMobile">
+							</div>
+						</div>
+
+						<!--<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+                            <label class="col-sm-7 advanced-label">Alto cara:</label>
+                            <div class="col-sm-2 no-padding-left">
+                            	<input type="number" class="advanced-input form-control" name="faceHeight" ng-model="advanced.idRecognizer.faceHeight">
+                            </div>
+                        </div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+                            <label class="col-sm-7 advanced-label">Alto cara movil:</label>
+                            <div class="col-sm-2 no-padding-left">
+                            	<input type="number" class="advanced-input form-control" name="faceHeightMobile" ng-model="advanced.idRecognizer.faceHeightMobile">
+                            </div>
+                        </div>-->
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label class="col-sm-7 advanced-label">Out Limit:</label>
+							<div class="col-sm-2 no-padding-left">
+								<input type="number" class="advanced-input form-control" name="goodPointsDemandedMobile" ng-model="advanced.idRecognizer.outLimit">
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+
+						<div class="form-group col-sm-12 col-md-12 no-margin-bottom">
+							<label class="col-sm-7 advanced-label">Min points:</label>
+							<div class="col-sm-2 no-padding-left">
+								<input type="number" class="advanced-input form-control" name="goodPointsDemandedMobile" ng-model="advanced.idRecognizer.minPoints">
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<hr>
+						</div>
+					</form>
+				</div>
+
+				<div class="col-sm-12">
+					<button class="btn btn-primary no-margin-top no-margin-left" ng-click="saveAdvancedConfiguration(advanced)">Guardar configuración</button>
+					<button class="btn btn-primary no-margin-top" ng-click="restoreDefault()">Restablecer valores por defecto</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

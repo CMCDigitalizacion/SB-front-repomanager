@@ -1,0 +1,27 @@
+<!-- Document Accordion -->
+<div class="panel panel-custom-documents">
+    <input style="display: none;" class="fileinput" type="file" id="file{{index}}" onchange="angular.element(this).scope().$parent.file_changed(this)" accept="application/pdf"/>
+    <div class="panel-heading panel-heading-custom-documents pointer-span" role="tab" id="headingDocument{{index}}" data-toggle="collapse" href="#collapseDocument{{index}}" data-parent="#accordion" style="background-color:{{color}}">
+      <h4 class="panel-title pull-left colapse" style="padding-top: 9px;" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseDocument{{index}}" target="_self" aria-expanded="false" aria-controls="collapseDocument{{index}}">
+        {{info.documentName}}
+      </h4>
+      <span ng-if="info.state !== 10" class="pull-right">
+        <img class="icon-document-valid" src="webapp/img/document-valid.svg"></img>
+      </span>
+      <span ng-if="info.state === 10 && $parent.state !== 99" class="pull-right">
+        <img class="icon-document-to-replace" src="webapp/img/document-to-replace.svg"></img>
+      </span>
+      <span ng-if="info.state === 10 && $parent.state === 99" class="pull-right">
+        <img class="icon-document-to-replace" src="webapp/img/document-not-valid.svg"></img>
+      </span>
+      <button class="btn btn-primary pull-right no-margin-top no-margin-bottom button-replace-doc" ng-show="((info.signmultiple === 1 && !info.belongToPriorLevels && info.state === 10) || (info.signmultiple === 0 && info.state === 10)) && $parent.state !== 99" style="height: 34px" ng-click="$parent.chooseFile($event, info, index);">Reemplazar</button>
+      <button class="btn btn-primary pull-right no-margin-top no-margin-bottom button-replace-doc" ng-show="info.belongToPriorLevels && info.belongToLevel > 1 && info.state === 10 && $parent.state !== 99 && $parent.canCancelAll" style="height: 34px" ng-click="$parent.cancelAllOperations($event, info, index);">Cancelar operaciones</button>
+      
+    </div>
+    <div id="collapseDocument{{index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingDocument{{index}}" >
+        <div class="panel-body" id="panel-pdf-viewer-{{index}}" style="height: 600px;">
+          <!-- Visor PDF -->
+          <iframe  width="100%" height="100%" id="pdfViewerDoc{{index}}" name="plugin" ng-src="{{info.externalURL}}" type="application/pdf"></iframe>
+        </div>
+    </div>
+</div>

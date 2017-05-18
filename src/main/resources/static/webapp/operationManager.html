@@ -1,0 +1,1915 @@
+<!-- CONTAINER-FLUID -->
+<head>
+  <meta charset="UTF-8" />
+</head>
+<style>
+    .checkbox-otp-first-line{
+        padding-top:15px;
+        text-align: center;
+    }
+    .clickable{
+    	cursor: pointer;
+	}
+
+	.panel-heading span {
+		margin-top: -20px;
+		font-size: 15px;
+	}
+	.white, .white a {
+  		color: #fff;
+	}
+	
+	.margin-label-condition {
+		margin-top: 21px;
+		margin-bottom: 26px;
+	}
+	
+	.margin-checkbox-condition {
+		margin-left: 5px;
+	}
+	
+	input#advanced-input-tag {
+ 	   text-transform: uppercase;
+	}
+</style>
+<head>
+  <meta charset="UTF-8" />
+</head>
+<div class="navbar navbar-default navbar-fixed-bottom custom-bottom-bar" role="navigation">
+  <div class="container custom-container-bottom">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse custom-navbar-collapse">
+
+      <!-- Left nav -->
+      <ul class="nav navbar-nav">
+        <button class="btn btn-default btn-bottom-bar" ng-if="isDoc" ng-click="detallesDoc()">+ Añadir documento</button>
+        <button class="btn btn-default btn-bottom-bar" ng-if="isDoc" ng-click="detallesVisiblesignDoc()">+ Añadir documento firma posicionada</button>
+        <button class="btn btn-default btn-bottom-bar" ng-if="isGeneral" ng-click="saveGeneralInfo(operation, customize)">Guardar</button>
+        <button class="btn btn-default btn-bottom-bar" ng-if="isCondition" ng-click="detallesCond()">+ Añadir condición</button>
+        <button class="btn btn-default btn-bottom-bar" ng-if="isFields" ng-click="saveAuthOpt(authOpt)" ng-disabled="(formSignersMultiple.$dirty || formCertificatePolicy.$dirty || formAuthOpt.$dirty) ? false : true" >Guardar</button>
+        <button class="btn btn-warning btn-bottom-bar" ng-if="isFields" type="button" id="nuevacondicion"  ng-click="detallesAuth()">+ Añadir Autenticación</button>
+        <button class="btn btn-default btn-bottom-bar" ng-if="isLimits" ng-click="detallesLimit()">+ Añadir limite</button>
+        <button class="btn btn-default btn-bottom-bar" ng-if="isPlantilla" ng-click="detallesNotification()">+ Añadir Plantilla</button>
+        <button class="btn btn-default btn-bottom-bar" ng-if="isReminders" ng-click="detallesReminder()">+ Añadir Aviso</button>
+        <button class="btn btn-default btn-bottom-bar" ng-if="isTemplate" ng-click="saveTemplate()" ng-disabled="!modified">Guardar Plantilla</button>
+        <button class="btn btn-default btn-bottom-bar" ng-if="isAdvanced" ng-click="saveAdvancedOptions(advanced)" ng-disabled="!advancedOptionsOperationForm.$dirty">Guardar opciones avanzadas</button>
+        <button class="btn btn-default btn-bottom-bar" ng-if="isAdvanced" ng-click="saveDefaultAdvancedOptions()">Restablecer opciones avanzadas</button>
+        <button class="btn btn-default btn-bottom-bar" ng-if="isMultilevel" ng-click="saveSignLevel()">Guardar configuración multinivel</button>
+        <button class="btn btn-default btn-bottom-bar" ng-if="isMultilevel" type="button" id="nuevonivel" ng-click="addSignLevelPanel()">+ Añadir nivel</button>
+      </ul>
+
+      <!-- Right nav -->
+      <ul class="nav navbar-nav navbar-right navbar-right-custom">
+        <button class="btn btn-warning btn-bottom-bar" type="button" ng-click="goBackToTheDomainManger();"><span class="glyphicon glyphicon-arrow-left"></span> Gestión Empresa</button>
+      </ul>
+
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div>
+<div class="fondo" ng-init="fillTables()">
+	<div id="container-fluid" style="margin-bottom: 50px;">
+		<ul class="nav nav-pills nav-justified">
+	        <li class="active"><a data-toggle="tab" target="_self" href="#tab_documentos" ng-click="setDocTab()">Documentos</a></li>
+            <li><a data-toggle="tab" target="_self" href="#tab_general"       ng-click="setGeneralTab()">Información General</a></li>
+	        <li><a data-toggle="tab" target="_self" href="#tab_condiciones"   ng-click="setConditionTab()">Condiciones</a></li>
+	        <li><a data-toggle="tab" target="_self" href="#tab_autenticacion" ng-click="setFieldTab()"id="authenticationTab">Campos </a></li>
+            <li><a data-toggle="tab" target="_self" href="#tab_limites"       ng-click="setLimitsTab()">Lí­mites</a></li>
+	        <li><a data-toggle="tab" target="_self" href="#tab_plantilla"     ng-click="setPlantillaTab()">Plantilla</a></li>
+            <li><a data-toggle="tab" target="_self" href="#tab_reminders"     ng-click="setRemindersTab()">Avisos</a></li>
+            <li><a data-toggle="tab" target="_self" href="#tab_template"      ng-click="setTemplateTab()">Template</a></li>
+            <li><a data-toggle="tab" target="_self" href="#tab_advanced"      ng-click="setAdvancedOptionsTab()">Avanzadas</a></li>
+            <li ng-show="operation.signatureType=='MULTINIVEL'"><a data-toggle="tab" target="_self" href="#tab_multilevel" ng-click="setMultilevelTab()">Configuración Multinivel</a></li>
+
+	    </ul>
+    	<div class="tab-content" style="padding-top:20px;">
+			<div class="tab-pane in active" id="tab_documentos" > <!-- TAB DOCUMENTOS -->
+
+				<div id="panel_documentos">
+
+					<p id="sign-doc-p" style="font-weight: lighter; font-size:large;">Documentos para <i>Firmar</i> :</p>
+	    			<table width="100%" datatable="" dt-options="dtOptionsDocsSign" dt-columns="dtColumnsDocsSign" dt-instance="dtInstanceDocsSignCallback" class="row-border hover table sign-doc-table"></table>
+
+                    <p id="upload-doc-p" style="font-weight: lighter; font-size:large; padding-top: 20px;">Documentos para <i>Recoger</i> :</p>
+                    <table width="100%" datatable="" dt-options="dtOptionsDocsUpload" dt-columns="dtColumnsDocsUpload" dt-instance="dtInstanceDocsUploadCallback" class="row-border hover table upload-doc-table"></table>
+				</div>
+			</div>
+
+			<div  class="tab-pane fade" id="tab_general">
+                <div id="panel_condiciones">
+                    <div class="row">
+                        <form name="generalInfoForm" id="general-info-form" novalidate>
+                            <div class="form-group col-sm-9" ng-class="{ 'has-error' : generalInfoForm.opName.$invalid , 'has-success' : !generalInfoForm.opName.$invalid}">
+                                <label id="operation-name-label" for="opName" class="control-label">Nombre Operación:</label>
+                                <input type="text" class="form-control" id="opName" name="opName" ng-model="operation.name" placeholder="Insertar el Nombre de la Operación" required>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label id="type-sign-label" for="signatureType" class="control-label">Tipo de Firma:</label>
+                                <select class="form-control" ng-options="item.label as item.label for item in signatureType" ng-model="operation.signatureType" name="signatureType" id="signatureType" ng-init="operation.signatureType = 'MULTINIVEL'"></select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-12" style="border-bottom: 2px solid #eee; padding-top: 15px;"></div>
+                            <div class="col-sm-12" style="padding-left: 0px; padding-top: 15px;">
+                                <h4 id="custom-labels-heading">
+                                    Configuración etiquetas customizadas
+                                </h4>
+                            </div>
+                            <div class="form-group col-sm-3" style="padding-left: 0px; padding-top: 15px;">
+                                <label id="select-page-label" for="custom" class="control-label">Seleccione la página:</label>
+                                <select class="form-control" ng-options="item.label as item.label for item in customlabels" ng-model="currentlabel" name="customlabel" id="customlabel"></select>
+                            </div>
+                            <div class="form-group col-sm-3" style="padding-left: 0px; padding-top: 15px;">
+                                <label id="select-lang-label" for="custom" class="control-label">Seleccione el idioma:</label>
+                                <select class="form-control" ng-model="currentlanguage" ng-change="loadCustomMessagesLang()" name="customlanguagecode" id="customlanguagecode">
+                                 <option ng-repeat="option in languages" value="{{option.languagecode}}">{{option.languagename}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <form name="" novalidate>
+                            <div ng-if="currentlabel === 'Página Inicial'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Trato al cliente:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.videoeidInitModalTitle1">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Selección del idioma:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.selectLanguage">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Castellano:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.spanishLang">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Mexicano:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.spanishMxLang">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Catalán:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.catalanLang">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Gallego:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.gallegoLang">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Euskera:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.euskeraLang">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Inglés:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.englishLang">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Italiano:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.italianLang">
+                                    </div>
+                                	<div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Cabecera:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.initoperationPageHdr">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="message-init-label" for="labelInitButton" class="control-label">Mensaje:</label>
+                                        <textarea ng-if="currentlabel === 'Página Inicial'" ui-tinymce="tinymceOptions" ng-model="customize.initoperationPageMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="label-button-init-label" for="labelInitButton" class="control-label">Etiqueta Botón:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.initoperationPageBtn" >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="currentlabel === 'Página Acceso'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-access-label" for="labelInitHeader" class="control-label">Cabecera:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.accessPageHdr">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="label-box-access" for="labelInitButton" class="control-label">Etiqueta caja:</label>
+                                        <input type="text" maxlength="50" class="form-control" id="box-access" name="labelInitButton" ng-model="customize.accessPageLbl">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="placeholder-label-access" for="labelInitButton" class="control-label">Place holder caja:</label>
+                                        <input type="text" maxlength="120" class="form-control" name="labelInitButton" ng-model="customize.accessPagePlc">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="placeholder-label-access" for="labelInitButton" class="control-label">Error código de acceso demasiado corto:</label>
+                                        <input type="text" maxlength="120" class="form-control" name="labelInitButton" ng-model="customize.inputValidationTooShort">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="placeholder-label-access" for="labelInitButton" class="control-label">Error código de acceso demasiado largo:</label>
+                                        <input type="text" maxlength="120" class="form-control" name="labelInitButton" ng-model="customize.inputValidationTooLong">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="placeholder-label-access" for="labelInitButton" class="control-label">Error campo de autenticación es requerido:</label>
+                                        <input type="text" maxlength="120" class="form-control" name="labelInitButton" ng-model="customize.inputFieldValidationRequired">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="message-access" for="labelInitButton" class="control-label">Mensaje:</label>
+                                        <textarea ng-if="currentlabel === 'Página Acceso'" ui-tinymce="tinymceOptions" ng-model="customize.accessPageMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="label-button-access" for="labelInitButton" class="control-label">Etiqueta Botón:</label>
+                                        <input type="text" maxlength="30" class="form-control" name="labelInitButton" ng-model="customize.accessPageBtn">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-show="currentlabel === 'Página Conformidad'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-conformidad" for="labelInitHeader" class="control-label">Cabecera:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.authorizationPageHdr">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="message-conformidad" for="labelInitButton" class="control-label">Mensaje:</label>
+                                        <textarea ng-if="currentlabel === 'Página Conformidad'" ui-tinymce="tinymceOptions" ng-model="customize.authorizationPageMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="label-more-info-conformidad" for="labelMoreInfoButton" class="control-label">Etiqueta botón más información en condiciones</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelMoreInfoButton" name="labelMoreInfoButton" ng-model="customize.moreInfoPreConditionBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="label-button-conformidad" for="labelInitButton" class="control-label">Etiqueta Botón:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.authorizationPageBtn">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="currentlabel === 'Página Subida Documentos'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Cabecera:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.uploaddocumentPageHdr">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje:</label>
+                                        <textarea ng-if="currentlabel === 'Página Subida Documentos'" ui-tinymce="tinymceOptions" ng-model="customize.uploaddocumentPageMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelSelectButton" class="control-label">Etiqueta Botón Elegir Fichero:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelSelectButton" name="labelSelectButton" ng-model="customize.uploaddocumentSelectFileBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelUploadButton" class="control-label">Etiqueta Botón Subir Fichero:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelUploadButton" name="labelUploadButton" ng-model="customize.uploaddocumentUploadFileBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelDeleteButton" class="control-label">Etiqueta Botón Eliminar Fichero:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelDeleteButton" name="labelDeleteButton" ng-model="customize.uploaddocumentDeleteFileBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Botón:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.uploaddocumentPageBtn">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="currentlabel === 'Página Firmar Contratos'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Cabecera:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.signcontractsPageHdr">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje:</label>
+                                        <textarea ng-if="currentlabel === 'Página Firmar Contratos'" ui-tinymce="tinymceOptions" ng-model="customize.signcontractsPageMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Texto checkbox:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.signcontractsPageChk">
+                                    </div>
+                                     <div class="form-group col-sm-12">
+                                        <label id="placeholder-label-access" for="labelInitButton" class="control-label">Error código de firma es demasiado corto:</label>
+                                        <input type="text" maxlength="120" class="form-control" name="labelInitButton" ng-model="customize.inputSignValidationTooShort">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="placeholder-label-access" for="labelInitButton" class="control-label">Error código de firma es demasiado largo:</label>
+                                        <input type="text" maxlength="120" class="form-control" name="labelInitButton" ng-model="customize.inputSignValidationTooLong">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Botón:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.signcontractsPageBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="rejectDocument" class="control-label">Mensaje Rechazar Documento:</label>
+                                        <textarea ng-if="currentlabel === 'Página Firmar Contratos'" ui-tinymce="tinymceOptions" ng-model="customize.rejectDocumentMsg"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="currentlabel === 'Página Firmar Contratos en un paso'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Cabecera:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.signcontractsonestepPageHdr">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje revisar documentos:</label>
+                                        <textarea ui-tinymce="tinymceOptions" ng-model="customize.signcontractsonestepPageMsg1"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Boton Ver documento:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.signcontractsonestepPageBtn1">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje recordatorio SMS:</label>
+                                        <textarea ui-tinymce="tinymceOptions" ng-model="customize.signcontractsonestepPageMsg2"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta campo firma:</label>
+                                        <input type="text" maxlength="50" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.signcontractonestepPageLbl">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Place holder campo firma:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.signcontractonestepPagePlc">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Boton Firmar:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.signcontractsonestepPageBtn2">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Texto habilitar campo de firma:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.signcontractsPageonestepEnableMsg">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="currentlabel === 'Popup mostrar/firmar contrato'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta campo firma:</label>
+                                        <input type="text" maxlength="50" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.signcontractPopupLbl">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Place holder campo firma:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.signcontractPopupPlc">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Botón firma:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.signcontractPopupSignBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Botón rechazar documento:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.signcontractPopupRejectBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Botón leer:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.signcontractPopupReadBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Botón salir:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.exitSignBtnModal">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Botón y titulo del diálogo de confirmación de firma con certificado generado:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.signGenerateCertificateTitleModal">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelRejectOp" class="control-label">Mesaje de firma con certificado generado:</label>
+                                        <textarea ng-if="currentlabel === 'Popup mostrar/firmar contrato'" ui-tinymce="tinymceOptions" ng-model="customize.signGenerateCertificateMessageModal"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Botón firmar:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.signcontractPopupSignBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Botón salir:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.closeBtnModal">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="currentlabel === 'Página Resumen'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                     <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Cabecera de la información del resumen:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.resumePageHeaderInformation">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Cabecera de los datos de la operación del resumen:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.resumePageHeaderOperationData" >
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Cabecera de los documentos del resumen:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.resumePageHeaderDocuments">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Título de los contratos del resumen:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.resumePageDocumentContracts">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Botón ver documentos del resumen:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.resumePageDocumentContractsBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Título de los documentos aportados del resumen:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.resumePageDocumentProvided">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Botón ver documentos aportados del resumen:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.resumePageDocumentProvidedBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Cabecera del acta del resumen:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.resumePageHeaderResume">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Botón de ver el acta del resumen:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.resumePageResumeBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Título del diálogo del acta del resumen:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.actaModalTitle2">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje de la página de resumen:</label>
+                                        <textarea ui-tinymce="tinymceOptions" ng-model="customize.resumePageAlternativeMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje del resumen:</label>
+                                        <textarea ng-if="currentlabel === 'Página Resumen'" ui-tinymce="tinymceOptions" ng-model="customize.resumePageHeaderMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje del pie del resumen:</label>
+                                        <textarea ng-if="currentlabel === 'Página Resumen'" ui-tinymce="tinymceOptions" ng-model="customize.resumePageFooterMsg"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="currentlabel === 'Página Resumen Alternativa'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                   <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje de la página de resumen:</label>
+                                        <textarea ui-tinymce="tinymceOptions" ng-model="customize.resumePageAlternativeMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Botón:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.resumePageAlternativeBtn">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="currentlabel === 'Página Selección Certificado'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelErrorO2CertServer" class="control-label">Mensaje de información O2CertServer:</label>
+                                        <textarea ng-if="currentlabel === 'Página Selección Certificado'" ui-tinymce="tinymceOptions" ng-model="customize.selectCertificateErrorO2certServer"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Cabecera:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.selectCertificatePageHdr" placeholder="Insertar el texto de la cabecera">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelCertField" class="control-label">Columna Certificados:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelCertField" name="labelCertField" ng-model="customize.selectCertificateTableCertField" placeholder="Insertar el texto de la columna de certificados">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInfoField" class="control-label">Columna Información:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInfoField" name="labelInfoField" ng-model="customize.selectCertificateTableInfoField" placeholder="Insertar el texto de la columna de información">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelSelectField" class="control-label">Columna Selección:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelSelectField" name="labelSelectField" ng-model="customize.selectCertificateTableSelectField" placeholder="Insertar el texto de la columna de selección">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje:</label>
+                                        <textarea ng-if="currentlabel === 'Página Selección Certificado'" ui-tinymce="tinymceOptions" ng-model="customize.selectCertificatePageMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Botón:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.selectCertificatePageBtn" placeholder="Insertar el Nombre de la Operación">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="currentlabel === 'Página Ver Contratos'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Cabecera:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.showcontractsPageHdr" placeholder="Insertar el texto de la cabecera">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje:</label>
+                                        <textarea ng-if="currentlabel === 'Página Ver Contratos'" ui-tinymce="tinymceOptions" ng-model="customize.showcontractsPageMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelOpenButton" class="control-label">Etiqueta Botón Abrir:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelOpenButton" name="labelOpenButton" ng-model="customize.signcontractsStateOpenBtn" placeholder="Insertar el texto del botón">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelSignedButton" class="control-label">Etiqueta Botón Firmado:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelSignedButton" name="labelSignedButton" ng-model="customize.signcontractsStateSignedBtn" placeholder="Insertar el texto del botón">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelRejectButton" class="control-label">Etiqueta Botón Rechazado:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelRejectButton" name="labelRejectButton" ng-model="customize.signcontractsStateRejectBtn" placeholder="Insertar el texto del botón">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelReadButton" class="control-label">Etiqueta Botón Leído:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelReadButton" name="labelReadButton" ng-model="customize.signcontractsStateReadBtn" placeholder="Insertar el texto del botón">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Botón:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.showcontractsPageBtn" placeholder="Insertar el texto del botón">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="currentlabel === 'Página Verificación'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Cabecera:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.verificationPageHdr" placeholder="Insertar el texto de la cabecera">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje:</label>
+                                        <textarea ng-if="currentlabel === 'Página Verificación'" ui-tinymce="tinymceOptions" ng-model="customize.verificationPageMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Campo Verificación:</label>
+                                        <input type="text" maxlength="50" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.verificationPageLbl" placeholder="Insertar el Nombre de la Operación">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Place holder Campo Verificación:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.verificationPagePlc" placeholder="Insertar el placeholder de la caja de texto">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Boton:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.verificationPageBtn" placeholder="Insertar el Nombre de la Operación">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div ng-if="currentlabel === 'Diálogo Vídeo Identificación'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Título diálogo vídeo identificación:</label>
+                                        <input type="text" maxlength="50" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.titleDialogVideoID">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Título del mensaje de vídeo identificación:</label>
+                                        <input type="text" maxlength="50" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidIdentificationTitle">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje información vídeo identificación:</label>
+                                        <textarea ng-if="currentlabel === 'Diálogo Vídeo Identificación'" ui-tinymce="tinymceOptions" ng-model="customize.videoidinitPageMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje de cancelación de la vídeo identificación:</label>
+                                        <textarea ng-if="currentlabel === 'Diálogo Vídeo Identificación'" ui-tinymce="tinymceOptions" ng-model="customize.videoidCancelProccess"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje de seelección documentos México:</label>
+                                        <input type="text" maxlength="70" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.selectMexicanIdDocument">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">INE:</label>
+                                        <input type="text" maxlength="10" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.ineDocument">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Cédula Profesional</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.cedulaDocument">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Botón aceptar:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidContinueBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Botón cancelar:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidCancelBtn">
+                                    </div>
+                                </div>  
+                            </div>
+
+                            <div ng-if="currentlabel === 'Página Vídeo Identificación'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Cabecera:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.videoidIdentificationTitle">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Paso foto:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidFirstStepProcess">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Paso anverso documento de identidad:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidSecondStepProcess">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Paso reverso documento de identidad:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidThirdStepProcess">
+                                    </div> 
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje de información durante la vídeo identificación:</label>
+                                        <textarea ng-if="currentlabel === 'Página Vídeo Identificación'" ui-tinymce="tinymceOptions" ng-model="customize.videoidcapturePageResumeMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje de vídeo identificación terminada:</label>
+                                        <textarea ng-if="currentlabel === 'Página Vídeo Identificación'" ui-tinymce="tinymceOptions" ng-model="customize.completedVideoID"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Realizar registro de voz:</label>
+                                        <input type="text" maxlength="150" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidVoiceEnrollmentMsg">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Botón sí:</label>
+                                        <input type="text" maxlength="10" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidVoiceEnrollmentYesBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Botón no:</label>
+                                        <input type="text" maxlength="10" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidVoiceEnrollmentNoBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Información del registro de voz:</label>
+                                        <textarea ng-if="currentlabel === 'Página Vídeo Identificación'" ui-tinymce="tinymceOptions" ng-model="customize.videoidVoiceInfoMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Botón empezar el registro de voz:</label>
+                                        <input type="text" maxlength="50" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidVoiceRecordBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Registro de voz correcto:</label>
+                                        <input type="text" maxlength="70" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidVoiceRegisterSuccessMsg">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Registro de voz erróneo:</label>
+                                        <input type="text" maxlength="70" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidVoiceRegisterErrorMsg">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Registro de voz correcto (en caso de que el cliente ya tenga un registro previo):</label>
+                                        <input type="text" maxlength="150" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidVoiceRegisterSuccessWithAuthMsg">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Registro de voz erróneo (en caso de que el cliente ya tenga un registro previo):</label>
+                                        <input type="text" maxlength="150" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidVoiceRegisterErrorWithAuthMsg">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje del número de muestras registradas:</label>
+                                        <input type="text" maxlength="70" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidVoiceSamplesMsg">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Registro de voz finalizado:</label>
+                                        <input type="text" maxlength="150" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidAuthMsg">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Botón autenticación de voz</label>
+                                        <input type="text" maxlength="50" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidAuthRecordBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Autenticación correcta:</label>
+                                        <input type="text" maxlength="70" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidAuthSuccess">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Autenticación errónea:</label>
+                                        <input type="text" maxlength="70" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidAuthError">
+                                    </div>
+                                </div>  
+                            </div>
+                            
+                            <div ng-if="currentlabel === 'Diálogo Videoconferencia'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Título diálogo videoconferencia:</label>
+                                        <input type="text" maxlength="50" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.initializeVideoConferenceTitle">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Título del mensaje de la videoconferencia:</label>
+                                        <input type="text" maxlength="50" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.initializeVideoConferenceSubTitle">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje información videoconferencia:</label>
+                                        <textarea ng-if="currentlabel === 'Diálogo Videoconferencia'" ui-tinymce="tinymceOptions" ng-model="customize.initializeVideoConferenceMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje de cancelación de la videoconferencia:</label>
+                                        <textarea ng-if="currentlabel === 'Diálogo Videoconferencia'" ui-tinymce="tinymceOptions" ng-model="customize.videoidCancelProccess"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Botón aceptar:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidContinueBtn">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Etiqueta Botón cancelar:</label>
+                                        <input type="text" maxlength="30" class="form-control" id="labelInitButton" name="labelInitButton" ng-model="customize.videoidCancelBtn">
+                                    </div>
+                                </div>  
+                            </div>
+
+                            <div ng-if="currentlabel === 'Página Videoconferencia'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitHeader" class="control-label">Cabecera:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.videoConferenceTitle">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label class="control-label">Botón solicitar videoconferencia</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelBtnVideoConf" name="labelBtnVideoConf" ng-model="customize.requestVideoConference" placeholder="Insertar el texto del botón">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label class="control-label">Mensaje de inicialización de la videoconferencia</label>
+                                        <textarea ng-if="currentlabel === 'Página Videoconferencia'" ui-tinymce="tinymceOptions" ng-model="customize.initializeVideoConferenceMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label class="control-label">Mensaje tiempo de espera agotado de la videoconferencia</label>
+                                        <textarea ng-if="currentlabel === 'Página Videoconferencia'" ui-tinymce="tinymceOptions" ng-model="customize.clientQueueTimeoutMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label class="control-label">Mensaje de no hay gestores disponibles en la videoconferencia</label>
+                                        <textarea ng-if="currentlabel === 'Página Videoconferencia'" ui-tinymce="tinymceOptions" ng-model="customize.noManagersAvailableMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label class="control-label">Mesaje de desconexión del gestor en la videoconferencia</label>
+                                        <textarea ng-if="currentlabel === 'Página Videoconferencia'" ui-tinymce="tinymceOptions" ng-model="customize.noManagersConnectedMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label class="control-label">Mensaje de información durante la videoconferencia</label>
+                                        <textarea ng-if="currentlabel === 'Página Videoconferencia'" ui-tinymce="tinymceOptions" ng-model="customize.videoidInitializeProcessMessage"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label class="control-label">Mensaje de aprobación de la videoconferencia</label>
+                                        <textarea ng-if="currentlabel === 'Página Videoconferencia'" ui-tinymce="tinymceOptions" ng-model="customize.approveVideoConferenceMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label class="control-label">Mensaje de rechazo de la videoconferencia</label>
+                                        <textarea ng-if="currentlabel === 'Página Videoconferencia'" ui-tinymce="tinymceOptions" ng-model="customize.rejectVideoConferenceMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label class="control-label">Mensaje videoconferencia terminada:</label>
+                                        <textarea ng-if="currentlabel === 'Página Videoconferencia'" ui-tinymce="tinymceOptions" ng-model="customize.finishVCidentificationMsg"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="currentlabel === 'Página Fima Masiva'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label class="control-label">Botón Firma Masiva</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelBtnMassiveSign" name="labelBtnMassiveSign" ng-model="customize.massiveSignatureBtn" placeholder="Insertar el texto del botón">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label class="control-label">Botón Volver a Listado de Operaciones</label>
+                                        <input type="text" maxlength="120" class="form-control" id="backOpListBtn" name="backOpListBtn" ng-model="customize.backOpListBtn" placeholder="Insertar el texto del botón">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="currentlabel === 'Rechazar operación'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Botón y titulo del diálogo de confirmación de rechazar operación:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.rejectOpLabelBtn" placeholder="Insertar el texto de la cabecera">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelRejectOp" class="control-label">Mensaje de confirmación al rechazar la operación:</label>
+                                        <textarea ng-if="currentlabel === 'Rechazar operación'" ui-tinymce="tinymceOptions" ng-model="customize.rejectOpDialogMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Botón rechazar:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.rejectOpLabelDialogBtn" placeholder="Insertar el texto del botón">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelRejectOp" class="control-label">Mensaje de operación rechazarda:</label>
+                                        <textarea ng-if="currentlabel === 'Rechazar operación'" ui-tinymce="tinymceOptions" ng-model="customize.rejectOpMsg"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="currentlabel === 'Encuesta'">
+                              <div class="form-group col-sm-12">
+                                  <h4 for="labelInitButton">Mensaje Encuesta:</h4>
+                                  <textarea ng-if="currentlabel === 'Encuesta'" ui-tinymce="tinymceOptions" ng-model="customize.surveyInfo"></textarea>
+                              </div>
+                              <div class="custom-padd-bottom form-group col-sm-12">
+                                <button type="button" class="btn btn-custom2" ng-click="addQuestion()">Añadir Preguntas</button>
+                                <table width="100%" datatable="ng" dt-options="dtOptionsQuestions" dt-columns-defs="dtColumnsQuestions" dt-instance="dtInstanceQuestions" class="table row-border hover">
+                                  <thead>
+                                      <tr>
+                                          <th class="col-sm-2 center-text">ID</th>
+                                          <th class="col-sm-8 center-text">Preguntas</th>
+                                          <th class="col-sm-1 center-text">Acciones</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      <tr ng-repeat="userQuestion in customize.questions">
+                                          <td>{{userQuestion.questionCode}}</td>
+                                          <td>{{userQuestion.questionText}}</td>
+                                          <td>
+                                                <i>
+                                                  <span class="glyphicon glyphicon-edit pointer-span" ng-click="editQuestion($index)"></span>
+                                                  <span class="glyphicon glyphicon-trash pointer-span icon" ng-click="removeQuestion($index)" confirm="¿Está seguro qué desea eliminar la pregunta con código {{userQuestion.questionCode}}?"></span>
+                                                </i>
+                                          </td>
+                                      </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                              <div class="form-group col-sm-12">
+                                  <h4 for="labelMsgSendSurveyOK">Mensaje de recogida de encuesta:</h4>
+                                  <textarea ng-if="currentlabel === 'Encuesta'" ui-tinymce="tinymceOptions" ng-model="customize.surveySendOK"></textarea>
+                              </div>
+                              <div class="form-group col-sm-12">
+                                  <h4 for="abelMsgSendSurveyFail">Mensaje de error en recogida de encuesta:</h4>
+                                  <textarea ng-if="currentlabel === 'Encuesta'" ui-tinymce="tinymceOptions" ng-model="customize.surveySendError"></textarea>
+                              </div>
+                            </div>
+                            
+                            <div ng-show="currentlabel === 'Mensajes de información'">
+                                <div class="col-sm-6 col-md-6" style="padding-left: 0px;">
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje de navegadores soportados:</label>
+                                        <textarea ng-if="currentlabel === 'Mensajes de información'" ui-tinymce="tinymceOptions" ng-model="customize.compatibilityBrowsersMsg"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Horario de atención al cliente:</label>
+                                        <textarea ng-if="currentlabel === 'Mensajes de información'" ui-tinymce="tinymceOptions" ng-model="customize.customerServiceSchedule"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label id="cabecera-init-label" for="labelInitHeader" class="control-label">Título error diálogo de error datos de acceso y firma:</label>
+                                        <input type="text" maxlength="120" class="form-control" id="labelInitHeader" name="labelInitHeader" ng-model="customize.error401TitleModal">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje de error datos de acceso:</label>
+                                        <textarea ng-if="currentlabel === 'Mensajes de información'" ui-tinymce="tinymceOptions" ng-model="customize.error401MessageAccessModal"></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="labelInitButton" class="control-label">Mensaje de error datos de firma:</label>
+                                        <textarea ng-if="currentlabel === 'Mensajes de información'" ui-tinymce="tinymceOptions" ng-model="customize.error401MessageSignModal"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+			<div  class="tab-pane fade" id="tab_condiciones">
+				<div id="panel_condiciones">
+                    <div class="col-sm-12">
+    	    			<table width="100%" datatable="ng" dt-options="dtOptionsCondition" dt-columns-defs="dtColumnsCondition" dt-instance="dtInstanceConditionCallback" class="row-border hover table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Etiqueta</th>
+                                    <th>URL</th>
+                                    <th>Paso</th>
+                                    <th>Obligatorio</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="condition in condType">
+                                    <td>{{ condition.id }}</td>
+                                    <td>{{ condition.label |  cut:true:30: ' ...' }}</td>
+                                    <td>{{ condition.fileHTMLPath }}</td>
+                                    <td>{{ condition.step }}</td>
+                                    <td>{{ condition.mandatory | binaryToYesNo }}</td>
+                                    <td>
+                                        <i>
+                                            <span ng-click="detallesCond(condition)" ng-if="condition.exists" class="glyphicon glyphicon-edit pointer-span"></span>
+
+                                            <span ng-click="detallesCond(condition)" ng-if="!condition.exists" class="glyphicon glyphicon-warning-sign" title="La condición con id {{condition.id}} no está disponible." ></span>
+
+                                            <span ng-click="deleteCond(condition)" confirm="¿Esta seguro que desea eliminar la condición con etiqueta {{condition.label}}?" class="icon glyphicon glyphicon-trash pointer-span"></span>
+                                        </i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+				</div>
+			</div>
+
+            <div  class="tab-pane fade" id="tab_autenticacion">
+                <div id="panel_condiciones">
+
+                    <table width="100%" datatable="ng" dt-options="dtOptionsAuth" dt-column-defs="dtColumnsAuth" dt-instance="dtInstanceAuth" class="row-border hover table">
+                        <thead>
+                            <tr>
+                                <th>Identificador</th>
+                                <th>Etiqueta</th>
+                                <th>Autenticación</th>
+                                <th>Resumen</th>
+                                <th>Tipo</th>
+                                <th>Orden</th>
+                                <th>Obligatorio</th>
+                                <th>Acciones adicionales</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="field in authfields">
+                                <td>{{ field.identifier }}</td>
+                                <td>{{ field.label }}</td>
+                                <td>{{ field.auth }}</td>
+                                <td>{{ field.resumen }}</td>
+                                <td>{{ field.type }}</td>
+                                <td>{{ field.order }}</td>
+                                <td>{{ field.isMandatory }}</td>
+                                <td>{{ field.additionalactions }}</td>
+                                <td>
+                                    <i>
+                                        <span ng-click="detallesAuth(field, $index)" class="glyphicon glyphicon-edit pointer-span"></span>
+                                        <span ng-click="deleteAuth($index, field.label)" confirm="¿Esta seguro que desea eliminar el campo con etiqueta {{field.label}}?" class="icon glyphicon glyphicon-trash pointer-span"></span>
+                                    </i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab_limites">
+                <div id="panel_limites">
+                    <div>
+                        <table datatable="ng" dt-options="dtOptionsLimit" dt-columns-defs="dtColumnsLimit" class="row-border hover table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Periodo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="limit in limitList">
+                                    <td>{{ limit.name }}</td>
+                                    <td>{{ limit.period }}</td>
+                                    <td>
+                                        <i>
+                                            <span ng-click="detallesLimit(limit, $index)" class="glyphicon glyphicon-edit pointer-span"></span>
+                                            <span ng-click="deleteLimit(limit)" class="icon glyphicon glyphicon-trash pointer-span" confirm="¿Esta seguro que desea eliminar la pólitica de limite {{limit.name}}?"></span>
+                                        </i>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab_plantilla">
+                <div id="panel_plantillas">
+                    <div class="row">
+                    <table width="100%" datatable="ng" dt-options="dtOptionsNotifications" dt-columns-defs="dtColumnsNotifications" dt-instance="dtInstanceNotificationsCallback" class="row-border hover table">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Idioma</th>
+                                <th>Nombre</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="notification in notifications">
+                                <td>{{ notification.notiftype }}</td>
+                                <td>{{ notification.extra }}</td>
+                                <td>{{ notification.name | cut:true:100: ' ...'}}</td>
+                                <td>
+                                    <i>
+                                        <span ng-click="detallesNotification(notification, $index)" class="glyphicon glyphicon-edit pointer-span"></span>
+                                        <span ng-click="deleteNotification(notification, $index)" confirm="¿Esta seguro que desea eliminar la plantilla de notificación {{notification.name}}?" class="icon glyphicon glyphicon-trash pointer-span"></span>
+                                    </i>
+                                </td>
+                            </tr>
+                        </tbody>
+
+
+                    </table>
+                    </div>
+                    <!-- <div class="row">
+                        <button class="btn btn-warning" type="button" ng-click="detallesNotification()" style="margin-top: 20px; margin-bottom: 20px;">+ Añadir Plantilla</button>
+                        <button class="btn btn-warning" type="button" ng-click="goBackToTheDomainManger();" style="float:right; margin-top: 20px; margin-bottom: 20px;"><span class="glyphicon glyphicon-arrow-left"></span> Gestión Empresa</button>
+                    </div> -->
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab_reminders">
+                <div id="panel_reminders">
+                    <table width="100%" datatable="" dt-options="dtOptionsReminders" dt-columns="dtColumnsReminders" dt-instance="dtInstanceRemindersCallback" class="row-border hover table"></table>
+                    <!--div>
+                        <button class="btn btn-warning" type="button" ng-click="detallesReminder()" style="margin-top: 20px; margin-bottom: 20px;">+ Añadir Aviso</button>
+                        <button class="btn btn-warning" type="button" ng-click="goBackToTheDomainManger();" style="float:right; margin-top: 20px; margin-bottom: 20px;"><span class="glyphicon glyphicon-arrow-left"></span> Gestión Empresa</button>
+                    </div-->
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab_template">
+                <div id="panel_reminders">
+                    <table width="100%" datatable="" dt-options="dtOptionsTemplate" dt-columns="dtColumnsTemplate" dt-instance="dtInstanceTemplateCallback" class="row-border hover table"></table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab_advanced">
+                <div class="col-sm-12 div-advanced-generals">
+
+                    <div class="col-sm-12 col-md-12">
+                        <h4>Opciones avanzadas de la operación</h4>
+                        <hr>
+                    </div>
+
+                    <form name="advancedOptionsOperationForm" novalidate>
+                        <div class="form-group col-sm-12 col-md-6 no-margin-bottom no-padding-left">
+                            <label for="advanced-checkbox-id-final-validation" class="col-sm-7 advanced-label">Necesita validación final:</label>
+                            <input class="col-sm-5 advanced-checkbox-id" type="checkbox" id="advanced-checkbox-id-final-validation" name="finalValidation" ng-model="advanced.additionalValidation">
+                            <div class="col-sm-12 col-md-12">
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12 col-md-6 no-margin-bottom no-padding-left">
+                            <label for="advanced-checkbox-id-replace" class="col-sm-7 advanced-label">Permitir remplazar documentos después de firmar:</label>
+                            <input class="col-sm-5 advanced-checkbox-id" type="checkbox" id="advanced-checkbox-id-replace" name="replaceDocs" ng-model="advanced.canUpdateDocs" ng-disabled="!advanced.additionalValidation">
+                            <div class="col-sm-12 col-md-12">
+                                <hr>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-12 col-md-6 no-margin-bottom no-padding-left">
+                            <label for="advanced-checkbox-id-zip" class="col-sm-7 advanced-label">Generar .zip:</label>
+                            <input class="col-sm-5 advanced-checkbox-id" type="checkbox" id="advanced-checkbox-id-zip" name="generateZip" ng-model="advanced.generateZip">
+                            <div class="col-sm-12 col-md-12">
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12 col-md-6 no-margin-bottom no-padding-left">
+                            <label for="advanced-checkbox-id-massive-sign" class="col-sm-7 advanced-label">Permitir acceso a firma masiva:</label>
+                            <input class="col-sm-5 advanced-checkbox-id" type="checkbox" id="advanced-checkbox-id-massive-sign" name="allowMasiva" ng-model="advanced.allowMasiva">
+                            <div class="col-sm-12 col-md-12">
+                                <hr>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-12 col-md-6 no-margin-bottom no-padding-left">
+                            <label for="advanced-checkbox-id-otp-access" class="col-sm-7 advanced-label">Requiere PIN de acceso:</label>
+                            <input class="col-sm-5 advanced-checkbox-id" type="checkbox" id="advanced-checkbox-id-otp-access" name="generateZip" ng-model="advanced.requiredOtpAccess">
+                            <div class="col-sm-12 col-md-12">
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12 col-md-6 no-margin-bottom no-padding-left">
+                            <label for="advanced-checkbox-id-otp-sign" class="col-sm-7 advanced-label">Requiere PIN de firma:</label>
+                            <input class="col-sm-5 advanced-checkbox-id" type="checkbox" id="advanced-checkbox-id-otp-sign" name="allowMasiva" ng-model="advanced.requiredOtpSign">
+                            <div class="col-sm-12 col-md-12">
+                                <hr>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-12 col-md-6 no-margin-bottom no-padding-left">
+                            <label for="advanced-checkbox-id-otp-video" class="col-sm-7 advanced-label">Requiere PIN de acceso a Vídeo Identificación:</label>
+                            <input class="col-sm-5 advanced-checkbox-id" type="checkbox" id="advanced-checkbox-id-otp-video" name="allowMasiva" ng-model="advanced.requiredOtpVideo">
+                            <div class="col-sm-12 col-md-12">
+                                <hr>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-12 col-md-6 no-margin-bottom no-padding-left">
+                            <label for="advanced-input-cert" class="col-sm-7 advanced-label">Enviar PIN mediante:</label>
+                            <div class="col-sm-4 no-padding-left">
+                                <select class="form-control select-center" ng-options="item as item for item in advanced.otpNotificationsTypeList track by item" ng-model="advanced.otpNotificationType"></select>
+                            </div>
+                            <div class="col-sm-12 col-md-12">
+                                <hr>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group col-sm-12 col-md-6 no-margin-bottom no-padding-left">
+                            <label for="advanced-input-tag" class="col-sm-6 advanced-label">Categorías operación:</label>
+                            <div class="col-sm-6 no-padding-left">
+								<input class="form-control" type="text" id="advanced-input-tag" name="advancedTags" ng-model="advanced.tags">
+                            </div>
+                            <div class="col-sm-12 col-md-12">
+                                <hr>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-12">
+                            <h5>Opciones avanzadas de vídeo</h5>
+                            <hr>
+                        </div>
+
+                        <div class="form-group col-sm-12 col-md-6 no-margin-bottom no-padding-left">
+                            <label for="advanced-checkbox-id-voice-register" class="col-sm-6 advanced-label">Registro de voz:</label>
+                            <input class="col-sm-5 advanced-checkbox-id" type="checkbox" id="advanced-checkbox-id-voice-register" name="voiceRegister" ng-model="advanced.voiceRegister">
+                            <div class="col-sm-12">
+                                <hr>
+                            </div>
+                        </div>
+						
+                        <div class="form-group col-sm-12 col-md-6 no-margin-bottom no-padding-left">
+                            <label for="advanced-checkbox-id-face-biometric" class="col-sm-6 advanced-label">Biometría de la cara:</label>
+                            <input class="col-sm-5 advanced-checkbox-id" type="checkbox" id="advanced-checkbox-id-face-biometric" name="faceBiometric" ng-model="advanced.faceBiometric">
+                            <div class="col-sm-12">
+                                <hr>
+                            </div>
+                        </div>
+						
+                        <div class="form-group col-sm-12 col-md-6 no-margin-bottom no-padding-left">
+                            <label for="advanced-checkbox-id-face-biometric" class="col-sm-6 advanced-label">Prueba de vida:</label>
+                            <input class="col-sm-5 advanced-checkbox-id" type="checkbox" id="advanced-checkbox-id-face-biometric" name="faceBiometric" ng-model="advanced.detectMotion">
+                            <div class="col-sm-12">
+                                <hr>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab_multilevel" ng-show="operation.signatureType=='MULTINIVEL'" >
+
+
+                <div ng-repeat="signlevel in signlevels">
+				  <div class="panel panel-primary">
+				  	<div class="panel-heading">
+				  		<h3 class="panel-title">Nivel de firma <i>{{signlevel.levelOrder}}</i></h3>
+						<span class="pull-right clickable" confirm="¿Esta seguro que desea eliminar la configuración del nivel {{signlevel.levelOrder}}?" ng-click="deleteSignLevelPanel(signlevel);"><i class="glyphicon glyphicon-trash white"></i></span>
+					</div>
+				  	<div class="panel-body">
+				  	<p ng-if="checkIfBio(signlevel.signatureTypes)">Si está seleccionada una firma biométrica para este nivel no se pueden añadir  documentos para este nivel que no sean biométricos. </p>
+				  	<div class=" panel-info col-md-3" style="border-color: transparent;">
+					<div class="panel-heading">TIPOS DE FIRMA</div>
+					<table width="100%" datatable="ng" dt-options="dtSignLevelSignatureOptions" dt-column-defs="dtSignLevelSignatureColumnDefs" class="row-border hover table">
+                        <thead>
+                            <tr>
+                            	<th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-index="{{signlevel}}" ng-repeat="signType in signlevel.signatureTypes">
+                            	<td>
+                                    <input type="checkbox" ng-model="signType.selected" ng-change="deselectSignIfBio(signlevel.signatureTypes, signType.selected, signType.label, signlevel.docsTypeList)" />
+                                </td>
+                                <td>{{ signType.label }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+
+				  	<div class=" panel-info col-md-6" style="border-color: transparent;">
+					<div class="panel-heading">DOCUMENTOS</div>
+				  	<table width="100%" datatable="ng" dt-options="dtSignLevelDocOptions" dt-column-defs="dtSignLevelDocColumnDefs" class="row-border hover table">
+                        <thead>
+							<tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="docType in signlevel.docsTypeList">
+                                <td><input type="checkbox" ng-model="docType.selected" ng-change="deselectDocsIfBio(signlevel.docsTypeList, docType.selected, docType.code, signlevel.signatureTypes)"/></td>
+                                <td>{{ docType.code }}</td>
+                                <td>{{ docType.name | cut:true:20: ' ...'}}</td>
+                                <td>{{ docType.signorupload==0?'FIRMAR':'RECOGER' }}</td>
+                                <td>{{ docType.operationorsigner==0?'OPERACIÓN':'FIRMANTE' }}</td>
+                                <td>{{ docType.uploadMandatory | setRightMandatory:docType }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+
+				  	<div class=" panel-info col-md-3" style="border-color: transparent;">
+					<div class="panel-heading">CONDICIONES</div>
+				  	<table width="100%" datatable="ng" dt-options="dtSignLevelPreconditionOptions" dt-column-defs="dtSignLevelPreconditionColumnsDef" class="row-border hover table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             <tr ng-repeat="condition in signlevel.preConditionsList">
+                                 <td><input type="checkbox" ng-model="condition.selected"/></td>
+                                 <td>{{ condition.label |  cut:true:30: ' ...' }}</td>
+                                 <td>{{ condition.mandatory==0?'NO':'SI' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+
+				  </div>
+				</div>
+            </div>
+
+		</div> <!-- tab content -->
+	</div>
+</div>
+
+<script type="text/ng-template" id="modalDocuments.html">
+
+    <div class="modal-body">
+
+        <form name="newDocForm" novalidate>
+            <div class="form-group">
+                <div class="row">
+                    <div class="form-group col-sm-6 col-xs-12" ng-class="{ 'has-error' : newDocForm.code.$invalid , 'has-success' : !newDocForm.code.$invalid}">
+                        <label for="code" class="control-label">Referencia Documento:</label>
+                        <input type="text" maxlength="50" class="form-control" name="code" ng-model="doc.code"  ng-readonly="!isnew" check-document-code="{{doc}}" check-bio-code="{{doc.code}}" placeholder="Este campo es obligatorio" required>
+						<div role="alert">
+      						<span class="error" ng-show="newDocForm.code.$invalid && !newDocForm.code.$error.checkBioCode">Este campo es obligatorio o está repetido.</span>
+                            <span class="error" ng-show="newDocForm.code.$error.checkBioCode">La referencia no puede empezar por 'BIO ' o por 'STATIC BIO '.</span>
+						</div>
+                    </div>
+
+                    <div class="form-group col-sm-6 col-xs-12" ng-class="{ 'has-error' : newDocForm.description.$invalid , 'has-success' : !newDocForm.description.$invalid}">
+                        <label for="description" class="control-label">Descripción:</label>
+                        <input type="text" maxlength="100" class="form-control" name="description" ng-model="doc.description" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+                    <div class="form-group col-xs-12" ng-class="{ 'has-error' : newDocForm.name.$invalid , 'has-success' : !newDocForm.name.$invalid}">
+                        <label for="name" class="control-label">Nombre Documento:</label>
+                        <input type="text" maxlength="70" class="form-control" name="name" ng-model="doc.name" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+					<div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newDocForm.operationorsigner.$invalid , 'has-success' : !newDocForm.operationorsigner.$invalid }"  ng-if="doc.signorupload !== '1'">
+                        <label for="signorupload" class="control-label">Operación/Firmante:</label>
+                        <select type="text" ng-model="doc.operationorsigner" ng-change="permitSignMultiple(doc.operationorsigner)" class="form-control" name="operationorsigner" id="operationorsigner" required>
+                            <option value="0">OPERACIÓN</option>
+                            <option value="1">FIRMANTE</option>
+                        </select>
+                    </div>
+
+ 					<div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newDocForm.signorupload.$invalid, 'has-success' : !newDocForm.signorupload.$invalid }">
+                        <label for="signorupload" class="control-label">Firmar/Recoger:</label>
+                        <select type="text" ng-model="doc.signorupload" ng-change="setBlockOrder(doc.signorupload)" class="form-control" name="signorupload" id="signorupload" required>
+                            <option value="0">FIRMAR</option>
+                            <option value="1">RECOGER</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newDocForm.mandatory.$invalid , 'has-success' : !newDocForm.mandatory.$invalid}" ng-if="doc.signorupload !== '1'">
+                        <label for="mandatory" class="control-label">Requiere Firma:</label>
+                        <select type="text" ng-model="doc.mandatory" class="form-control" name="mandatory" id="mandatory" required>
+                            <option value="0">NO</option>
+                            <option value="1">SI</option>
+                            <option value="2">SOLO LECTURA</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newDocForm.signmultiple.$invalid , 'has-success' : !newDocForm.signmultiple.$invalid}" ng-if="doc.signorupload !== '1'">
+                        <label for="signmultiple" class="control-label">Firma múltiple:</label>
+                        <select type="text" ng-model="doc.signmultiple" class="form-control" name="signmultiple" id="signmultiple" ng-required="doc.operationorsigner === '0'" ng-disabled="disableMultiple">
+                            <option value="0">NO</option>
+                            <option value="1">SI</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newDocForm.transferible.$invalid , 'has-success' : !newDocForm.transferible.$invalid}" ng-if="doc.signorupload !== '1'">
+                        <label for="transferible" class="control-label">Exportable:</label>
+                        <select type="text" ng-model="doc.transferible" class="form-control" name="transferible" id="transferible" required>
+                            <option value="0">NO</option>
+                            <option value="1">SI</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newDocForm.uploadMandatory.$invalid , 'has-success' : !newDocForm.uploadMandatory.$invalid}" ng-if="doc.signorupload !== '1'">
+                        <label for="uploadMandatory" class="control-label">Obligatorio:</label>
+                        <select type="text" ng-model="doc.uploadMandatory" class="form-control" name="uploadMandatory" id="uploadMandatory" required>
+                            <option value="0">NO</option>
+                            <option value="1">SI</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newDocForm.mandatory.$invalid , 'has-success' : !newDocForm.mandatory.$invalid}" ng-if="doc.signorupload === '1'">
+                        <label for="mandatory" class="control-label">Obligatorio aportar:</label>
+                        <select type="text" ng-model="doc.mandatory" class="form-control" name="mandatory" id="mandatory" required>
+                            <option value="0">NO</option>
+                            <option value="1">SI</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newDocForm.block.$invalid , 'has-success' : !newDocForm.block.$invalid}" ng-if="doc.signorupload !== '1'">
+                        <label for="block" class="control-label" >Bloque:</label>
+                        <select type="text" ng-model="doc.block" class="form-control" name="block" id="block" ng-required="doc.signorupload === '0'">
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newDocForm.order.$invalid , 'has-success' : !newDocForm.order.$invalid}" ng-if="doc.signorupload !== '1'">
+                        <label for="order" class="control-label">Orden:</label>
+                        <select type="text" ng-model="doc.order" class="form-control" name="order" check-correct-order="{{doc}}" id="order" ng-required="doc.signorupload === '0'">
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+		    <div class="modal-footer modal-footer-custom">
+		        <button class="btn btn-primary btn-custom" type="button" ng-click="saveDoc(doc)" ng-disabled="newDocForm.$invalid">Guardar</button>
+		        <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+		    </div>
+    	</form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="modalVisiblesingDocuments.html">
+
+    <div class="modal-body">
+
+        <form name="newVisiblesignDocForm" novalidate>
+            <div class="form-group">
+                <div class="row">
+                    <div class="form-group col-sm-6 col-xs-12" ng-class="{ 'has-error' : newVisiblesignDocForm.code.$invalid , 'has-success' : !newVisiblesignDocForm.code.$invalid}">
+                        <label for="code" class="control-label">Referencia:</label>
+                        <select class="form-control" ng-model="doc.code" name="code" id="code" ng-readonly="!isnew" check-document-code="{{doc}}" required>
+                            <option value="" disabled selected>Selecciona el documento</option>
+							<option ng-repeat="option in biosignDocsArray" value="{{option.reference}}">[{{option.reference}}]{{option.documentname}}</option>
+                        </select>
+						<div role="alert">
+      						<span class="error" ng-show="newVisiblesignDocForm.code.$invalid">Este campo es obligatorio o está repetido.</span>
+						</div>
+                    </div>
+
+                    <div class="form-group col-sm-6 col-xs-12" ng-class="{ 'has-error' : newVisiblesignDocForm.name.$invalid , 'has-success' : !newVisiblesignDocForm.name.$invalid}">
+                        <label for="name" class="control-label">Nombre Documento:</label>
+                        <input type="text" maxlength="70" class="form-control" name="name" ng-model="doc.name" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+                    <div class="form-group col-xs-12" ng-class="{ 'has-error' : newVisiblesignDocForm.description.$invalid , 'has-success' : !newVisiblesignDocForm.description.$invalid}">
+                        <label for="description" class="control-label">Descripción:</label>
+                        <input type="text" maxlength="100" class="form-control" name="description" ng-model="doc.description" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+					<div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newDocForm.operationorsigner.$invalid , 'has-success' : !newDocForm.operationorsigner.$invalid }"  ng-if="doc.signorupload !== '1'">
+                        <label for="signorupload" class="control-label">Operación/Firmante:</label>
+                        <select type="text" ng-model="doc.operationorsigner" ng-change="permitSignMultiple(doc.operationorsigner)" class="form-control" name="operationorsigner" id="operationorsigner" required>
+                            <option value="0">OPERACIÓN</option>
+                            <option value="1">FIRMANTE</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newVisiblesignDocForm.mandatory.$invalid , 'has-success' : !newVisiblesignDocForm.mandatory.$invalid}">
+                        <label for="mandatory" class="control-label">Requiere firma:</label>
+                        <select type="text" ng-model="doc.mandatory" class="form-control" name="mandatory" id="mandatory" required>
+                            <option value="0">NO</option>
+                            <option value="1">SI</option>
+                            <option value="2">SOLO LECTURA</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newDocForm.signmultiple.$invalid , 'has-success' : !newDocForm.signmultiple.$invalid}" ng-hide="doc.signorupload === '1'">
+                        <label for="signmultiple" class="control-label">Firma múltiple:</label>
+                        <select type="text" ng-model="doc.signmultiple" class="form-control" name="signmultiple" id="signmultiple" ng-disabled="disableMultiple" required>
+                            <option value="0">NO</option>
+                            <option value="1">SI</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newDocForm.transferible.$invalid , 'has-success' : !newDocForm.transferible.$invalid}">
+                        <label for="transferible" class="control-label">Exportable:</label>
+                        <select type="text" ng-model="doc.transferible" class="form-control" name="transferible" id="transferible" required>
+                            <option value="0">NO</option>
+                            <option value="1">SI</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newVisiblesignDocForm.uploadMandatory.$invalid , 'has-success' : !newVisiblesignDocForm.uploadMandatory.$invalid}">
+                        <label for="uploadMandatory" class="control-label">Obligatorio:</label>
+                        <select type="text" ng-model="doc.uploadMandatory" class="form-control" name="uploadMandatory" id="uploadMandatory" required>
+                            <option value="0">NO</option>
+                            <option value="1">SI</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newVisiblesignDocForm.block.$invalid , 'has-success' : !newVisiblesignDocForm.block.$invalid}">
+                        <label for="block" class="control-label">Bloque:</label>
+                        <select type="text" ng-model="doc.block" class="form-control" name="block" id="block" required>
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3 col-xs-4" ng-class="{ 'has-error' : newVisiblesignDocForm.order.$invalid , 'has-success' : !newVisiblesignDocForm.order.$invalid}">
+                        <label for="order" class="control-label">Order:</label>
+                        <select type="text" ng-model="doc.order" class="form-control" name="order" id="order" check-correct-order="{{doc}}" required>
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+		    <div class="modal-footer modal-footer-custom">
+		        <button class="btn btn-primary btn-custom" type="button" ng-click="saveVisiblesignDoc(doc)" ng-disabled="newVisiblesignDocForm.$invalid">Guardar</button>
+		        <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+		    </div>
+    	</form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="modalAuth.html">
+
+    <div class="modal-body">
+
+       <form name="newAuthForm" novalidate>
+            <div class="form-group">
+                <div class="row">
+                    <div class="form-group col-sm-5" ng-class="{ 'has-error' : newAuthForm.identifier.$invalid , 'has-success' : !newAuthForm.identifier.$invalid}">
+                        <label for="identifier" class="control-label">Identificador:</label>
+                        <select class="form-control" ng-options="item as item.label for item in identifierArray track by item.identifier" ng-model="identifier" name="identifier" id="identifier" ng-change="checkIfIsMandatory(identifier)" required>
+                            <option value="" disabled selected>Selecciona la opción</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-5" ng-class="{ 'has-error' : newAuthForm.label.$invalid , 'has-success' : !newAuthForm.label.$invalid}">
+                        <label for="label" class="control-label">Etiqueta:</label>
+                        <input type="text" class="form-control" name="label" ng-model="field.label" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+                    <div class="form-group col-sm-2" ng-class="{ 'has-error' : newAuthForm.order.$invalid , 'has-success' : !newAuthForm.order.$invalid}">
+                        <label for="order" class="control-label">Orden:</label>
+                        <input type="number" min="0" class="form-control" name="order" ng-model="field.order" placeholder="Orden" required>
+                    </div>
+
+
+                    <div class="form-group col-sm-3" ng-class="{ 'has-error' : newAuthForm.type.$invalid , 'has-success' : !newAuthForm.type.$invalid}">
+                        <label for="type" class="control-label">Tipo:</label>
+                        <select  ng-model="field.type" class="form-control" name="type" id="type" ng-disabled="isTypeReadOnly" required>
+                            <option value="" disabled selected>Selecciona el tipo</option>
+                            <option selected value="OPERATION">De operación</option>
+                            <option value="SIGNER">De firmante</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3" ng-class="{ 'has-error' : newAuthForm.auth.$invalid , 'has-success' : !newAuthForm.auth.$invalid}">
+                        <label for="auth" class="control-label">Autenticación:</label>
+                        <select  ng-model="auth" class="form-control" name="auth" id="auth" required>
+                            <option value="" disabled selected>Selecciona la opción</option>
+                            <option selected value="Y">SI</option>
+                            <option value="N">NO</option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-group col-sm-3" ng-class="{ 'has-error' : newAuthForm.resumen.$invalid , 'has-success' : !newAuthForm.resumen.$invalid}">
+                        <label for="resumen" class="control-label">Mostrar en resumen:</label>
+                        <select  ng-model="field.resumen" class="form-control" name="resumen" required>
+                            <option value="" disabled selected>Selecciona la opción</option>
+                            <option selected value="Y">SI</option>
+                            <option value="N">NO</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-3" ng-class="{ 'has-error' : newAuthForm.isMandatory.$invalid , 'has-success' : !newAuthForm.isMandatory.$invalid}">
+                        <label for="isMandatory" class="control-label">Obligatorio:</label>
+                        <select  ng-model="field.isMandatory" class="form-control" name="isMandatory" required ng-disabled="isReadOnly">
+                            <option value="" disabled selected>Selecciona la opción</option>
+                            <option selected value="Y">SI</option>
+                            <option value="N">NO</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-12" >
+                        <label for="action" class="control-label">Acciones adicionales:</label>
+						<table datatable="ng" dt-options="dtOptionsModalAuth" dt-column-defs="dtColumnsModalAuth"  class="row-border hover table">
+							<thead>
+								<tr>
+									<td colspan="2">
+									<div class="form-group">
+										<select class="form-control" ng-options="item as ('[' +item.step +'] ' + item.label) for item in actionArray track by item.action" ng-model="additionalaction.identifier" name="addactidentifier">
+                            					<option value="" selected>Ninguna</option>
+                        				</select>
+									</div>
+									</th>
+									<td>
+									<div class="form-group">
+										<button ng-click="dtModalAuthAdd()" class="btn btn-primary btn-custom pointer-span" style="height: 34px;">Añadir</button>
+									</div>
+									</td>
+								</tr>
+								<tr>
+									<th>Paso</th>
+									<th>Acción adicional</th>
+									<th></th>
+								</tr>
+
+							</thead>
+							<tbody>
+								<tr ng-repeat="addact in field.additionalactions">
+									<td>{{ addact.step }}</td>
+									<td>{{ addact.identifier }}</td>
+									<td>
+										<span ng-click="dtModalAuthRemove($index)" class="glyphicon glyphicon-trash pointer-span"></span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer modal-footer-custom">
+                <button class="btn btn-primary btn-custom" type="button" ng-click="saveAuth(field, identifier, auth, resu, action)" ng-disabled="newAuthForm.$invalid">Guardar</button>
+                <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="modalCondition.html">
+
+    <div class="modal-body">
+
+       <form name="newCondForm" novalidate>
+
+            <div class="row">
+				 <div data-info="{{showInputPhrase}}" class="form-group col-xs-6 margin-label-condition">
+                    <label class="control-label">Utilizar frase como condición:
+                        <input type="checkbox" name="typology" class="margin-checkbox-condition" ng-model="cond.typology" ng-checked="cond.typology" ng-click="showInputPhrase = !showInputPhrase">
+					</label>
+                </div>
+
+				<div ng-if="showInputPhrase" class="col-md-6 col-sm-6 col-xs-6 col-lg-6 form-group" ng-class="{ 'has-error' : newCondForm.phrase.$invalid , 'has-success' : !newCondForm.phrase.$invalid}">
+                    <label for="phrase" class="control-label">Frase de la condición:</label>
+                        <input type="text" class="form-control" name="phrase" ng-model="cond.phrase" placeholder="Escriba la frase verificar la condición" required>
+                </div>
+			</div>
+
+			<div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6 form-group" ng-class="{ 'has-error' : newCondForm.label.$invalid , 'has-success' : !newCondForm.label.$invalid}">
+                    <label for="description" class="control-label">Label:</label>
+                        <input type="text" same-condition-name={{cond}} class="form-control" name="label" ng-model="cond.label" placeholder="Este campo es obligatorio" required>
+                </div>
+
+                <div class="col-md-4 col-xs-4 col-sm-4 col-lg-4 form-group">
+                    <label for="step" class="control-label">Paso:</label>
+                    <select type="text" ng-model="cond.step" class="form-control" name="step" id="step" required>
+                        <option value="" disabled selected>     Selecciona el paso donde se mostrará</option>
+                        <option value="welcome">                Pantalla de bienvenida</option>
+						<option value="selectCertificate">      Pantalla de selección de certificado</option>
+                        <option value="access">                 Pantalla de acceso</option>
+                        <option value="conformity">             Pantalla de datos</option>
+                        <option value="requiredDocuments">      Pantalla de documentos requeridos</option>
+                        <option value="signatureDocuments">     Pantalla de documentos de firma</option>
+                        <option value="signature">              Pantalla de firma</option>
+                        <option value="resume">                 Pantalla de resumen</option>
+                        <option value="popupvideorecord">       Dialogo Inicio Vídeo Identificación</option>
+                        <option value="popupvideoconference">   Dialogo Inicio Vídeoconferencia</option>
+                        <option value="videorecord">            Vídeo Identificación</option>
+                        <option value="videoconference">        Vídeo Conferencia</option>
+                        <option value="videoconferenceAdmin">   Vídeo Conferencia Administración</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 col-xs-2 col-sm-2 col-lg-2 form-group">
+                    <label for="name" class="control-label">Obligatorio:</label>
+                    <select type="text" ng-model="cond.mandatory" class="form-control" name="notiftype" id="notiftype" required>
+                        <option value="" disabled selected>Selecciona la opción</option>
+                        <option value="0">NO</option>
+                        <option value="1">SI</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12 form-group">
+                    <textarea ui-tinymce="tinymceOptions" ng-model="cond.html"></textarea>
+                </div>
+            </div>
+
+		    <div class="modal-footer modal-footer-custom">
+		        <button class="btn btn-primary btn-custom" type="button" ng-click="saveCond(cond)" ng-disabled="newCondForm.$invalid">Guardar</button>
+		        <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+		    </div>
+    	</form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="modalLimit.html">
+
+    <div class="modal-body">
+
+       <form name="newLimitForm" class="form-horizontal" novalidate>
+
+            <div class="form-group" ng-class="{ 'has-error' : newLimitForm.name.$invalid , 'has-success' : !newLimitForm.name.$invalid}">
+                <label for="name" class="col-sm-3 control-label">Nombre:</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" name="name" id="name" ng-model="limit.name" placeholder="Este campo es obligatorio." required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="period" class="col-sm-3 control-label">Periodo:</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" name="period" ng-model="limit.period">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12 form-inline">
+                    <div class="form-group col-sm-4">
+                        <div class="col-sm-12" >
+                            <label for="period" class="col-sm-7 control-label">Número máximo<br/>de visitas:</label>
+                            <div class="col-sm-5">
+                                <input type="number" class="form-control" name="maxNumberVisits" ng-model="limit.maxNumberVisits" style="width: 100%" ng-value="{{0}}" min="0">
+                            </div>
+                        </div>
+                    </div>
+					<div class="form-group col-sm-4">
+                        <div class="col-sm-12" >
+                            <label for="maxNumberVisitsPerHour" class="col-sm-7 control-label">Número máximo<br/>de visitas<br/>por hora:</label>
+                            <div class="col-sm-5">
+                                <input type="number" class="form-control" name="maxNumberVisitsPerHour" id="maxNumberVisitsPerHour" ng-model="limit.maxNumberVisitsPerHour" style="width: 100%" ng-value="{{0}}" min="0">
+                            </div>
+                        </div>
+                   </div>
+                   <div class="form-group col-sm-4">
+                        <div class="col-sm-12" >
+                            <label for="maxNumberDownloads" class="col-sm-7 control-label">Número máximo<br/>descargas:</label>
+                            <div class="col-sm-5">
+                                <input type="number" class="form-control" name="maxNumberDownloads" id="maxNumberDownloads" ng-model="limit.maxNumberDownloads" style="width: 100%" ng-value="{{0}}" min="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12 form-inline">
+                   <div class="form-group col-sm-6">
+                        <div class="col-sm-12" >
+                            <label for="maxSMSNotif" class="col-sm-7 control-label">Número máximo de SMS notificación:</label>
+                            <div class="col-sm-5">
+                                <input type="number" class="form-control" name="maxSMSNotif" id="maxSMSNotif" ng-model="limit.maxSMSNotif" style="width: 100%" ng-value="{{0}}" min="0">
+                            </div>
+                        </div>
+                    </div>
+					<div class="form-group col-sm-6">
+                        <div class="col-sm-12" >
+                            <label for="maxSMSSign" class="col-sm-7 control-label">Número máximo de SMS firma:</label>
+                            <div class="col-sm-5">
+                                <input type="number" class="form-control" name="maxSMSSign" id="maxSMSSign"ng-model="limit.maxSMSSign" style="width: 100%" ng-value="{{0}}" min="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12 form-inline">
+                    <div class="form-group col-sm-6">
+                        <div class="col-sm-12" >
+                            <label for="maxSMSReminder" class="col-sm-7 control-label">Número máximo de SMS recordatorio:</label>
+                            <div class="col-sm-5">
+                                <input type="number" class="form-control" name="maxSMSReminder" id="maxSMSReminder" ng-model="limit.maxSMSReminder" style="width: 100%" ng-value="{{0}}" min="0">
+                            </div>
+                        </div>
+                    </div>
+                   <div class="form-group col-sm-6">
+                        <div class="col-sm-12" >
+                            <label for="maxSMSTotal" class="col-sm-7 control-label">Número máximo de SMS totales:</label>
+                            <div class="col-sm-5">
+                                <input type="number" class="form-control" name="maxSMSTotal" id="maxSMSTotal" ng-model="limit.maxSMSTotal" style="width: 100%" ng-value="{{0}}" min="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12 form-inline">
+                    <div class="form-group col-sm-6">
+                        <div class="col-sm-12" style="text-align:left">
+                            <label for="maxSizeKbFile" class="col-sm-7 control-label">Tamaño máximo (kB) file:</label>
+                            <div class="col-sm-5">
+                                <input type="number" class="form-control" name="maxSizeKbFile" id="maxSizeKbFile"ng-model="limit.maxSizeKbFile" style="width: 100%" ng-value="{{0}}" min="0">
+                            </div>
+                        </div>
+                    </div>
+					<div class="form-group col-sm-6">
+                        <div class="col-sm-12" style="text-align:left">
+                            <label for="maxSizeKbTotal" class="col-sm-7 control-label">Tamaño máximo (kB) total:</label>
+                            <div class="col-sm-5">
+                                <input type="number" class="form-control" name="maxSizeKbTotal" id="maxSizeKbTotal" ng-model="limit.maxSizeKbTotal" style="width: 100%" ng-value="{{0}}" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12 form-inline">
+                    <div class="form-group col-sm-6">
+                        <div class="col-sm-12" style="text-align:left">
+                            <label for="maxValidTimeOTPMillis" class="col-sm-7 control-label">Caducidad de la clave<br/>(milisegundos):</label>
+                            <div class="col-sm-5">
+                                <input type="number" class="form-control" name="maxValidTimeOTPMillis" id="maxValidTimeOTPMillis"ng-model="limit.maxValidTimeOTPMillis" style="width: 100%" ng-value="{{0}}" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <div class="col-sm-12" style="text-align:left">
+                            <label for="maxValidTimeFrameMillis" class="col-sm-7 control-label">Caducidad de la operación<br/>(milisegundos)::</label>
+                            <div class="col-sm-5">
+                                <input type="number" class="form-control" name="maxValidTimeFrameMillis" id="maxValidTimeFrameMillis"ng-model="limit.maxValidTimeFrameMillis" style="width: 100%" ng-value="{{0}}" min="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="modal-footer modal-footer-custom">
+                <button class="btn btn-primary btn-custom" type="button" ng-click="saveLimit(limit)" ng-disabled="newLimitForm.$invalid">Guardar</button>
+                <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="modalReminder.html">
+
+    <div class="modal-body">
+
+       <form name="newReminderForm" novalidate>
+            <div class="col-sm-7 control-label">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 form-group" ng-class="{ 'has-error' : newReminderForm.reminderType.$invalid , 'has-success' : !newReminderForm.reminderType.$invalid}">
+                        <label for="reminderType" class="control-label">Tipo de aviso:</label>
+                        <select class="form-control" ng-options="item.label as item.label for item in reminderTypeArray" ng-model="reminder.reminderType" name="reminderType" id="reminderType" required></select>
+                    </div>
+                    <div class="col-md-6 col-sm-12 form-group" ng-class="{ 'has-error' : newReminderForm.notificationTemplateId.$invalid , 'has-success' : !newReminderForm.notificationTemplateId.$invalid}">
+                        <label for="notificationTemplateId" class="control-label">Tipo de plantilla:</label>
+                        <select class="form-control" ng-options="item.label as item.label for item in notificationTypeArray" ng-model="reminder.notificationTemplateId" name="notificationTemplateId" id="notificationTemplateId" required></select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : newReminderForm.hoursSinceLastReminder.$invalid , 'has-success' : !newReminderForm.hoursSinceLastReminder.$invalid}">
+                        <label for="hoursSinceLastReminder" class="control-label">Tiempo desde último aviso (en minutos):</label>
+                        <input type="number" min="1" id="hoursSinceLastReminder" name="hoursSinceLastReminder" class="form-control" ng-model="reminder.hoursSinceLastReminder" placeholder="Este campo es obligatorio" required>
+                    </div>
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : newReminderForm.hoursSinceFirstNotification.$invalid , 'has-success' : !newReminderForm.hoursSinceFirstNotification.$invalid}">
+                        <label for="hoursSinceFirstNotification" class="control-label">Tiempo desde la notificación inicial (en minutos):</label>
+                        <input type="number" min="1" id="hoursSinceFirstNotification" name="hoursSinceFirstNotification" class="form-control" ng-model="reminder.hoursSinceFirstNotification" placeholder="Este campo es obligatorio" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer modal-footer-custom">
+                <button class="btn btn-primary btn-custom" type="button" ng-click="saveReminder(reminder)" ng-disabled="newReminderForm.$invalid">Guardar</button>
+                <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="modalNotification.html">
+
+    <div class="modal-body" style="padding-bottom: 0px;">
+
+       <form name="newNotificationForm" novalidate>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-3 form-group" ng-class="{ 'has-error' : newNotificationForm.identifier.$invalid , 'has-success' : !newNotificationForm.identifier.$invalid}">
+                        <label for="notiftype" class="control-label">Tipo:</label>
+                        <select class="form-control" ng-options="item.label as item.label for item in notificationTypeArray" same-notification-type="{{notification}}" ng-model="notification.notiftype" name="identifier" id="identifier" required></select>
+                    </div>
+                    <div class="col-md-3 form-group" ng-class="{ 'has-error' : newNotificationForm.extra.$invalid , 'has-success' : !newNotificationForm.extra.$invalid}">
+                        <label for="extra" class="control-label">Idioma:</label>
+                        <select class="form-control" ng-model="notification.extra" name="extra" id="extra" required>
+							<option ng-repeat="option in languages" value="{{option.languagecode}}">{{option.languagename}}</option>
+						</select>
+                    </div>
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : newNotificationForm.name.$invalid , 'has-success' : !newNotificationForm.name.$invalid}">
+                        <label for="name" class="control-label">Nombre:</label>
+                        <input type="text" id="name" maxlength="199" name="name" class="form-control" ng-model="notification.name" placeholder="Este campo es obligatorio" required>
+                    </div>
+                    <div class="col-md-12 form-group" ng-class="{ 'has-error' : newNotificationForm.subject.$invalid , 'has-success' : !newNotificationForm.subject.$invalid}">
+                        <input type="text" id="subject" maxlength="199" name="subject" class="form-control" ng-model="notification.subject" placeholder="Insertar el asunto por favor" required>
+                    </div>
+
+                    <div class="form-group col-sm-12">
+                            <textarea ui-tinymce="tinymceOptions" ng-model="notification.body"></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer modal-footer-custom">
+                    <button class="btn btn-primary btn-custom" type="button" ng-click="saveNotification(notification)" ng-disabled="newNotificationForm.$invalid">Guardar</button>
+                    <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="modalAddQuestions.html">
+
+    <div class="modal-body">
+
+       <form name="surveyForm" novalidate>
+            <div class="form-group">
+                <div class="row">
+                    <h4 class="marginLeft">Insertar pregunta:</h4>
+                    <div class="form-group col-sm-4" ng-class="{ 'has-error' : surveyForm.questionCode.$invalid , 'has-success' : !surveyForm.questionCode.$invalid}">
+                        <label for="questionCode" class="control-label">Identificador:</label>
+                        <input class="form-control" ng-model="question.questionCode" name="questionCode" id="questionCode" required></input>
+                    </div>
+                    <div class="form-group col-sm-8" ng-class="{ 'has-error' : surveyForm.questionText.$invalid , 'has-success' : !surveyForm.questionText.$invalid}">
+                        <label for="questionText" class="control-label">Pregunta:</label>
+                        <input class="form-control" ng-model="question.questionText" name="questionText" id="questionText" required></input>
+                    </div>
+                    <h4 class="marginLeft">Insertar respuesta:</h4>
+                    <div class="form-group col-sm-4" ng-class="{ 'has-error' : surveyForm.optionCode.$invalid , 'has-success' : !surveyForm.optionCode.$invalid}">
+                        <label for="optionCode" class="control-label">Identificador:</label>
+                        <input class="form-control" ng-model="question.option.optionCode" name="optionCode" id="optionCode" required></input>
+                    </div>
+                    <div class="form-group col-sm-7" ng-class="{ 'has-error' : surveyForm.optionText.$invalid , 'has-success' : !surveyForm.optionText.$invalid}">
+                        <label for="optionText" class="control-label">Respuesta:</label>
+                        <input class="form-control" ng-model="question.option.optionText" name="optionText" id="optionText" required></input>
+                    </div>
+                    <button class="btn btn-custom2" ng-disabled="noEmptyAnswerFields()" ng-click="saveAnswer(question.option)">
+                      <span class="glyphicon glyphicon-plus" area-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+            <div>
+              <table width="100%" datatable="ng" dt-options="dtOptionsAnswer" dt-columns-defs="dtColumnsAnswer" dt-instance="dtInstanceAnswer" class="table row-border hover">
+                <thead>
+                    <tr>
+                        <th class="col-sm-2 center-text">ID</th>
+                        <th class="col-sm-8 center-text">Respuesta</th>
+                        <th class="col-sm-2 center-text">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="userAnswer in question.options">
+                        <td>{{userAnswer.optionCode}}</td>
+                        <td>{{userAnswer.optionText}}</td>
+                        <td>
+                              <i>
+                                <!-- <span class="glyphicon glyphicon-edit pointer-span" ng-click="editAnswer($index)"></span> -->
+                                <span class="glyphicon glyphicon-trash pointer-span" ng-click="removeAnswer($index)" confirm="¿Está seguro qué desea eliminar la respuesta con código {{userAnswer.optionCode}}?"></span>
+                              </i>
+                        </td>
+                    </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer modal-footer-custom">
+                <button class="btn btn-primary btn-custom" type="button" ng-click="saveQuestion(question)" ng-disabled="checkLenghtAnswers()">Guardar</button> <!-- surveyQForm.$invalid -->
+                <button class="btn btn-warning btn-custom" type="button" ng-click="closeSurveyModal()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="modalShowActa.html">
+
+    <div class="modal-body">
+
+            <iframe id="fileViewer" style="width: 100%;" ng-src="{{documentURL}}"></iframe>
+            <div class="modal-footer modal-footer-custom">
+                <button class="btn btn-warning btn-custom" type="button" ng-click="closeActaModal()">Cancelar</button>
+            </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="modalStaticDocument.html">
+
+    <div class="modal-body">
+
+            <iframe id="fileViewer" style="width: 100%;" ng-src="{{documentURL}}"></iframe>
+            <div class="modal-footer modal-footer-custom">
+                <button class="btn btn-warning btn-custom" type="button" ng-click="closeActaModal()">Cancelar</button>
+            </div>
+    </div>
+</script>

@@ -1,0 +1,1490 @@
+<head>
+  <meta charset="UTF-8" />
+
+<style type="text/css">
+.extra-button {
+    height: 34px;
+    margin-top: 0px;
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+.nopadding {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.imgdimension {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.containerimg {
+    width : 120px;
+    height : 120px;
+}
+
+.buttonAddUser {
+	width: 60px;
+	height: 33px;
+	margin-top: 23px; 
+}
+
+.img-add-user {
+	height: 30px;
+	margin-top: -4px;
+}
+
+table.dataTable tbody td {
+	padding-top: 6px;
+	padding-bottom: 7px;
+}
+
+.textSearch {
+	text-align: right;
+    padding-top: 9px;
+    margin-bottom: 0;
+}
+
+.rowSearch {
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+</style>
+</head>
+<!-- CONTAINER-FLUID -->
+<div id="container-fluid" class="fondo" ng-init="loadDomainData()">
+    <div class="row">
+        <div class="panel panel-primary panel-primary-custom" ng-if="isLoaded">
+            <div class="panel-heading">Gestion de <i>dominio</i>
+            </div>
+            <div class="text-titular">Pantalla de gestión del dominio.</div>
+            <div class="panel-body">
+                <ul class="nav nav-pills nav-justified">
+                    <li ng-class="{'active' : !fromOperation}"><a data-toggle="pill" href="#tab_info" target="_self">General</a></li>
+                    <li><a data-toggle="pill" target="_self" href="#tab_storage">Almacenamiento</a></li>
+                    <li><a data-toggle="pill" target="_self" href="#tab_certificates">Certificados</a></li>
+                    <li><a data-toggle="pill" target="_self" href="#tab_graphics">Aspecto</a></li>
+                    <li><a data-toggle="pill" target="_self" href="#tab_email">Correo</a></li>
+                    <li><a data-toggle="pill" target="_self" href="#tab_url">M&oacute;dulos</a></li>
+                    <li><a data-toggle="pill" target="_self" href="#tab_extra">Adicionales</a></li>
+                    <li><a data-toggle="pill" target="_self" href="#tab_sms">SMS</a></li>
+                    <li ng-class="{'active' : fromOperation}"><a data-toggle="pill" target="_self" href="#tab_operations">Operaciones</a></li>
+                    <li><a data-toggle="pill" target="_self" href="#tab_cas">CAs admitidas</a></li>
+                    <li><a data-toggle="pill" target="_self" href="#tab_actas">Tipos acta</a></li>
+                    <li><a data-toggle="pill" target="_self" href="#tab_biodocs">Coordenadas Firmas</a></li>
+                    <li ng-if="domainData.advancedOptions.useLDAP"><a data-toggle="pill" target="_self" href="#tab_LDAP">Configuraci&oacute;n LDAP</a></li>
+                </ul>
+                <div class="tab-content">
+
+                    <div class="tab-pane fade" ng-class="{'in active' : !fromOperation}" id="tab_info" role="tabpanel"> <!-- TAB DOCUMENTOS -->
+
+                        <div class="row">
+                        <hr>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <p>Información básica del contexto de empresa</p>
+                                </div>
+                                <div class="col-sm-12 col-md-12" style="height:100%; overflow-y: auto; box-shadow: 2px 2px 2px 2px #888888; padding: 0px; border-radius: 3px;">
+	                                <div style="width: 100%; height:100%;">
+                                        <div class="panel-heading panel-group-user" >Grupos de usuarios</div>
+                                    </div>
+
+	                                <!-- BLOQUE GESTION DE GRUPOS DE USUARIOS -->
+	                                <div class="col-sm-12 col-md-12" style="margin-top: 20px; margin-bottom: 20px;"
+								      data-angular-treeview="true"
+								      data-tree-model="usersgroupsList"
+								      data-node-id="id"
+								      data-node-label="groupName"
+								      data-node-children="childrens" >
+								    </div>
+							    </div>
+                            </div>
+                            <div class="col-md-8 col-sm-12">
+                                <div class="col-sm-12 col-md-12 no-padding-lateral">
+                                    <form name="domainInfoForm" novalidate>
+                                    	<div class="col-xs-12 no-padding-lateral">
+											<div class="form-group col-sm-12 col-md-2">
+	                                            <label for="domainID" class="control-label">Id dominio:</label>
+	                                            <input type="number" class="form-control" id="domainID" name="domainID" ng-model="domainInfo.id" placeholder="Email" readonly>
+	                                        </div>
+	                                        <div class="form-group col-sm-12 col-md-2" ng-class="{ 'has-error' : domainInfoForm.configID.$invalid , 'has-success' : !domainInfoForm.configID.$invalid}">
+	                                            <label for="configID" class="control-label">Id configuración:</label>
+	                                            <input type="number" min="1" class="form-control" id="configID" name="configID" ng-model="domainInfo.configurationID" placeholder="Introducir el id de la config." required>
+	                                        </div>
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainInfoForm.domainName.$invalid , 'has-success' : !domainInfoForm.domainName.$invalid}">
+	                                            <label for="domainName" class="control-label">Nombre:</label>
+	                                            <input type="text" class="form-control" id="domainName" name="domainName" ng-model="domainInfo.domainName" placeholder="Insertar en nombre" required>
+	                                        </div>
+	                                        <div class="col-md-1 col-sm-1 form-group no-padding-lateral">
+	                                            <button class="btn btn-default form-control buttonAddUser" ng-click="editUser()"><img class="img-add-user" src="webapp/img/new-user.svg"></img></button>
+	                                        </div>
+	                                        <div class="col-md-1 col-sm-1 form-group no-padding-lateral">
+	                                           	<button ng-if="importLDAPUser" class="btn btn-default form-control buttonAddUser" ng-click="importUser()"><img class="img-add-user" src="webapp/img/new-user-ldap.svg"></img></button>
+	                                        </div>
+                                    	</div>
+                                    </form>
+
+                                    <table datatable="ng" dt-options="dtOptionsUser" dt-column-defs="dtColumnsUser" dt-instance="dtInstanceUserCallback" class="row-border hover table" width="100%" height="5%">
+                                        <thead>
+                                        <tr>
+                                            <th>Usuario</th>
+                                            <th>Correo</th>
+                                            <th>Rol</th>
+                                            <th>Grupo</th>
+                                            <th>Estado</th>
+                                            <th>Nombre</th>
+                                            <th>Apellidos</th>
+                                            <th>Nif</th>
+                                            <th>Teléfono</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="user in usersList">
+                                                <td>{{ user.username }}</td>
+                                                <td>{{ user.useremail }}</td>
+                                                <td>{{ user.role | role }}</td>
+                                                <td>{{ user.groupid | groupFilter }}</td>
+                                                <td>{{ user.state | stateFilter }}</td>
+                                                <td>{{ user.userfirstname}}</td>
+                                                <td>{{ user.userlastname1}}</td>
+                                                <td>{{ user.userdocument}}</td>
+                                                <td>{{ user.cellphone}}</td>
+                                                <td>
+                                                    <i>
+                                                        <span ng-if="user.role < userRole || user.id == userIdFromToken" ng-click="editUser(user)" class="glyphicon glyphicon-edit pointer-span "></span>
+                                                        <span ng-click="deleteUser(user)" ng-if="user.role < userRole" confirm="¿Está seguro de eliminar el usuario '{{user.username}}'?" class="icon glyphicon glyphicon-trash pointer-span">
+                                                    </i>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <button class="btn btn-default" ng-disabled="domainInfoForm.$invalid" ng-click="saveGeneralInfo(domainInfo)">Guardar Configuración General</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div  class="tab-pane fade" id="tab_storage">
+
+                        <div class="row">
+                        <hr>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <p>Gestión de los parámetros del tipo de almacenamiento</p>
+                                </div>
+                            </div>
+                            <div class="col-md-8 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <form name="domainStorageForm" novalidate>
+
+                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainStorageForm.encLevel.$invalid , 'has-success' : !domainStorageForm.encLevel.$invalid}">
+                                            <label for="encLevel" class="control-label">Nivel de Encriptación:</label>
+                                            <input type="number" class="form-control" id="encLevel" name="encLevel" ng-model="domainStorage.encryptionLevel" placeholder="Nivel Encryption" required>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-3" ng-class="{ 'has-error' : domainStorageForm.sizeLimit.$invalid , 'has-success' : !domainStorageForm.sizeLimit.$invalid}">
+                                            <label for="sizeLimit" class="control-label">Tamaño max archivo (Kb):</label>
+                                            <input type="number" class="form-control" id="sizeLimit" name="sizeLimit" ng-model="domainStorage.sizeLimit" placeholder="Tamaño max fichero" required>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-3" ng-class="{ 'has-error' : domainStorageForm.totalSizeLimit.$invalid , 'has-success' : !domainStorageForm.totalSizeLimit.$invalid}">
+                                            <label for="totalSizeLimit" class="control-label">Tamaño max total (MB):</label>
+                                            <input type="number" class="form-control" id="totalSizeLimit" name="totalSizeLimit" ng-model="domainStorage.totalSizeLimit" placeholder="Tamaño max total" required>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainStorageForm.basePath.$invalid , 'has-success' : !domainStorageForm.basePath.$invalid}">
+                                            <label for="basePath" class="control-label">Base path:</label>
+                                            <input type="text" class="form-control" id="basePath" name="basePath" ng-model="domainStorage.basePath" placeholder="Path almacenamiento" required>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainStorageForm.storageType.$invalid , 'has-success' : !domainStorageForm.storageType.$invalid}">
+                                            <label for="storageType" class="control-label">Tipo de almacenamiento:</label>
+                                            <select type="text" ng-model="domainStorage.storageType" class="form-control" name="storageType" id="storageType">
+                                                <option selected value="LOCAL">LOCAL</option>
+                                                <option value="CLOUD">CLOUD</option>
+                                                <option value="ALFRESCO">ALFRESCO</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainStorageForm.stusername.$invalid , 'has-success' : !domainStorageForm.stusername.$invalid && domainStorage.storageType !== 'LOCAL', '' : domainStorage.storageType === 'LOCAL'}">
+                                            <label for="stusername" class="control-label">St username:</label>
+                                            <input type="text" class="form-control" id="stusername" name="stusername" ng-model="domainStorage.stusername" placeholder="Usuario" ng-required="domainStorage.storageType !== 'LOCAL'">
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainStorageForm.stpassword.$invalid , 'has-success' : !domainStorageForm.stpassword.$invalid && domainStorage.storageType !== 'LOCAL', '' : domainStorage.storageType === 'LOCAL'}">
+                                            <label for="stpassword" class="control-label">St Passw:</label>
+                                            <input type="password" class="form-control" id="stpassword" name="stpassword" ng-model="domainStorage.stpassword" placeholder="Password" autocomplete="off" required>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <button class="btn btn-default" ng-disabled="domainStorageForm.$invalid" ng-click="saveStorageConf(domainStorage)">Guardar Configuración Almacenamiento</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div  class="tab-pane fade" id="tab_certificates">
+                        <div class="row">
+                        <hr>
+                            <!-- <div class="col-md-4 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <p>Gestión de la información de certificado de firma</p>
+                                </div>
+                            </div> -->
+                            <div class="col-md-12 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <form name="fileCertForm" novalidate>
+
+                                        <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                                            <div class="checkbox">
+                                                <label><input type="checkbox" ng-model="disableFileCertUpload" ng-change="setDefaultCert(disableFileCertUpload)">Usar Certificado por defecto</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12 col-md-4 no-padding-left no-padding-right">
+                                            <div class="form-group col-sm-12 col-md-12 col-xs-12">
+                                                <label for="p12cert" class="control-label">Certificado (.P12, .PFX):</label>
+                                                <input class="form-control" type="file" name="p12cert" id="p12cert"
+                                                onchange="angular.element(this).scope().uploadedP12File(this)" ng-disabled="disableFileCertUpload">
+                                            </div>
+
+                                            <div class="form-group col-sm-12 col-md-12">
+                                                <label for="certificateArea" class="control-label">Certificado:</label>
+                                                <textarea rows="5" class="form-control" id="certificateArea" name="certificateArea" ng-model="domainCertificates.certificate" disabled></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12 col-md-4 no-padding-left no-padding-right">
+                                            <div class="form-group col-sm-12 col-md-9" ng-class="{ 'has-success' : !fileCertForm.certFilePass.$invalid }">
+                                                <label for="certFilePass" class="control-label">Contraseña certificado:</label>
+                                                <input type="password" class="form-control" id="certFilePass" name="certFilePass" placeholder="Introducir la contraseña (opcional)" autocomplete="off" ng-model="domainCertificates.certificatePass">
+                                            </div>
+                                            <div class="form-group col-sm-12 col-md-3 col-xs-4">
+                                                <!-- <label for="operationType" style="visibility: hidden;">hidden</label> -->
+                                                <button class="btn btn-default" style="height: 34px; margin-top:23px; width: 100%" ng-disabled="!fileSelected" ng-click="saveP12Cert(domainCertificates);"><span class="glyphicon glyphicon-plus"></span></button>
+                                            </div>
+                                            <div class="form-group col-sm-12 col-md-12 ">
+                                                <label for="certificatePKArea" class="control-label">Validez:</label>
+                                                <textarea rows="5" class="form-control" id="certificatePKArea" name="certificatePKArea" ng-model="domainCertificates.certificatePK" disabled></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12 col-md-4 no-padding-left no-padding-right">
+                                            <div class="form-group col-sm-12 col-md-9 col-xs-12">
+                                                <label for="LTVcert" class="control-label">Certificado para LTV (.cer, .crt):</label>
+                                                <input class="form-control" type="file" name="LTVcert" id="LTVcert"
+                                                onchange="angular.element(this).scope().uploadLTVCert(this)" ng-disabled="disableFileCertUpload && !isValidIntermediateCert">
+                                            </div>
+
+                                            <div class="form-group col-sm-12 col-md-3">
+                                                <button class="btn btn-default" style="height: 34px; margin-top:23px; width: 100%" ng-disabled="!fileLTVSelected" ng-click="saveLTVCert(domainCertificates);"><span class="glyphicon glyphicon-plus"></span></button>
+                                            </div>
+
+                                            <div class="form-group col-sm-12 col-md-12">
+                                                <label for="certificateAreaLTV" class="control-label">Certificado para LTV:</label>
+                                                <textarea rows="5" class="form-control" id="certificateAreaLTV" name="certificateAreaLTV" ng-model="domainCertificates.certificateroot" disabled></textarea>
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                </div>
+                                <div class="col-sm-12 col-md-12">
+                                    <div class="col-sm-12 col-md-12">
+                                        <hr>
+                                    </div>
+                                </div>
+                                     <div class="col-sm-12 col-md-12">
+                                    <form name="domainCertForm" novalidate>
+
+                                        <div class="form-group col-xs-12 col-sm-12 col-md-12">
+                                            <div class="checkbox">
+                                                <label><input type="checkbox" ng-model="disableTsa" ng-change="saveDefaultTsa(disableTsa)">Usar TSA por defecto</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-4" ng-class="{ 'has-error' : domainCertForm.tsaURL.$invalid , 'has-success' : !domainCertForm.tsaURL.$invalid}">
+                                            <label for="tsaURL" class="control-label">URL de TSA:</label>
+                                            <input type="text" class="form-control" id="tsaURL" name="tsaURL" ng-model="domainCertificates.tsaURL" placeholder="Introducir la URL de TSA" required ng-disabled="disableTsa">
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-4" ng-class="{ 'has-error' : domainCertForm.tsaUsername.$invalid , 'has-success' : !domainCertForm.tsaUsername.$invalid}">
+                                            <label for="tsaUsername" class="control-label">Usuario TSA:</label>
+                                            <input type="text" class="form-control" id="tsaUsername" name="tsaUsername" ng-model="domainCertificates.tsaUsername" placeholder="Introducir el usuario de TSA" ng-disabled="disableTsa">
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-4" ng-class="{ 'has-error' : domainCertForm.tsaPassword.$invalid , 'has-success' : !domainCertForm.tsaPassword.$invalid}">
+                                            <label for="tsaPassword" class="control-label">Password TSA:</label>
+                                            <input type="password" class="form-control" id="tsaPassword" name="tsaPassword" ng-model="domainCertificates.tsaPassword" autocomplete="off" placeholder="Introducir la pass de TSA" ng-disabled="disableTsa">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12">
+                                <button class="btn btn-default" ng-disabled="domainCertForm.$invalid" ng-click="saveCertInfo(domainCertificates, disableFileCertUpload, disableTsa);">Guardar datos</button>
+                                <button class="btn btn-default" ng-disabled="domainCertForm.$invalid" ng-click="tryTsa(domainCertificates);">Probar TSA</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab_graphics">
+                        <div class="row">
+                            <hr>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <p>Gestión de los elementos gráficos.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-8 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <form name="domainGraphicForm" novalidate>
+
+                                        <div class="form-group col-sm-12 col-md-6">
+                                            <div class="col-md-6">
+                                                <label for="cssFile" class="control-label">Hoja de Estilo:</label>
+                                                <span class="btn btn-default btn-file" style="margin-top: 0px;">Elige el fichero
+                                                    <input class="form-control" type="file" name="fileCSS" id="cssFile" onchange="angular.element(this).scope().uploadedFile(this)"/>
+                                                </span>
+                                            </div>
+                                            <div class="col-md-6" style="height: 63px;">
+                                                <span style="line-height: 63px;" id="previewcssfile" class="previewcssfile">{{cssFile}}</span>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-6">
+                                            <div class="col-md-6">
+                                                <label for="logoBig" class="control-label">Logo Grande:</label>
+                                                <span class="btn btn-default btn-file" style="margin-top: 0px;">Elige el fichero
+                                                    <input class="form-control" type="file" name="logoBig" id="logoBig" onchange="angular.element(this).scope().uploadedFile(this)"/>
+                                                </span>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div id="previewbig" class="containerimg"><img class="imgdimension" ng-src="services/logos/biglogo/{{domainID}}{{setClearChache}}" /></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-6">
+                                            <div class="col-md-6">
+                                                <label for="logoMedium" class="control-label">Logo Mediano:</label>
+                                                <span class="btn btn-default btn-file" style="margin-top: 0px;">Elige el fichero
+                                                    <input class="form-control" type="file" name="logoMedium" id="logoMedium" onchange="angular.element(this).scope().uploadedFile(this)"/>
+                                                </span>
+                                            </div>
+                                            <div class="col-md-6">
+                                               <div id="previewmedium" class="containerimg"><img class="imgdimension" ng-src="services/logos/mediumlogo/{{domainID}}{{setClearChache}}" style="vertical-align: middle;" /></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-6">
+                                            <div class="col-md-6">
+                                                <label for="logoLittle" class="control-label">Logo pequeño:</label>
+                                                <span class="btn btn-default btn-file" style="margin-top: 0px;">Elige el fichero
+                                                    <input class="form-control" type="file" name="logoLittle" id="logoLittle" onchange="angular.element(this).scope().uploadedFile(this)"/>
+                                                </span>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div id="previewlittle" class="containerimg"><img class="imgdimension" ng-src="services/logos/smalllogo/{{domainID}}{{setClearChache}}" /></div>
+                                            </div>
+                                        </div>
+                                        <!-- COLOR PICKER -->
+                                        <div class="form-group col-sm-12 col-md-6">
+                                            <div class="col-md-6"  ng-class="{ 'has-error' : domainGraphicForm.primaryColor.$invalid, 'has-success' : !domainGraphicForm.primaryColor.$invalid}">
+                                                <label for="primaryColor" class="control-label">Color principal página de firma:</label>
+                                                <input style="color: {{ signatureColors.primaryColor }}" class="form-control" ng-class="{'background-black': !checkBlackColor(signatureColors.primaryColor), 'background-white': checkBlackColor(signatureColors.primaryColor)}" colorpicker ng-model="signatureColors.primaryColor" name="primaryColor" type="text" colorpicker-position="right" required>
+                                                <!-- <button style="margin: 0;" colorpicker type="button" colorpicker-position="right" class="btn btn-success ng-valid ng-dirty" ng-model="primaryColor.color" value="">Change color</button> -->
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-sm-12 col-md-6">
+                                            <div class="col-md-6" ng-class="{'has-error' : domainGraphicForm.accentColor.$invalid , 'has-success' : !domainGraphicForm.accentColor.$invalid}">
+                                                <label for="accentColor" class="control-label">Color secundario página de firma:</label>
+                                                <input style="color: {{signatureColors.accentColor}}" class="form-control" ng-class="{'background-black': !checkBlackColor(signatureColors.accentColor), 'background-white': checkBlackColor(signatureColors.accentColor)}" colorpicker ng-model="signatureColors.accentColor" name="accentColor" type="text" colorpicker-position="right" required>
+                                                <!-- <button style="margin: 0;" colorpicker type="button" colorpicker-position="right" class="btn btn-success ng-valid ng-dirty" ng-model="accentColor.color" value="">Change color</button> -->
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12">
+                                <button class="btn btn-default" ng-click="saveGraphicFiles();" ng-disabled="domainGraphicForm.$invalid">Guardar datos de aspecto</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab_email">
+                        <div class="row">
+                        <hr>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <p>Gestión de parámetros del servicio de email</p>
+                                </div>
+                            </div>
+                            <div class="col-md-8 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <form name="domainEmailsForm" novalidate>
+
+                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainEmailsForm.emailServerType.$invalid , 'has-success' : !domainEmailsForm.emailServerType.$invalid}">
+                                            <label for="emailServerType" class="control-label">Tipología Server:</label>
+                                            <select class="form-control" id="emailServerType" name="emailServerType" ng-options="item for item in listOfEmailServerType track by item" ng-model="domainEmail.emailServerType" required>
+                                                <option value="">Seleccionar la tipología de servicio EMAIL</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainEmailsForm.emailServer.$invalid , 'has-success' : !domainEmailsForm.emailServer.$invalid}">
+                                            <label for="emailServer" class="control-label">Server:</label>
+                                            <input type="text" ng-maxlength="200" class="form-control" id="emailServer" name="emailServer" ng-model="domainEmail.emailServer" placeholder="Introducir el servidor" required>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainEmailsForm.emailReplyTo.$invalid , 'has-success' : !domainEmailsForm.emailReplyTo.$invalid}">
+                                            <label for="emailReplyTo" class="control-label">Puerto:</label>
+                                            <input type="text" class="form-control" id="emailReplyTo" name="emailReplyTo" ng-model="domainEmail.emailReplyTo" only-numbers placeholder="Introducir el puerto" required>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainEmailsForm.emailSender.$invalid , 'has-success' : !domainEmailsForm.emailSender.$invalid}">
+                                            <label for="emailSender" class="control-label">Remitente:</label>
+                                            <input type="email" ng-maxlength="100" class="form-control" id="emailSender" name="emailSender" ng-model="domainEmail.emailSender" placeholder="Introducir el correo" required>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainEmailsForm.emailUsername.$invalid , 'has-success' : !domainEmailsForm.emailUsername.$invalid}">
+                                            <label for="emailUsername" class="control-label">Server Username:</label>
+                                            <input type="text" ng-maxlength="100" class="form-control" id="emailUsername" name="emailUsername" ng-model="domainEmail.emailUsername" placeholder="Introducir el usuario del correo" ng-required="domainEmail.emailServerType === 'SENDGRID'">
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainEmailsForm.emailPassword.$invalid , 'has-success' : !domainEmailsForm.emailPassword.$invalid}">
+                                            <label for="emailPassword" class="control-label">Server Password:</label>
+                                            <input type="text" ng-maxlength="100" class="form-control" id="emailPassword" name="emailPassword" ng-model="domainEmail.emailPassword" placeholder="Introducir la password del correo" ng-required="domainEmail.emailServerType === 'SENDGRID'">
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12">
+                                <button class="btn btn-default" ng-disabled="domainEmailsForm.$invalid" ng-click="saveEmailInfo(domainEmail);">Guardar configuración de correo</button>
+                                 <button class="btn btn-default" ng-disabled="domainEmailsForm.$invalid" ng-click="tryEmailInfo(domainEmail);">Probar correo</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab_url">
+                        <div class="row">
+                        <hr>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <p>M&oacute;dulos habilitados</p>
+                                </div>
+                            </div>
+                            <div class="col-md-8 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <form name="domainUrlForm" novalidate>
+
+                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainUrlForm.esignUrl.$invalid , 'has-success' : !domainUrlForm.esignUrl.$invalid}">
+                                            <label for="esignUrl" class="control-label">eSign URL:</label>
+                                            <input type="text" ng-maxlength="200" class="form-control" id="esignUrl" name="esignUrl" ng-model="domainUrl.esignUrl" placeholder="Introducir la URL del servidor eSign" required>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainUrlForm.serverDomain.$invalid , 'has-success' : !domainUrlForm.serverDomain.$invalid}">
+                                            <label for="serverDomain" class="control-label">Dominio servidor:</label>
+                                            <input type="text" ng-maxlength="100" class="form-control" id="serverDomain" name="serverDomain" ng-model="domainUrl.serverDomain" placeholder="Introducir el dominio" required>
+                                        </div>
+
+										<div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainUrlForm.availableFunct1.$invalid , 'has-success' : !domainUrlForm.availableFunct1.$invalid}">
+                                            <span ng-show="{{domainUrl.availableFunct1}}" class="glyphicon glyphicon-ok-sign"> BSign</span>
+                                            <span ng-show="{{!domainUrl.availableFunct1}}" class="glyphicon glyphicon-remove-sign"> BSign</span>
+                                        </div>
+										<div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainUrlForm.availableFunct2.$invalid , 'has-success' : !domainUrlForm.availableFunct2.$invalid}">
+                                            <span ng-show="{{domainUrl.availableFunct2}}" class="glyphicon glyphicon-ok-sign"> Video Identificación</span>
+                                            <span ng-show="{{!domainUrl.availableFunct2}}" class="glyphicon glyphicon-remove-sign"> Video Identificación</span>
+                                        </div>
+										<div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainUrlForm.availableFunct3.$invalid , 'has-success' : !domainUrlForm.availableFunct3.$invalid}">
+                                            <span ng-show="{{domainUrl.availableFunct3}}" class="glyphicon glyphicon-ok-sign"> IMAE</span>
+                                            <span ng-show="{{!domainUrl.availableFunct3}}" class="glyphicon glyphicon-remove-sign"> IMAE</span>
+                                        </div>
+										<div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : domainUrlForm.availableFunct4.$invalid , 'has-success' : !domainUrlForm.availableFunct4.$invalid}">
+                                            <span ng-show="{{domainUrl.availableFunct4}}" class="glyphicon glyphicon-ok-sign"> Func 4</span>
+                                            <span ng-show="{{!domainUrl.availableFunct4}}" class="glyphicon glyphicon-remove-sign"> Func 4</span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12">
+                                <button class="btn btn-default" ng-disabled="domainUrlForm.$invalid" ng-click="saveUrlInfo(domainUrl);">Guardar configuración</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab_extra">
+                    	 <div class="col-md-12 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <p>Definición de atributos adicionales. Los identificadores <strong>no pueden contener mayúsculas</strong></p>
+                                    <p>Los campos que se podrán completar del usuario son: username, useremail, firstName, lastName1, nif y phone</p> 
+                                </div>
+						</div>
+                        <div class="row">
+                        <hr>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="col-sm-12 col-md-12" style="height:90%; overflow-y: auto; box-shadow: 2px 2px 2px #888888;">
+
+                                    <form name="domainExtraForm" novalidate>
+                                        <div ng-repeat="field in extraFields">
+
+                                            <div class="form-group col-sm-2 col-md-2 col-lg-2">
+                                                <label for="$index" class="control-label hidden-xs col-xs-12" style="visibility: hidden;">Borrar</label>
+                                                <button class="btn btn-default extra-button" id="$index" ng-click="removeExtraInfo($index);" confirm="¿Está seguro de eliminar el campo adicional '{{field.identifier}}'?">Borrar</button>
+                                            </div>
+
+                                            <div class="form-group col-sm-3 col-md-3 col-lg-3" ng-class="{ 'has-error' : domainExtraForm.identifier{{$index}}.$invalid , 'has-success' : !domainExtraForm.identifier{{$index}}.$invalid}">
+                                                <label for="identifier{{$index}}" class="control-label">Identificador Extra:</label>
+                                                <input type="text" ng-maxlength="2000" class="form-control" id="identifier{{$index}}" name="identifier{{$index}}" ng-model="field.identifier" placeholder="Identifier Info extra" ng-change="extraModified();" required>
+                                            </div>
+
+                                            <div class="form-group col-sm-4 col-md-4 col-lg-4" ng-class="{ 'has-error' : domainExtraForm.label{{$index}}.$invalid , 'has-success' : !domainExtraForm.label{{$index}}.$invalid}">
+                                                <label for="label{{$index}}" class="control-label">Etiqueta Extra:</label>
+                                                <input type="text" ng-maxlength="2000" class="form-control" id="label{{$index}}" name="label{{$index}}" ng-model="field.label" placeholder="Label Info extra" ng-change="extraModified();" required>
+                                            </div>
+                                            
+                                            <div class="form-group col-sm-3 col-md-3 col-lg-3" ng-class="{ 'has-error' : domainExtraForm.defaultValue{{$index}}.$invalid , 'has-success' : !domainExtraForm.defaultValue{{$index}}.$invalid}">
+                                                <label for="defaultValue{{$index}}" class="control-label">Valor predefinido:</label>
+                                                <input type="text" ng-maxlength="2000" class="form-control" id="defaultValue{{$index}}" name="defaultValue{{$index}}" ng-model="field.defaultValue" placeholder="Default value Info extra" ng-change="extraModified();">
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                </div>
+                                <p>{{extraFields.length}} Extra Info insertadas.</p>
+                            </div>
+                            <div class="col-sm-6 col-md-4">
+                                <button class="btn btn-default" ng-disabled="domainExtraForm.$invalid || !extraInfoModified" ng-click="saveExtraInfo(extraFields);">Guardar {{extraFields.length}} Extra Info</button>
+                                <button class="btn btn-default" ng-click="addExtraInfo();" style="float:right;">Añadir</button>
+                            </div>
+                            <div class="col-sm-6 col-md-6">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab_sms">
+                        <div class="row">
+                        <hr>
+                            <div class="col-md-4 col-sm-6">
+                                <form name="domainSmsForm" novalidate>
+                                    <div class="form-group col-sm-12 col-md-12">
+                                        <textarea ng-class="{ 'sms-textarea-invalid' : !isSMSJSONValid, 'sms-textarea' : isSMSJSONValid}" ng-model="domainSms.smsServerType" ng-change="generateSMSJSONObject(domainSms.smsServerType)"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-8 col-sm-6">
+                                <json-formatter json="domainSms.smsConfiguration" open="1"></json-formatter>
+                            </div>
+                            <div class="col-sm-12 col-md-12">
+                                <button class="btn btn-default" ng-disabled="!isSMSJSONValid" ng-click="saveSMSInfo(domainSms);">Guardar configuración de SMS</button>
+                                <button class="btn btn-default" ng-disabled="!isSMSJSONValid" ng-click="trySMSInfo(domainSms);">Probar SMS</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" ng-class="{'in active' : fromOperation}" id="tab_operations">
+                        <div class="row">
+                        <hr>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <p>Gestión de los tipos de operaciones</p>
+                                </div>
+                            </div>
+                            <div class="col-md-8 col-sm-12">
+                                <form role="form" name="addOperationTypeForm" novalidate>
+                                  <div class="form-group col-sm-6 col-xs-12" ng-class="{ 'has-error' : addOperationTypeForm.name.$invalid , 'has-success' : !addOperationTypeForm.name.$invalid}">
+                                    <label for="email" class="control-label">Nombre Operación:</label>
+                                    <input type="text" maxlength="99" class="form-control" id="name" name="name" ng-model="operation.name" check-name placeholder="Este campo es obligatorio" required>
+                                  </div>
+                                  <div class="form-group col-sm-4 col-xs-12">
+                                    <label for="signatureType" class="control-label">Tipo Firma:</label>
+                                    <select type="text" ng-model="operation.signatureType" class="form-control" name="signatureType" id="signatureType" ng-init="operation.signatureType = 'MULTINIVEL'">
+                                        <!-- <option value="SINFIRMA">SIN FIRMA</option> -->
+                                        <!-- <option value="SIMPLE">SIMPLE</option> -->
+                                        <!-- <option value="AVANZADA">AVANZADA</option> -->
+                                        <!-- <option value="VIDEOCONFERENCIA">VIDEOCONFERENCIA</option> -->
+                                        <!-- <option value="SIMPLE_MULTIPLE">SIMPLE MULTIPLE</option> -->
+                                        <!-- <option value="AVANZADA_MULTIPLE">AVANZADA MULTIPLE</option> -->
+                                        <!-- <option value="AVANZADA_VIDEO">AVANZADA CON VIDEO</option> -->
+                                        <!-- <option value="AVANZADA_VIDEO_1PASO">AVANZADA CON VIDEO 1 PASO</option> -->
+                                        <option value="MULTINIVEL">MULTINIVEL</option>
+                                    </select>
+                                  </div>
+                                  <div class="form-group col-sm-2 col-xs-6">
+                                    <!-- <label for="operationType" style="visibility: hidden;">hidden</label> -->
+                                    <button class="btn btn-default" style="height: 34px; margin-top:23px;" ng-disabled="addOperationTypeForm.$invalid" ng-click="saveNewOp(operation, addOperationTypeForm)"><span class="glyphicon glyphicon-plus"></span></button>
+                                  </div>
+                                </form>
+                                <table datatable="ng" dt-options="dtOptionsOp" dt-column-defs="dtColumnsOp" dt-instance="dtInstanceOpCallback" class="row-border hover table" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Tipo de firma</th>
+                                            <th>ID</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="op in operationsList">
+                                            <td>{{ op.name | cut:true:40: ' ...'}}</td>
+                                            <td>{{ op.signatureType | signTypeFilter}}</td>
+                                            <td>{{ op.id }}</td>
+                                            <td>
+                                                <i>
+                                                    <span ng-click="edit(op)" title="Editar"class="glyphicon glyphicon-edit pointer-span"></span>
+                                                    <span ng-click="copy(op)" title="Copiar" confirm="¿Está seguro de querer copiar el tipo de operación '{{op.name}}'" class="icon glyphicon glyphicon-share-alt pointer-span"></span>
+                                                    <span ng-click="delete(op)" title="Borrar" confirm="¿Está seguro de querer eliminar el tipo de operación '{{op.name}}'" class="icon glyphicon glyphicon-trash pointer-span"></span>
+
+                                                </i>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-sm-12 col-md-12">
+                                <!-- <button class="btn btn-default" ng-disabled="" ng-click="saveUrlInfo(domainUrl);">dsds</button> -->
+                            </div>
+                        </div>
+                    </div>
+
+
+                     <div class="tab-pane fade" id="tab_cas">
+                        <div class="row">
+                        <hr>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <p>Gestión de la lista de Autoridades de Certificación admitidas</p>
+                                </div>
+                            </div>
+                            <div class="col-md-8 col-sm-12">
+                                <form role="form" name="addAllowedCaForm" novalidate>
+
+                                  <div class="form-group col-sm-5 col-xs-12" ng-class="{ 'has-error' : addAllowedCaForm.caname.$invalid , 'has-success' : !addAllowedCaForm.caname.$invalid}">
+                                    <label for="caname" class="control-label">Nombre CA:</label>
+                                    <input type="text" class="form-control" id="caname" name="caname" ng-model="allowedca.name" placeholder="Este campo es obligatorio" same-caname required>
+                                  </div>
+
+                                  <div class="form-group col-sm-5 col-xs-12" ng-class="{ 'has-error' : addAllowedCaForm.cn.$invalid , 'has-success' : !addAllowedCaForm.cn.$invalid}">
+                                    <label for="cn" class="control-label">Nombre com&uacute;n:</label>
+                                    <input type="text" class="form-control" id="cn" name="cn" ng-model="allowedca.cn" same-common-name placeholder="Este campo es obligatorio" required>
+                                  </div>
+
+                                  <div class="form-group col-sm-2 col-xs-6">
+                                    <!-- <label for="operationType" style="visibility: hidden;">hidden</label> -->
+                                    <button class="btn btn-default" style="height: 34px; margin-top:23px;" ng-disabled="addAllowedCaForm.$invalid" ng-click="saveAllowedCa(allowedca, addAllowedCaForm)"><span class="glyphicon glyphicon-plus"></span></button>
+                                  </div>
+                                </form>
+                                <table datatable="ng" dt-options="dtOptionsOp" dt-column-defs="dtColumnsOp" dt-instance="dtInstanceOpCallback" class="row-border hover table" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre CA</th>
+                                            <th>Nombre com&uacute;n</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="allowedca in allowedCaList">
+                                            <td>{{ allowedca.name }}</td>
+                                            <td>{{ allowedca.cn }}</td>
+                                            <td>{{ allowedca.id }}</td>
+                                            <td>
+                                                <i>
+                                                    <span ng-click="editca(allowedca)" class="glyphicon glyphicon-edit pointer-span"></span>
+                                                    <span ng-click="deleteca(allowedca)"  confirm="¿Está seguro de querer eliminar la CA '{{allowedca.name}}'" class="icon glyphicon glyphicon-trash pointer-span">
+                                                </i>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-sm-12 col-md-12">
+                                <!-- <button class="btn btn-default" ng-disabled="" ng-click="saveUrlInfo(domainUrl);">dsds</button> -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab_actas">
+                        <div class="row">
+                        <hr>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <p>Gestión de las plantillas de actas</p>
+                                </div>
+                            </div>
+                            <div class="col-md-8 col-sm-12">
+                                <form role="form" name="addActaForm" novalidate>
+
+                                    <div class="form-group col-sm-5 col-md-5 col-xs-12" ng-class="{ 'has-error' : addActaForm.name.$invalid , 'has-success' : !addActaForm.name.$invalid}">
+                                        <label for="name" class="control-label">Nombre Plantilla:</label>
+                                        <input type="text" class="form-control" id="name" name="name" ng-model="actatemplate.name" same-template-name placeholder="Este campo es obligatorio" required>
+                                    </div>
+
+                                    <div class="form-group col-sm-5 col-md-5 col-xs-6">
+                                        <label for="actaFile" class="control-label">Fichero de la plantilla de acta (pdf):</label>
+                                        <input class="form-control" type="file" name="actaFile" id="actaFile" ng-model="actatemplate.temp" valid-file
+                                        onchange="angular.element(this).scope().uploadedActaFile(this)" required accept="application/pdf">
+                                    </div>
+
+                                  <div class="form-group col-sm-2 col-md-2 col-xs-6">
+                                    <!-- <label for="operationType" style="visibility: hidden;">hidden</label> -->
+                                    <button class="btn btn-default" style="height: 34px; margin-top:23px;" ng-disabled="checkNumberOfFiles(addActaForm.name.$valid)" ng-click="saveNewActa(actatemplate, addActaForm)"><span class="glyphicon glyphicon-plus"></span></button>
+                                  </div>
+                                </form>
+                                <table datatable="ng" dt-options="dtOptionsOp" dt-column-defs="dtColumnsOp" dt-instance="dtInstanceOpCallback" class="row-border hover table" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Fichero</th>
+                                            <th>ID</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="acta in actasList">
+                                            <td>{{ acta.name }}</td>
+                                            <td>{{ acta.path }}</td>
+                                            <td>{{ acta.id }}</td>
+                                            <td>
+                                                <i>
+                                                    <span ng-if="acta.exists" ng-click="showActa(acta)" class="glyphicon glyphicon-eye-open pointer-span"></span>
+                                                    <span ng-if="!acta.exists" class="glyphicon glyphicon-warning-sign" title="El fichero {{acta.name}} no existe"></span>
+                                                    <span ng-if="acta.exists" ng-click="editacta(acta)" class="icon glyphicon glyphicon-edit pointer-span"></span>
+                                                    <span ng-click="deleteacta(acta)" confirm="¿Está seguro de querer eliminar la plantilla de acta '{{acta.name}}'" class="icon glyphicon glyphicon-trash pointer-span">
+                                                </i>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-sm-12 col-md-12">
+                                <!-- <button class="btn btn-default" ng-disabled="" ng-click="saveUrlInfo(domainUrl);">dsds</button> -->
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="tab-pane fade" id="tab_biodocs">
+                        <div class="row">
+                        <hr>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="col-sm-12 col-md-12">
+                                    <p>Gestión de las plantillas de documentos biométricos</p>
+                                </div>
+                            </div>
+                            <div class="col-md-8 col-sm-12">
+                                <button class="btn btn-default btn-custom" ng-click="openDocModal();">Añadir Documento Biométrico</button>
+                                <button class="btn btn-default btn-custom" ng-click="openStaticDocModal();">Añadir Documento Estático</button>
+                                <table datatable="ng" dt-options="dtOptionsBioDocs" dt-column-defs="dtColumnsBioDocs" dt-instance="dtInstanceBioDocs" class="row-border hover table" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Referencia</th>
+                                            <th>Tipo</th>
+                                            <th>Firmantes</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="doc in bioDocs">
+                                            <td>{{ doc.documentname }}</td>
+                                            <td>{{ doc.reference }}</td>
+                                            <td>{{ doc.reference | filterReferenceType }}</td>
+                                            <td>{{ doc.signernumber | filterSigners:doc.reference}}</td>
+                                            <td>
+                                                <i>
+                                                    <span ng-click="showStaticDocModal(doc)" ng-if="doc.reference.startsWith('STATIC ') && doc.exists" class="glyphicon glyphicon-eye-open pointer-span"></span>
+                                                    <span ng-if="doc.reference.startsWith('STATIC ') && !doc.exists" class="glyphicon glyphicon-warning-sign" title="El documento {{doc.documentname}} no existe."></span>
+                                                    <span ng-click="openDocModal(doc)" ng-if="(doc.reference.startsWith('BIO ') || doc.reference.startsWith('STATIC BIO ')) && doc.exists" class="icon glyphicon glyphicon-edit pointer-span"></span>
+                                                    <span ng-click="openDocModal(doc)" ng-if="(doc.reference.startsWith('BIO '))" class="icon glyphicon glyphicon-edit pointer-span"></span>
+                                                    <span ng-click="deleteDoc(doc)" confirm="El documento con referencia {{doc.reference}} puede estar asociado a diferentes operaciones, ¿está seguro de que desea eliminarlo?" class="icon glyphicon glyphicon-trash pointer-span">
+                                                </i>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-sm-12 col-md-12">
+                                <!-- <button class="btn btn-default" ng-disabled="" ng-click="saveUrlInfo(domainUrl);">dsds</button> -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="tab_LDAP">
+                        <div class="row">
+                        <hr>
+                            
+                                <div class="col-sm-12 col-md-12">
+
+
+                                    <form name="ldapServerForm" novalidate>
+
+										<div class="form-group col-sm-12 col-md-12">
+											<div class="form-group col-sm-12 col-md-12">
+												<label for="hostLDAP" class="control-label">Datos del servidor de LDAP:</label>
+	                                        </div>
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.hostLDAP.$invalid , 'has-success' : !ldapServerForm.hostLDAP.$invalid}">
+	                                            <label for="hostLDAP" class="control-label">Host:</label>
+	                                            <input type="text" class="form-control" id="hostLDAP" name="hostLDAP" ng-model="ldapServer.ldapHost" placeholder="xxx.xxx.xxx.xxx" required/>
+	                                        </div>
+	                                        
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.portLDAP.$invalid , 'has-success' : !ldapServerForm.portLDAP.$invalid}">
+	                                            <label for="portLDAP" class="control-label">Puerto:</label>
+	                                            <input type="number" class="form-control" id="portLDAP" name="portLDAP" ng-model="ldapServer.ldapPort" placeholder="389" required/>
+	                                        </div>
+	                                    </div>
+
+										<div class="form-group col-sm-12 col-md-12">
+											<div class="form-group col-sm-12 col-md-12">
+												<label for="hostLDAP" class="control-label">Datos acceso mediante binding:</label>
+	                                        </div>
+
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.userLogginLDAP.$invalid , 'has-success' : !ldapServerForm.userLogginLDAP.$invalid}">
+	                                            <label for="userLogginLDAP" class="control-label">Usuario para conectarse:</label>
+	                                            <input type="text" class="form-control" id="userLogginLDAP" name="userLogginLDAP" ng-model="ldapServer.ldapUser" required/>
+	                                        </div>
+	                                        
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.passwordUserLDAP.$invalid , 'has-success' : !ldapServerForm.passwordUserLDAP.$invalid}">
+	                                            <label for="passwordUserLDAP" class="control-label">Password:</label>
+	                                            <input type="password" class="form-control" id="passwordUserLDAP" name="passwordUserLDAP" ng-model="ldapServer.ldapPass" required/>
+	                                        </div>
+	                                    </div>
+
+										<div class="form-group col-sm-12 col-md-12">
+											<div class="form-group col-sm-12 col-md-12">
+												<label for="hostLDAP" class="control-label">Datos generales de configuración de LDAP:</label>
+	                                        </div>
+
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.dcObject.$invalid , 'has-success' : !ldapServerForm.dcObject.$invalid}">
+	                                            <label for="dcObject" class="control-label">Ruta raiz del LDAP (DN): </label>
+	                                            <input type="text" class="form-control" id="dcObject" name="dcObject" ng-model="ldapServer.dcObject" placeholder="dc=example,dc=com" required/>
+	                                        </div>
+	                                        
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.dcObjectFilter.$invalid , 'has-success' : !ldapServerForm.dcObjectFilter.$invalid}">
+	                                            <label for="dcObjectFilter" class="control-label">objectClass para realizar filtros: </label>
+	                                            <input type="text" class="form-control" id="dcObjectFilter" name="dcObjectFilter" ng-model="ldapServer.dcObjectFilter" placeholder="(objectClass=dcObject)" required/>
+	                                        </div>
+	                                        
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.commonNameKey.$invalid , 'has-success' : !ldapServerForm.commonNameKey.$invalid}">
+	                                            <label for="commonNameKey" class="control-label">Atributo usado para "Common Name": </label>
+	                                            <input type="text" class="form-control" id="commonNameKey" name="commonNameKey" ng-model="ldapServer.commonNameKey" placeholder="cn" required/>
+	                                        </div>
+
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.groupValue.$invalid , 'has-success' : !ldapServerForm.groupValue.$invalid}">
+                                            	<label for="objectClassKey" class="control-label">Clase Objeto por defecto: </label>
+                                            	<input type="text" class="form-control" id="objectClassKey" name="objectClassKey" ng-model="ldapServer.objectClassKey" placeholder="objectClass" required/>
+                                        	</div>
+                                        	
+                                        	<div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.serverImpl.$invalid , 'has-success' : !ldapServerForm.serverImpl.$invalid}">
+	                                            <label for="serverImpl" class="control-label">Implementación del servidor de LDAP: </label>
+	                                            <select class="form-control" id="serverImpl" name="serverImpl" ng-model="ldapServer.serverImpl" required>
+	                                            	<option value="com.galeon.docsmanager.ldap.datasource.impl.ApacheLdap">Implementacion de Apache</option>
+	                                            	<option value="com.galeon.docsmanager.ldap.datasource.impl.BossLdap">Implementación de JBoss</option>
+	                                            </select>
+	                                        </div>
+                                        	
+                                        
+                                        
+	                                    </div>
+
+										<div class="form-group col-sm-12 col-md-12">
+											<div class="form-group col-sm-12 col-md-12">
+												<label for="hostLDAP" class="control-label">Datos para filtros y búsquedas:</label>
+	                                        </div>
+
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.userFilter.$invalid , 'has-success' : !ldapServerForm.userFilter.$invalid}">
+	                                            <label for="userFilter" class="control-label">Filtro para búsquedas de usuario: </label>
+	                                            <input type="text" class="form-control" id="userFilter" name="userFilter" ng-model="ldapServer.userFilter" placeholder="(objectClass=inetOrgPerson)" required/>
+	                                        </div>
+	                                        
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.groupFilter.$invalid , 'has-success' : !ldapServerForm.groupFilter.$invalid}">
+	                                            <label for="groupFilter" class="control-label">Filtro para búsquedas de grupo: </label>
+	                                            <input type="text" class="form-control" id="groupFilter" name="groupsUsersLgroupFilterDAP" ng-model="ldapServer.groupFilter" placeholder="(objectClass=groupOfNames)" required/>
+	                                        </div>
+	                                        
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.groupValue.$invalid , 'has-success' : !ldapServerForm.groupValue.$invalid}">
+	                                            <label for="groupValue" class="control-label">DN de los grupos donde están los usuarios (Separados por "|"): </label>
+	                                            <input type="text" class="form-control" id="groupValue" name="groupValue" ng-model="ldapServer.groupValue" placeholder="cn=grupoUno,dc=example,dc=com|cn=grupoDos,dc=example,dc=com|..." required/>
+	                                        </div>
+	
+	                                    </div>
+
+										<div class="form-group col-sm-12 col-md-12">
+											<div class="form-group col-sm-12 col-md-12">
+												<label for="hostLDAP" class="control-label">Propiedades del usuario de LDAP:</label>
+	                                        </div>
+
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.userIDKey.$invalid , 'has-success' : !ldapServerForm.userIDKey.$invalid}">
+	                                            <label for="userIDKey" class="control-label">Atributo del id Usuario: </label>
+	                                            <input type="text" class="form-control" id="userIDKey" name="userIDKey" ng-model="ldapServer.userIDKey" placeholder="uid" required/>
+	                                        </div>
+	                                        
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.givenNameKey.$invalid , 'has-success' : !ldapServerForm.givenNameKey.$invalid}">
+	                                            <label for="givenNameKey" class="control-label">Atributo del nombre del usuario: </label>
+	                                            <input type="text" class="form-control" id="givenNameKey" name="givenNameKey" ng-model="ldapServer.givenNameKey" placeholder="cn" required/>
+	                                        </div>
+	                                        
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.surNameKey.$invalid , 'has-success' : !ldapServerForm.surNameKey.$invalid}">
+	                                            <label for="surNameKey" class="control-label">Atributo del apellido del usuario: </label>
+	                                            <input type="text" class="form-control" id="surNameKey" name="surNameKey" ng-model="ldapServer.surNameKey" placeholder="sn" required/>
+	                                        </div>
+	                                        
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.emailKey.$invalid , 'has-success' : !ldapServerForm.emailKey.$invalid}">
+	                                            <label for="emailKey" class="control-label">Atributo del email del usuario: </label>
+	                                            <input type="text" class="form-control" id="emailKey" name="emailKey" ng-model="ldapServer.emailKey" placeholder="mail" required/>
+	                                        </div>
+	                                        
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.phoneKey.$invalid , 'has-success' : !ldapServerForm.phoneKey.$invalid}">
+	                                            <label for="phoneKey" class="control-label">Atributo del teléfono del usuario: </label>
+	                                            <input type="text" class="form-control" id="phoneKey" name="phoneKey" ng-model="ldapServer.phoneKey" placeholder="telephoneNumber" required/>
+	                                        </div>
+	                                        
+	                                        <div class="form-group col-sm-12 col-md-6" ng-class="{ 'has-error' : ldapServerForm.userPasswordKey.$invalid , 'has-success' : !ldapServerForm.userPasswordKey.$invalid}">
+	                                            <label for="userPasswordKey" class="control-label">Atributo de la contraseña del usuario: </label>
+	                                            <input type="text" class="form-control" id="userPasswordKey" name="userPasswordKey" ng-model="ldapServer.userPasswordKey" placeholder="userPassword" required/>
+	                                        </div>
+	                                    </div>
+
+                                    </form>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12">
+                                <button class="btn btn-default" ng-disabled="ldapServerForm.$invalid" ng-click="saveLDAPConfig(ldapServer);">Guardar configuración de LDAP</button>
+                                <button class="btn btn-default" ng-disabled="ldapServerForm.$invalid" ng-click="tryLDAPConection(ldapServer);">Probar conexión LDAP</button>
+                            </div>
+                    </div>
+
+                </div> <!-- tab content -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/ng-template" id="userModal.html">
+
+    <div class="modal-body">
+        <span ng-hide="hide" style="color: red; font-size:large; font-family: Palatino Linotype, Book Antiqua, Palatino, serif">{{response}}</span>
+       <form name="newUserForm" novalidate autocomplete="off">
+            <div class="form-group">
+                <div class="row">
+
+					<div class="col-xs-12 no-padding">
+						<div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.username.$invalid , 'has-success' : !newUserForm.username.$invalid}">
+                        	<label for="username" class="control-label">Username: </label>
+                        	<input type="text" name="username" class="form-control" ng-model="user.username" check-username="{{user}}" placeholder="Este campo es obligatorio" required>
+							<div role="alert">
+      							<span class="error" ng-if="newUserForm.username.$invalid">Este campo es obligatorio o está repetido.</span>
+							</div>
+                    	</div>
+
+                    	<div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.useremail.$invalid , 'has-success' : !newUserForm.useremail.$invalid}">
+                        	<label for="useremail" class="control-label">Email:</label>
+                       	 	<input type="email" id="useremail" name="useremail" class="form-control" check-useremail="{{user}}" ng-model="user.useremail"  tooltip="{{newUserForm.useremail.$invalid ? 'La dirección de correo ya existe para este dominio.' : ''}}" placeholder="Este campo es obligatorio" required>
+							<div role="alert">
+      							<span class="error" ng-if="newUserForm.useremail.$invalid">Este campo es obligatorio, no tiene un formato válido o está repetido.</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-xs-12 no-padding">
+						<div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.firstName.$invalid , 'has-success' : !newUserForm.firstName.$invalid}">
+                       		<label for="firstName" class="control-label">Nombre:</label>
+                        	<input type="text" id="firstName" name="firstName" class="form-control" check-firstName="{{user}}" ng-model="user.userfirstname" placeholder="Nombre del usuario">
+						</div>
+
+						<div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.lastName.$invalid , 'has-success' : !newUserForm.lastName.$invalid}">
+                       		<label for="lastName" class="control-label">Apellidos:</label>
+                        	<input type="text" id="lastName" name="lastName" class="form-control" check-lastName="{{user}}" ng-model="user.userlastname1" placeholder="Apellidos del usuario">
+						</div>
+					</div>
+
+					<div class="col-xs-12 no-padding">
+						<div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.nif.$invalid , 'has-success' : !newUserForm.nif.$invalid}">
+                        	<label for="nif" class="control-label">NIF: </label>
+                        	<input id="nif" type="text" name="nif" class="form-control" ng-model="user.userdocument" validate-nif from-domain="true" placeholder="Nif del usuario">
+							<div role="alert">
+      							<span class="error" ng-show="newUserForm.nif.$invalid">El nif introducido no tiene un formato válido.</span>
+							</div>
+                    	</div>
+
+						<div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.cellphone.$invalid , 'has-success' : !newUserForm.cellphone.$invalid}">
+                        	<label for="cellphone" class="control-label">Teléfono: </label>
+                        	<input id="cellphone" type="text" name="cellphone" class="form-control" ng-model="user.cellphone" validate-phone from-domain="true" placeholder="Teléfono del usuario">
+							<div role="alert">
+      							<span class="error" ng-show="newUserForm.cellphone.$invalid">El teléfono introducido no tiene un formato válido.</span>
+							</div>
+                   		</div>
+					</div>
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4 form-group" ng-class="{ 'has-error' : newUserForm.groupid.$invalid , 'has-success' : !newUserForm.groupid.$invalid}">
+                        <label for="groupid" class="control-label">Grupo:</label>
+                        <select type="text" ng-model="user.groupid" class="form-control" name="groupid" id="groupid" required>
+                            <option ng-repeat="option in usersgroupsListTab" value="{{option.id}}">{{option.groupName}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 form-group" ng-class="{ 'has-error' : newUserForm.role.$invalid , 'has-success' : !newUserForm.role.$invalid}">
+                        <label for="role" class="control-label">Rol:</label>
+                        <select type="text" ng-model="user.role" class="form-control" name="role" id="role" required ng-disabled="user.role === '3'">
+                            <option value="0">VIDEO</option>
+                            <option value="-1">SUPERVISOR</option>
+                            <option value="-2">VISOR</option>
+                            <option value="1">NORMAL</option>
+                            <option value="2">ADMIN</option>
+							<option value="3" ng-if="user.role === '3'">SUPERADMIN</option>
+							<option value="-3">FIRMANTE</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 form-group" ng-class="{ 'has-error' : newUserForm.state.$invalid , 'has-success' : !newUserForm.state.$invalid}">
+                        <label for="state" class="control-label">Estado:</label>
+                        <select type="text" ng-model="user.state" class="form-control" name="state" id="state" required>
+                            <option value="1">ACTIVO</option>
+							<option value="-1">INACTIVO</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : (newUserForm.pass.$invalid && newUserForm.pass.$dirty) || (newUserForm.pass.$invalid && isNewUser) , 'has-success' : !newUserForm.pass.$invalid && newUserForm.pass.$dirty}">
+                        <label for="pass" class="control-label">Password:</label>
+                        <input type="password" id="pass" name="pass" class="form-control" check-length-pass check-lower-case check-upper-case check-digit ng-model="user.userpassword" autocomplete="off" placeholder="Este campo es obligatorio" ng-required="newUserForm.pass.$dirty || isNewUser">
+                    </div>
+                    <div class="col-md-6 form-group" ng-class="{ 'has-error' : newUserForm.passRepeated.$invalid && newUserForm.pass.$dirty, 'has-success' : !newUserForm.passRepeated.$invalid && newUserForm.pass.$dirty}">
+                        <label for="passRepeated" class="control-label">Repetir Password:</label>
+                        <input type="password" id="passRepeated" name="passRepeated" same-pass="{{user.userpassword}}" class="form-control" ng-model="user.userpasswordrepeated" placeholder="Este campo es obligatorio" autocomplete="off" ng-required="newUserForm.pass.$dirty || isNewUser" ng-readonly="!newUserForm.pass.$dirty">
+                    </div>
+                </div>
+            </div>
+
+            <p class="error-pass" ng-if="newUserForm.pass.$error.checkLengthPass">La longitud de la contraseña tiene que ser mayor que 5, faltan {{numberOfPendingsChars}}.</p>
+            <p class="error-pass" ng-if="newUserForm.pass.$error.checkLowerCase">La contraseña tiene que contener al menos una letra minúscula.</p>
+            <p class="error-pass" ng-if="newUserForm.pass.$error.checkUpperCase">La contraseña tiene que contener al menos una letra mayúscula.</p>
+            <p class="error-pass" ng-if="newUserForm.pass.$error.checkDigit">La contraseña tiene que contener al menos un número.</p>
+
+            <div class="modal-footer modal-footer-custom">
+                <button class="btn btn-primary btn-custom" type="button" ng-click="saveUser(user)" ng-disabled="newUserForm.$invalid">Guardar</button>
+                <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="importUserModal.html">
+
+	<div class="modal-body no-padding-bottom">
+		<div class="row rowSearch">
+			<div class="col-xs-6">
+				<p for="search" class="textSearch">Indique la palabra clave para buscar en LDAP:</p>
+			</div>
+			<div class="col-xs-6 no-padding-lateral">
+				<div class=" col-xs-9 no-padding-lateral">
+					<input type="text" class="form-control" name="search" ng-model="searchLDAP" ng-change="countChart(searchLDAP);" />
+				</div>
+				<div class="col-xs-3">
+					<button class="btn btn-custom float-right" style="margin-top: 0; height: 33px;" ng-click="searchLDAPUsers(searchLDAP)" ng-disabled="invalidSearch"><i class="glyphicon glyphicon-search"></i></button>
+				</div>
+			</div>
+		</div>
+		
+		<form name="formImportLDAPUser">
+			<div class="row" ng-show="successSearch">
+				<div class="col-xs-12">
+    				<table width="100%" datatable="ng" dt-options="dtOptionsUsersLDAP" dt-column-defs="dtColumnDefsUsersLDAP" class="row-border hover table">
+						<thead>
+							<tr>
+								<th></th>
+								<th>Nombre</th>
+								<th>Email</th>
+								<th>Teléfono</th>
+								<th>DN</th>
+        					</tr>
+	        			</thead>
+	    	    		<tbody>
+    	    				<tr ng-repeat="(index, user) in usersLDAPList">
+        	    				<td><input type="checkbox" name="selectedUser" ng-value="user" ng-model="selectedLDAPUser[index]" ng-click=""/></td>
+								<td>{{ user.username }}</td>
+								<td>{{ user.useremail }}</td>
+								<td>{{ user.cellphone }}</td>
+								<td>{{ user.dnLdap }}</td>
+	        				</tr>
+	    	    		</tbody>
+    	  			</table>
+				</div>
+			</div>
+
+			<div class="row" ng-show="successSearch">
+				<div class="col-md-4 form-group has-success" ng-class="{ 'has-error' : formImportLDAPUser.groupid.$invalid , 'has-success' : !formImportLDAPUser.groupid.$invalid}">
+					<label for="groupid" class="control-label">Grupo:</label>
+        	        <select type="text" ng-model="user.groupid" class="form-control" name="groupid" id="groupid" required="required">
+						<option data-option="{{option}}" ng-value="option.id" ng-repeat="option in usersgroupsListTab">{{option.groupName}}</option>	
+					</select>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="modal-footer">
+		<button class="btn btn-warning btn-custom no-margin" type="button" ng-click="importSelectedUser(selectedLDAPUser)" ng-disabled="formImportLDAPUser.$invalid || disableImportButton(selectedLDAPUser)">Importar</button>
+    	<button class="btn btn-warning btn-custom no-margin" type="button" ng-click="cancel()">Cancelar</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="caModal.html">
+
+    <div class="modal-body">
+
+       <form name="CAForm" novalidate>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4 form-group" ng-class="{ 'has-error' : CAForm.caname.$invalid , 'has-success' : !CAForm.caname.$invalid}">
+                        <label for="caname" class="control-label">Nombre CA:</label>
+                        <input type="text" name="caname" class="form-control" ng-model="ca.name" same-caname-modal="{{ca}}" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+                    <div class="col-md-4 form-group" ng-class="{ 'has-error' : CAForm.cacn.$invalid , 'has-success' : !CAForm.cacn.$invalid}">
+                        <label for="cacn" class="control-label">Nombre com&uacute;n:</label>
+                        <input type="text" name="cacn" class="form-control" ng-model="ca.cn" same-common-name-modal="{{ca}}" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+                    <div class="col-md-4 form-group">
+                        <label for="camapping" class="control-label">Mapping:</label>
+                        <input type="text" name="camapping" class="form-control" ng-model="ca.mapping" placeholder="">
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer modal-footer-custom">
+                <button class="btn btn-primary btn-custom" type="button" ng-click="saveCA(ca)" ng-disabled="CAForm.$invalid">Guardar</button>
+                <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+
+<script type="text/ng-template" id="actaModal.html">
+
+    <div class="modal-body">
+
+       <form name="modifyActaForm" novalidate>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-5 form-group" ng-class="{ 'has-error' : modifyActaForm.name.$invalid , 'has-success' : !modifyActaForm.name.$invalid}">
+                        <label for="name" class="control-label">Nombre CA:</label>
+                        <input type="text" name="name" class="form-control" ng-model="actatemplate.name" same-template-name-modal="{{actatemplate}}" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+                    <div class="col-md-2 form-group" >
+                        <label for="caname" class="control-label">Fichero plantilla:</label>
+                        <span class="btn btn-default btn-file form-control" style="margin-top: 0px; height:34px;padding-left: 6px;padding-right: 6px;">Elige el fichero
+                            <input class="form-control" type="file" name="fileCSS" id="cssFile" onchange="angular.element(this).scope().uploadedFile(this)"/>
+                        </span>
+                    </div>
+
+                    <div class="col-md-5 form-group">
+                        <label for="caname" class="control-label">Nombre/Path fichero:</label>
+                        <span class="form-control" style="margin-top: 0px; font-size:8pt; font-weight: 400">{{prova}}{{actatemplate.path | cut:true:56: ' ...' }}
+                        </span>
+                    </div>
+
+
+
+                </div>
+            </div>
+
+            <div class="modal-footer modal-footer-custom">
+                <button class="btn btn-primary btn-custom" type="button" ng-click="saveActaTemplate(actatemplate)" ng-disabled="modifyActaForm.$invalid">Guardar</button>
+                <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="usersgroupModal.html">
+
+    <div class="modal-body">
+
+       <form name="UserGroupForm" novalidate>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-12 form-group" ng-class="{ 'has-error' : UserGroupForm.usergroupname.$invalid , 'has-success' : !UserGroupForm.usergroupname.$invalid}">
+                        <label for="usergroupname" class="control-label">Nombre grupo de usuarios:</label>
+                        <input type="text" name="usergroupname" maxlength="100" class="form-control" ng-model="usersgroup.groupName" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer modal-footer-custom">
+                <button class="btn btn-primary btn-custom" type="button" ng-click="saveUsersGroup(usersgroup)" ng-disabled="UserGroupForm.$invalid">Guardar</button>
+                <button class="btn btn-delete btn-custom" type="button"  confirm="¿Está seguro de querer eliminar el grupo de usuarios '{{usersgroup.groupName}}'"  ng-click="deleteUsersGroup(usersgroup)" ng-show="usersgroup.childrens.length<2">Eliminar</button>
+                <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="bioDocsModal.html">
+
+    <div class="modal-body">
+
+       <form name="modifyDocumentForm" novalidate>
+            <div class="form-group">
+                <div class="row">
+
+                    <div class="col-sm-12">
+                        <p><strong>Se añadirá al nombre de la referencia el prefijo <i>BIO</i></strong></p>
+                        <p class="error-pass" ng-if="modifyDocumentForm.reference.$error.checkUniqueRefBio"><strong>Esta referencia ya existe</strong></p>
+                    </div>
+
+                    <div class="col-md-5 col-sm-5 form-group" ng-class="{ 'has-error' : modifyDocumentForm.documentname.$invalid , 'has-success' : !modifyDocumentForm.documentname.$invalid}">
+                        <label for="documentname" class="control-label">Nombre Documento:</label>
+                        <input type="text" ng-maxlength="100" name="documentname" id="documentname" class="form-control" ng-model="document.documentname" placeholder="Este campo es obligatorio" required>
+                    </div>
+
+                    <div class="col-md-5 col-sm-5 form-group" ng-class="{ 'has-error' : modifyDocumentForm.reference.$invalid , 'has-success' : !modifyDocumentForm.reference.$invalid}">
+                        <label for="reference" class="control-label">Referencia:</label>
+                        <input type="text" ng-maxlength="45" name="reference" id="reference" class="form-control" ng-model="document.reference" check-unique-ref-bio={{document.id}} placeholder="Este campo es obligatorio" ng-change="addBioPrefix(document.reference)" ng-readonly="!isNew" required>
+                    </div>
+
+                    <div class="col-md-2 col-sm-2 form-group" ng-class="{ 'has-error' : modifyDocumentForm.signernumber.$invalid, 'has-success' : !modifyDocumentForm.signernumber.$invalid }">
+                        <label for="signernumber" class="control-label">Número Firmantes:</label>
+                        <input type="number" min="1" name="signernumber" id="signernumber" class="form-control" ng-model="document.signernumber" placeholder="Este campo es obligatorio" ng-change="changeIt(document.signernumber)" required>
+                    </div>
+
+
+                    <div ng-repeat="signer in signers">
+                        <div class="col-md-10 col-sm-8 form-group" ng-class="{ 'has-error' : modifyDocumentForm.label{{$index}}.$invalid , 'has-success' : !modifyDocumentForm.label{{$index}}.$invalid}">
+                            <label for="label{{$index}}" class="control-label little-control-label">Área de firma {{$index + 1}}:</label>
+                            <input type="text" ng-maxlength="100" name="label{{$index}}" id="label{{$index}}" class="form-control" ng-model="signer.label" same-label-bio="{{signers}}" index-attr="{{$index}}" placeholder="Este campo es obligatorio" required>
+                            <p style="color: #a94442" ng-show="modifyDocumentForm.label{{$index}}.$error.sameLabelBio">La etiqueta {{signer.label}} ya existe.</p>
+                        </div>
+                        <div class="col-md-2 col-sm-4 form-group" ng-class="{ 'has-error' : modifyDocumentForm.pag{{$index}}.$invalid , 'has-success' : !modifyDocumentForm.pag{{$index}}.$invalid}">
+                            <label for="pag{{$index}}" class="control-label little-control-label">Num Página Firmante {{$index + 1}}:</label>
+                            <input type="number" min="0" name="pag{{$index}}" id="pag{{$index}}" class="form-control" ng-model="signer.pag" placeholder="Este campo es obligatorio" required>
+                        </div>
+                        <div class="col-md-3 col-sm-3 form-group" ng-class="{ 'has-error' : modifyDocumentForm.x{{$index}}.$invalid , 'has-success' : !modifyDocumentForm.x{{$index}}.$invalid}">
+                            <label for="x{{$index}}" class="control-label little-control-label">Coordenada X Firmante {{$index + 1}}:</label>
+                            <input type="number" min="0" name="x{{$index}}" id="x{{$index}}" class="form-control" ng-model="signer.x" placeholder="Este campo es obligatorio" required>
+                        </div>
+                        <div class="col-md-3 col-sm-3 form-group" ng-class="{ 'has-error' : modifyDocumentForm.y{{$index}}.$invalid , 'has-success' : !modifyDocumentForm.y{{$index}}.$invalid}">
+                            <label for="y{{$index}}" class="control-label little-control-label">Coordenada Y Firmante {{$index + 1}}:</label>
+                            <input type="number" min="0" name="y{{$index}}" id="y{{$index}}" class="form-control" ng-model="signer.y" placeholder="Este campo es obligatorio" required>
+                        </div>
+                        <div class="col-md-3 col-sm-3 form-group" ng-class="{ 'has-error' : modifyDocumentForm.width{{$index}}.$invalid , 'has-success' : !modifyDocumentForm.width{{$index}}.$invalid}">
+                            <label for="width{{$index}}" class="control-label little-control-label">Ancho caja firma {{$index + 1}}:</label>
+                            <input type="number" min="0" name="width{{$index}}" id="width{{$index}}" class="form-control" ng-model="signer.width" placeholder="Este campo es obligatorio" required>
+                        </div>
+                        <div class="col-md-3 col-sm-3 form-group" ng-class="{ 'has-error' : modifyDocumentForm.height{{$index}}.$invalid , 'has-success' : !modifyDocumentForm.height{{$index}}.$invalid}">
+                            <label for="height{{$index}}" class="control-label little-control-label">Alto caja firma {{$index + 1}}:</label>
+                            <input type="number" min="0" name="height{{$index}}" id="height{{$index}}" class="form-control" ng-model="signer.height" placeholder="Este campo es obligatorio" required>
+                        </div>
+                        <div class="col-sm-12">
+                            <hr>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="modal-footer" style="padding-bottom: 0px; padding-right: 0px;">
+                <button class="btn btn-primary btn-custom" type="button" ng-click="saveBioDoc(document)" ng-disabled="modifyDocumentForm.$invalid">Guardar</button>
+                <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+
+<script type="text/ng-template" id="staticDocsModal.html">
+
+    <div class="modal-body">
+
+       <form name="modifyDocumentForm" novalidate>
+            <div class="form-group">
+                <div class="row">
+
+                    <div class="col-sm-12">
+                        <p><strong>Se añadirá al nombre de la referencia el prefijo <i>STATIC</i> o <i>STATIC BIO</i></strong></p>
+                        <p class="error-pass" ng-if="modifyDocumentForm.reference.$error.checkUniqueRefStaticBio"><strong>Esta referencia ya existe</strong></p>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <label for="isstaticbio" class="control-label">Posicionado:</label>
+                        <input type="checkbox" name="isstaticbio" id="isstaticbio" ng-model="isstaticbio" ng-change="resetFields(isstaticbio)">
+                    </div>
+
+                    <div class="col-md-5 col-sm-12 form-group" ng-class="{ 'has-error' : modifyDocumentForm.defaultFile.$invalid , 'has-success' : !modifyDocumentForm.defaultFile.$invalid}">
+                        <label for="defaultFile" class="control-label">Fichero (pdf):</label>
+                        <input class="form-control" type="file" name="defaultFile" id="defaultFile" ng-model="document.temp" valid-file
+                        onchange="angular.element(this).scope().uploadDefaultFile(this)" required accept="application/pdf">
+                    </div>
+
+                    <div class="col-md-5 col-sm-12 form-group" ng-class="{ 'has-error' : modifyDocumentForm.reference.$invalid , 'has-success' : !modifyDocumentForm.reference.$invalid}">
+                        <label for="reference" class="control-label">Referencia: </label>
+                        <input type="text" ng-maxlength="45" name="reference" id="reference" class="form-control" ng-model="document.reference" check-unique-ref-static-bio={{document.id}} placeholder="Este campo es obligatorio" required >
+                    </div>
+
+                    <div class="col-sm-12" ng-if="isstaticbio">
+                        <hr>
+                    </div>
+
+                    <div class="col-md-12 col-sm-12 form-group" ng-class="{ 'has-error' : modifyDocumentForm.positions.$invalid , 'has-success' : !modifyDocumentForm.positions.$invalid}" ng-if="isstaticbio">
+                        <label for="positions" class="control-label">Posiciones:</label>
+                        <input type="number" min="1" name="positions" id="positions" class="form-control" ng-model="positionsNumber" ng-change="changeIt(positionsNumber)" placeholder="Este campo es obligatorio" ng-required="isstaticbio">
+                    </div>
+
+                    <div ng-repeat="signer in signers" ng-if="isstaticbio">
+
+                        <div class="col-md-10 col-sm-4 form-group" ng-class="{ 'has-error' : modifyDocumentForm.label{{$index}}.$invalid , 'has-success' : !modifyDocumentForm.label{{$index}}.$invalid}">
+                            <label for="label{{$index}}" class="control-label little-control-label">Área de firma {{$index + 1}}:</label>
+                            <input type="text" ng-maxlength="100" name="label{{$index}}" id="label{{$index}}" class="form-control" same-label-bio="{{signers}}" index-attr="{{$index}}" ng-model="signer.label" placeholder="Este campo es obligatorio" required>
+                            <p style="color: #a94442" ng-show="modifyDocumentForm.label{{$index}}.$error.sameLabelBio">La etiqueta {{signer.label}} ya existe.</p>
+                        </div>
+                        <div class="col-md-2 col-sm-4 form-group" ng-class="{ 'has-error' : modifyDocumentForm.pag{{$index}}.$invalid , 'has-success' : !modifyDocumentForm.pag{{$index}}.$invalid}">
+                            <label for="pag{{$index}}" class="control-label little-control-label">Num Página Posición {{$index + 1}}:</label>
+                            <input type="number" min="1" name="pag{{$index}}" id="pag{{$index}}" class="form-control" ng-model="signer.pag" placeholder="Este campo es obligatorio" required>
+                        </div>
+                        <div class="col-md-3 col-sm-4 form-group" ng-class="{ 'has-error' : modifyDocumentForm.x{{$index}}.$invalid , 'has-success' : !modifyDocumentForm.x{{$index}}.$invalid}">
+                            <label for="x{{$index}}" class="control-label little-control-label">Coordenada X Posición {{$index + 1}}:</label>
+                            <input type="number" min="0" name="x{{$index}}" id="x{{$index}}" class="form-control" ng-model="signer.x" placeholder="Este campo es obligatorio" required>
+                        </div>
+                        <div class="col-md-3 col-sm-4 form-group" ng-class="{ 'has-error' : modifyDocumentForm.y{{$index}}.$invalid , 'has-success' : !modifyDocumentForm.y{{$index}}.$invalid}">
+                            <label for="y{{$index}}" class="control-label little-control-label">Coordenada Y Posición {{$index + 1}}:</label>
+                            <input type="number" min="0" name="y{{$index}}" id="y{{$index}}" class="form-control" ng-model="signer.y" placeholder="Este campo es obligatorio" required>
+                        </div>
+                        <div class="col-md-3 col-sm-4 form-group" ng-class="{ 'has-error' : modifyDocumentForm.width{{$index}}.$invalid , 'has-success' : !modifyDocumentForm.width{{$index}}.$invalid}">
+                            <label for="width{{$index}}" class="control-label little-control-label">Ancho caja {{$index + 1}}:</label>
+                            <input type="number" min="0" name="width{{$index}}" id="width{{$index}}" class="form-control" ng-model="signer.width" placeholder="Este campo es obligatorio" required>
+                        </div>
+                        <div class="col-md-3 col-sm-4 form-group" ng-class="{ 'has-error' : modifyDocumentForm.height{{$index}}.$invalid , 'has-success' : !modifyDocumentForm.height{{$index}}.$invalid}">
+                            <label for="height{{$index}}" class="control-label little-control-label">Alto caja {{$index + 1}}:</label>
+                            <input type="number" min="0" name="height{{$index}}" id="height{{$index}}" class="form-control" ng-model="signer.height" placeholder="Este campo es obligatorio" required>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer" style="padding-bottom: 0px; padding-right: 0px;">
+                <button class="btn btn-primary btn-custom" type="button" ng-click="saveDefaultDoc(document)" ng-disabled="modifyDocumentForm.$invalid">Guardar</button>
+                <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="trySmsModal.html">
+
+    <div class="modal-body">
+
+       <form name="sendSmsForm" novalidate>
+            <div class="form-group">
+                <div class="row">
+
+                    <div class="col-sm-12 form-group" ng-class="{ 'has-error' : sendSmsForm.cellphone.$invalid , 'has-success' : !sendSmsForm.cellphone.$invalid}">
+                        <label for="cellphone" class="control-label">Introducir el número de telefono:</label>
+                        <input class="form-control" type="text" name="cellphone" id="cellphone" validate-phone ng-model="cellphone" required>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer" style="padding-bottom: 0px; padding-right: 0px;">
+                <button class="btn btn-primary btn-custom" type="button" ng-click="sendSms(cellphone)" ng-disabled="sendSmsForm.$invalid">Enviar</button>
+                <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="tryEmailModal.html">
+
+    <div class="modal-body">
+
+       <form name="sendEmailForm" novalidate>
+            <div class="form-group">
+                <div class="row">
+
+                    <div class="col-sm-12 form-group" ng-class="{ 'has-error' : sendEmailForm.email.$invalid , 'has-success' : !sendEmailForm.email.$invalid }">
+                        <label for="email" class="control-label">Introducir el correo:</label>
+                        <input class="form-control" type="email" name="email" id="email" ng-model="email" validate-email required>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer" style="padding-bottom: 0px; padding-right: 0px;">
+                <button class="btn btn-primary btn-custom" type="button" ng-click="sendEmail(email)" ng-disabled="sendEmailForm.$invalid">Enviar</button>
+                <button class="btn btn-warning btn-custom" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="modalShowActa.html">
+
+    <div class="modal-body">
+
+            <iframe id="fileViewer" style="width: 100%;" ng-src="{{documentURL}}"></iframe>
+            <div class="modal-footer modal-footer-custom">
+                <button class="btn btn-warning btn-custom" type="button" ng-click="closeActaModal()">Cancelar</button>
+            </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="modalStaticDocument.html">
+
+    <div class="modal-body">
+
+            <iframe id="fileViewer" style="width: 100%;" ng-src="{{documentURL}}"></iframe>
+            <div class="modal-footer modal-footer-custom">
+                <button class="btn btn-warning btn-custom" type="button" ng-click="closeActaModal()">Cancelar</button>
+            </div>
+    </div>
+</script>

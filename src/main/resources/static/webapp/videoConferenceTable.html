@@ -1,0 +1,104 @@
+<head>
+    <meta charset="UTF-8" />
+</head>
+<style>
+    .slide-enter.ng-hide-remove {
+        animation: fadeInLeft 3.5s;
+    }
+</style>
+<div id="container-fluid" class="fondo" ng-controller="VideoConferenceController" ng-init="loadVideoConferenceTable()">
+    <div class="row list-operation" ng-if="isLoaded">
+        <div class="panel panel-primary panel-primary-custom">
+            <div class="panel-heading">Listado de vídeo conferencias</div>
+            <div class="panel-body">
+                <form name="filterForm" novalidate="" class="ng-pristine ng-invalid ng-invalid-required">
+                    <div class="form-group col-sm-2">
+                        <label for="from" class="control-label">Desde:</label>
+                        <p class="input-group">
+                             <input type="text" class="form-control" uib-datepicker-popup="dd-MM-yyyy" is-open="fromdatepicker.opened" id="from" name="from" ng-model="filter.from" ng-click="openFromDatePicker()" placeholder="Elige una fecha">
+                             <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" style="margin-top: 0px; height: 34px;" ng-click="openFromDatePicker()"><i class="glyphicon glyphicon-calendar no-hover"></i></button>
+                            </span>
+                        </p>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label for="to" class="control-label">Hasta:</label>
+                        <p class="input-group">
+                             <input type="text" class="form-control" uib-datepicker-popup="dd-MM-yyyy" is-open="todatepicker.opened" id="to" name="to" ng-model="filter.to" placeholder="Elige una fecha" ng-click="openToDatePicker()">
+                             <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" style="margin-top: 0px; height: 34px;" ng-click="openToDatePicker()"><i class="glyphicon glyphicon-calendar no-hover"></i></button>
+                            </span>
+                        </p>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label for="id" class="control-label">ID de operaci&oacute;n:</label>
+                        <input type="text" class="form-control" id="operationid" name="operationid" ng-model="filter.operationid" required>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label for="agentName" class="control-label">Nombre gestor:</label>
+                        <input type="text" class="form-control" id="agentName" name="agentName" ng-model="filter.agent.name" required>
+                    </div>                    
+                    <div class="form-group col-sm-2">
+                        <label for="videostate" class="control-label">Estado:</label>
+                        <select type="text" class="form-control" ng-model="filter.videostate" name="videostate" id="videostate">
+                            <option value="VIDEOCONF_PEDIDA">SOLICITADA</option>
+                            <option value="VIDEOCONF_ATENDIDA">ATENDIDA</option>
+                            <option value="VIDEOCONF_AHORA">EN PROGRESO</option>
+                            <option value="VIDEOCONF_FIN">TERMINADA</option>
+                            <option value="VERIFIED">VERIFICADA</option>
+                            <option value="REJECTED">RECHAZADA</option>
+                            <option value="EXPIRED">CADUCADA</option>
+                            <option value="undefined">Todos</option>;
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <label for="filter" class="control-label" style="visibility:hidden;">:</label>
+                        <button class="btn btn-default form-control" style="height:34px; margin-top:0px;" ng-click="filterVideoTable(filter)"><span class="glyphicon glyphicon-filter"></span></button>
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <label for="refresh" class="control-label" style="visibility:hidden;">:</label>
+                        <button class="btn btn-default form-control" style="height:34px; margin-top:0px;" ng-click="clearFilterAndReloadVideoConferenceTable()"><span class="glyphicon glyphicon-refresh" style="color: white;"></span></button>
+                    </div>
+                </form>
+                <div class="panel-body">
+                    <div class="col-sm-12" id="provabutton"></div>
+                    <table width="100%" datatable="ng" dt-options="dtOptionsVideoConference" dt-columns-defs="dtColumnsVideoConference" dt-instance="dtInstanceVideoConference" class="table row-border hover">
+                        <thead>
+                        <tr>
+                            <th class="col-sm-2 center-text">ID</th>
+                            <th class="col-sm-2 center-text">Operaci&oacute;n</th>
+                            <th class="col-sm-2 center-text">Creado</th>
+                            <!--<th class="col-sm-3 center-text">Fichero</th>-->
+                            <!--<th class="col-sm-1 center-text">Duración</th>-->
+                            <th class="col-sm-1 center-text">Estado</th>
+                            <th class="col-sm-1 center-text">NIF</th>
+                            <th class="col-sm-1 center-text">Agente</th>
+                            <th class="col-sm-1 center-text">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="conference in videoConferencesList">
+                                <td>{{ conference.archiveid }}</td>
+                                <td>{{ conference.opname }}</td>
+                                <td>{{ conference.creationDate }}</td>
+                                <td>{{ conference.videostate | operationVideoConferenceState }}</td>
+                                <td>{{ conference.nif }}</td>
+                                <td>{{ conference.username | cut:true:40: ' ...'}}</td>
+                                <td>
+                                    <div ng-if="conference.videostate === 'VIDEOCONF_PEDIDA'" class="btn-group" role="group" aria-label="...">
+                                        <i ng-click="goToVideoConference(conference)"><span class="glyphicon glyphicon-facetime-video"></span></i>
+                                    </div>
+                                    <div ng-if="conference.videostate === 'VIDEOCONF_ATENDIDA' || conference.videostate === 'VIDEOCONF_AHORA'" class="btn-group" role="group" aria-label="...">
+                                    </div>
+                                    <div ng-if="conference.videostate !== 'VIDEOCONF_PEDIDA' && conference.videostate !== 'VIDEOCONF_ATENDIDA' && conference.videostate !== 'VIDEOCONF_AHORA' && conference.archiveid != undefined && conference.archiveid != ''" class="btn-group" role="group" aria-label="...">
+                                        <i ng-click="viewVideo(conference)"><span class="glyphicon glyphicon-eye-open"></span></i>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

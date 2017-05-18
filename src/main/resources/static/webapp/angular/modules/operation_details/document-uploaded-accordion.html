@@ -1,0 +1,16 @@
+<!-- Document Accordion -->
+<div class="panel panel-custom-documents">
+    <div class="panel-heading panel-heading-custom-documents" role="tab" id="headingUploadedDocument{{index}}" style="background-color:{{color}}">
+      <h4 class="panel-title">
+        <a class="colapse" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseUploadedDocument{{index}}" target="_self" aria-expanded="false" aria-controls="collapseUploadedDocument{{index}}">
+          {{info.documentName}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapseUploadedDocument{{index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingUploadedDocument{{index}}" >
+        <div class="panel-body" style="height: 600px;">
+          <!-- Visor PDF -->
+          <iframe  width="100%" height="100%" name="plugin" ng-src="{{info.externalURL}}" type="application/pdf"></iframe>
+        </div>
+    </div>
+</div>

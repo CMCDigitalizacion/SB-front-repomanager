@@ -1,0 +1,228 @@
+<head>
+    <meta charset="UTF-8" />
+</head>
+
+<div id="container-fluid" class="fondo ng-cloak" ng-cloak>
+    <div class="col-sm-12" ng-controller="VideoConferenceAttendedController"  ng-init="getVideoConferenceToAttend()">
+        <div class="panel panel-primary panel-primary-custom">
+            <div class="panel-heading">Vídeo Conferencia para Operación {{ operationname }}</div>
+            <!-- <div class="text-titular"></div> -->
+            <div class="panel-body">
+                <div>
+                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-if="videoConferenceVisible" style="padding: 0px;">
+                      <div class="col-lg-12 col-md-12 col-sm-12 videoConference" style="padding: 0;">
+                          <div class="col-lg-8 ">
+                             <div id="publisher"></div>
+                          </div>
+                           <div class="col-lg-4 panel panel-danger" style="padding: 0;">
+                                     <div class="panel-heading">ATENCIÓN</div>
+                                     <div class="panel-body">Recuerde que siempre que se encuentre en esta página, su cámara está compartida con el cliente aunque él todavía no haya iniciado la suya.</div>
+                           </div>                         
+                           <div id="suscriber"></div>
+                      </div>
+                 </div>
+                 
+                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">     
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="col-lg-4 col-md-4 col-sm-4" ng-if="isBtnInitVisible">
+                                <button ng-click="sendSignalToClient()" class="btn btn-default">Iniciar</button>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4" ng-if="isBtnCaptureVisible && recording">
+                                <button ng-click="captureImageFromVideo()" class="btn btn-default">{{ labelBtnCapture }}</button>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4" ng-if="isBtnCaptureBackVisible && recording">
+                                <button ng-click="captureDniBack()" class="btn btn-default">Capturar reverso</button>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4" ng-if="isBtnSignalingVisible && recording">
+                               <button ng-click="sendSignalToClient()" class="btn btn-default" ng-disabled="isBtnSignalingDisabled">{{ labelSignalingBtn }}</button>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6" ng-show="isBtnCaptureVisible && !recording"><h5 style="color: red">Iniciando la grabación de video...</h5></div>
+                        </div>
+                        
+                        <div class="col-md-6 col-sm-6" ng-if="showChatView">
+                            <form name="form">
+                                    <div class="col-lg-12 col-md-12 col-sm-12" style="margin-top: 15px; padding: 0px;">
+                                      <div class="col-lg-10 col-md-10 col-sm-10" style="margin-top: 5px; padding: 0px;">
+                                          <input type="text" class="form-control col-lg-10 col-md-10 col-sm-10" ng-model="text.msg" maxlength="200" required/>
+                                      </div>
+                                      <div class="col-lg-2 col-md-2 col-sm-2">
+                                          <button class="btn btn-default glyphicon glyphicon-send" aria-label="Send message" style="margin-top: 0px;" ng-click="sendMessage(text.msg); $event.stopPropagation();" ng-disabled="form.$invalid"></button>
+                                      </div>
+                                    </div>
+                                </form>
+                         </div>
+                        
+                        <div class="col-lg-12 col-md-12 col-sm-12 textChat" ng-if="showChatView">
+                          <div id="msgHistory" prevent-parent-scroll></div>
+                        </div>
+                        
+                    </div>
+
+                    <!-- Div to put captures from video -->
+                    <div class="custom-panel">
+                        <div class="panel-heading"></div>
+                        <div style="padding: 30px;" class="panel-body"></div>
+                    </div>
+
+                    <div class="custom-panel panel-default">
+                        <div class="panel-heading">Capturas de imagen</div>
+                        <div style="padding: 30px;" class="panel-body" id="output"></div>
+                    </div>
+                    <!--<div class="col-sm-offset-1">-->
+
+                        <!--  <button ng-click="verifyDniFront" class="btn btn-default">Verificar DNI anverso</button>  -->
+                        <!--  <button ng-click="verifyDniBack" class="btn btn-default">Verificar DNI reverso</button>  -->
+                    <!--</div>-->
+
+
+                    <div class="custom-panel panel-default">
+                        <div class="panel-heading">Verificación.</div>
+                        <div class="panel-body">
+                            <div class="col-sm-12">
+                                <div class="col-sm-6">
+                                    <div class="col-sm-12">
+                                        <h4 class="panel-body center-text">- Datos del cliente:</h4>
+                                        <div class="form-group col-sm-12 col-xs-12">
+                                          <div class="col-sm-4 col-xs-4" style="text-align: right;">
+                                            <label style="font-size:medium" class="control-label etiqueta">Nombre</label>
+                                          </div>
+                                          <div class="col-sm-8 col-xs-8">
+                                            <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.name" ng-disabled="detailsData.customer.name" readonly="">
+                                          </div>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-xs-12">
+                                          <div class="col-sm-4 col-xs-4" style="text-align: right;">
+                                            <label  style="font-size:medium" class="control-label etiqueta">Apellidos</label>
+                                          </div>
+                                          <div class="col-sm-8 col-xs-8">
+                                            <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.lastName" ng-disabled="detailsData.customer.lastName" readonly="">
+                                          </div>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-xs-12">
+                                          <div class="col-sm-4 col-xs-4" style="text-align: right;">
+                                            <label style="font-size:medium" class="control-label etiqueta">DNI</label>
+                                          </div>
+                                          <div class="col-sm-8 col-xs-8">
+                                            <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.nif" ng-disabled="detailsData.customer.nif" readonly="">
+                                          </div>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-xs-12">
+                                          <div class="col-sm-4 col-xs-4" style="text-align: right;">
+                                            <label style="font-size:medium" class="control-label etiqueta">Teléfono</label>
+                                          </div>
+                                          <div class="col-sm-8 col-xs-8">
+                                            <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.phone" ng-disabled="detailsData.customer.pones" readonly="">
+                                          </div>
+                                        </div>
+
+                                        <div class="form-group col-sm-12 col-xs-12">
+                                          <div class="col-sm-4 col-xs-4" style="text-align: right;">
+                                            <label style="font-size:medium" class="control-label etiqueta">Email</label>
+                                          </div>
+                                          <div class="col-sm-8 col-xs-8">
+                                            <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.email" ng-disabled="detailsData.customer.email" readonly="">
+                                          </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                   <div class="col-sm-12">
+                                     <h4 class="panel-body center-text">- Datos obtenidos de la identificación del cliente:</h4>
+                                      <div class="form-group col-sm-12 col-xs-12">
+                                          <div class="col-sm-4 col-xs-4" style="text-align: right;">
+                                            <label style="font-size:medium" class="control-label etiqueta">Nombre</label>
+                                          </div>
+                                          <div class="col-sm-8 col-xs-8">
+                                            <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.icarName" ng-disabled="detailsData.customer.icarName" readonly="">
+                                          </div>
+                                      </div>
+
+                                      <div class="form-group col-sm-12 col-xs-12">
+                                        <div class="col-sm-4 col-xs-4" style="text-align: right;">
+                                          <label style="font-size:medium" class="control-label etiqueta">Apellidos</label>
+                                        </div>
+                                        <div class="col-sm-8 col-xs-8">
+                                          <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.icarLastName" ng-disabled="detailsData.customer.icarLastName" readonly="">
+                                        </div>
+                                      </div>
+
+                                      <div class="form-group col-sm-12 col-xs-12">
+                                        <div class="col-sm-4 col-xs-4" style="text-align: right;">
+                                          <label style="font-size:medium" class="control-label etiqueta">DNI</label>
+                                        </div>
+                                        <div class="col-sm-8 col-xs-8">
+                                          <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.icarNif" ng-disabled="detailsData.customer.icarNif" readonly="">
+                                        </div>
+                                      </div>
+
+                                      <div class="form-group col-sm-12 col-xs-12">
+                                        <div class="col-sm-4 col-xs-8" style="text-align: right;">
+                                          <label style="font-size:medium" class="control-label etiqueta">Validez</label>
+                                        </div>
+                                        <div class="col-sm-8 col-xs-8">
+                                          <input type="text" class="form-control" placeholder="" ng-model="detailsData.customer.icarExpirationDate" ng-disabled="detailsData.customer.icarExpirationDate" readonly="">
+                                        </div>
+                                      </div>
+                                   </div>
+                                </div>
+                            </div>
+
+                            <div id="managerQuestionContainer" class="col-sm-12 col-md-12 col-lg-12" style="padding-top: 15px; padding-bottom: 15px;" ng-if="isApproveOrRejectVideoConference">
+                                <!--<h5>- El proceso de identificación sólo podrá completarse cuando:</h5>
+                                <form style="font-size: 11pt;" name="form" novalidate="">
+                                    <input style="margin: 6px;" type="checkbox" name="question01" ng-model="checkedValues.checkbox01" ng-value="false" ng-click="allChecked(checkedValues)"> <span>Se ha verificado que el proceso de identificación es completamente privado y en la grabación únicamente aparece la persona que efectivamente está contratando el servicio.</span><br>
+                                    <input style="margin: 6px;" type="checkbox" name="question02" ng-model="checkedValues.checkbox02" ng-value="false" ng-click="allChecked(checkedValues)"> <span>Se ha informado al usuario y éste ha consentido en el inicio de la grabación que su imagen y voz sea grabada en vídeo.</span><br>
+                                    <input style="margin: 6px;" type="checkbox" name="question03" ng-model="checkedValues.checkbox03" ng-value="false" ng-click="allChecked(checkedValues)"> <span>Se ha realizado una captura de la imagen del rostro del usuario.</span><br>
+                                    <input style="margin: 6px;" type="checkbox" name="question04" ng-model="checkedValues.checkbox04" ng-value="false" ng-click="allChecked(checkedValues)"> <span>La imagen del rostro del usuario es nítida y permite identificar perfectamente al usuario.</span><br>
+                                    <input style="margin: 6px;" type="checkbox" name="question05" ng-model="checkedValues.checkbox05" ng-value="false" ng-click="allChecked(checkedValues)"> <span>Se ha realizado una captura en una imagen del anverso y el reverso del documento de identificación fehaciente.</span><br>
+									<input style="margin: 6px;" type="checkbox" name="question06" ng-model="checkedValues.checkbox06" ng-value="false" ng-click="allChecked(checkedValues)"> <span>Las imágenes del documento del usuario son nítidas y permiten identificar perfectamente al usuario.</span><br>
+
+                                    <input style="margin: 6px;" type="checkbox" name="question7" ng-model="checkedValues.checkbox07" ng-value="false" ng-click="allChecked(checkedValues)"> <span>Se han realizado las siguientes preguntas de comprobación de la identidad del usuario, siendo contestadas sin que el usuario pueda ver el contenido del documento (en tanto éste está enfrentado a la cámara) realizarle las siguientes preguntas:
+									<ul>
+									<li>¿Cuál es tú nombre?</li>
+									<li>¿Cuáles son tus apellidos?</li>
+									<li>¿Qué edad tienes?</li>
+									<li>¿Cuándo es tú cumpleaños?</li>
+									<li>¿Dónde naciste?</li>
+									<li>¿Cómo se llama tú padre?</li>
+									<li>¿Cómo se llama tú madre?</li>
+									<li>¿Cuál es tú domicilio?</li>
+									</ul>
+									</span>
+                                    <input style="margin: 6px;" type="checkbox" name="question8" ng-model="checkedValues.checkbox08" ng-value="false" ng-click="allChecked(checkedValues)"> <span>Se ha verificado que el documento de identificación fehaciente está en vigor y coincide la fecha de vigencia con la facilitada por el usuario en el proceso de registro.</span><br>
+                                    <input style="margin: 6px;" type="checkbox" name="question9" ng-model="checkedValues.checkbox09" ng-value="false" ng-click="allChecked(checkedValues)"> <span>Se ha verificado que el rostro del usuario es el mismo o muy semejante al de la fotografía del documento de identificación.</span><br>
+                                    <input style="margin: 6px;" type="checkbox" name="question10" ng-model="checkedValues.checkbox10" ng-value="false" ng-click="allChecked(checkedValues)"> <span>Se ha solicitado al usuario que mueva el documento de identificación frente a la cámara, habiéndose verificado la presencia de hologramas en el documento.</span><br>
+                                    <input style="margin: 6px;" type="checkbox" name="question11" ng-model="checkedValues.checkbox11" ng-value="false" ng-click="allChecked(checkedValues)"> <span>Se ha verificado que el documento no presenta signos de deterioro y especialmente, que la fotografía no tiene signos de haber sido manipulada (colocada encima de la original, por ejemplo) o se trata de una copia o reproducción del DNI.</span><br>
+									<input style="margin: 6px;" type="checkbox" name="question12" ng-model="checkedValues.checkbox12" ng-value="false" ng-click="allChecked(checkedValues)"> <span>Todos los datos obtenidos mediante la lectura automática del código MRZ del documento de identidad han sido obtenidos adecuadamente.</span><br>
+                                </form>-->
+                                <!-- <div style="margin-top: 10px;" class="col-sm-6">
+                                        <label style="font-size:medium" class="control-label">Código de agente</label>
+                                        <input type="password" class="form-control" placeholder="Introduzca su pin de agente" ng-model="pin" name="pin" ng-change="allCheckedAndPin(pin)" required>
+                                    </div> -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <button style="float:right" type="submit" class="btn btn-default" ng-hide="isRejectValidationVisible" ng-click="rejectVideoConference()" confirm="¿Está seguro qué desea rechazar la identificación?">Rechazar</button>
+                        <button style="float:right; margin-right:5px;" type="submit" class="btn btn-warning" ng-hide="isApproveValidationVisible" ng-click="approveVideoConference()" confirm="¿Está seguro qué desea aprobar la identificación?">Aprobar</button>
+                        <button style="float:right; margin-right:5px;" type="button" class="btn btn-warning" ng-click="goToVideoConferenceTable()" confirm="¿Está seguro de abandonar el proceso de identificación?"><span class="glyphicon glyphicon-arrow-left"></span> Volver</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/ng-template" id="approveOrRejectVideoModal.html">
+    <div class="modal-body">
+        <p style="font-size:large;">{{messageModal}}</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning" type="button" ng-click="exitModal()">Cerrar</button>
+    </div>
+</script>
